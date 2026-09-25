@@ -1,7 +1,7 @@
 # Especificação visual e de experiência — demo Kapitalis
 
 **Data:** 25 de setembro de 2026
-**Estado:** direção “Mesa de Controle Financeira” aprovada; navy e dourado preservados; aguardando revisão desta especificação antes do plano.
+**Estado:** direção e especificação aprovadas pelo cliente; ajustes de mídia substituível, motor reutilizável e prioridade de esforço incorporados para o plano técnico.
 
 ## Objetivo
 
@@ -101,7 +101,7 @@ Dourado não será usado sozinho como texto de corpo sobre off-white: contraste 
 2. **Hero navy:** headline-direção “Seus números sob controle. Suas decisões com mais clareza.”; subheadline de uma frase; CTA WhatsApp e âncora para conhecer o sistema; interface financeira compacta à direita. Altura responde ao conteúdo e à altura da janela, sem depender de um hero de 100vh.
 3. **Faixa de contexto:** nomes de serviço e localidade, sem contagem ou alegação. Link para avaliações Google sem score, se a URL oficial continuar válida.
 4. **Problemas do empresário:** composição editorial clara com perguntas reais sobre sobra, caixa, tributos, pagamentos e previsibilidade; sem “por que escolher” e sem oito cards uniformes.
-5. **Sistema Kapitalis / storytelling assinatura:** quatro capítulos conectados: fontes financeiras → rotinas organizadas → informação útil → decisão. Um visual sticky acompanha o capítulo em desktop; texto e cenas 2D próprias mudam de maneira coordenada. O diagrama mostra fontes reais de trabalho e saídas coerentes com os serviços.
+5. **Sistema Kapitalis / storytelling assinatura:** quatro capítulos conectados: fontes financeiras → rotinas organizadas → informação útil → decisão. Um visual sticky acompanha o capítulo em desktop; texto e mídia mudam de maneira coordenada. A demo usa cenas 2D próprias, mas o motor aceita cada capítulo com mídia independente, inclusive fotografia editorial aprovada no futuro. O diagrama mostra fontes reais de trabalho e saídas coerentes com os serviços.
 6. **Serviços:** três pilares editoriais: Contabilidade; BPO Financeiro; Tributário e empresarial. Cada pilar lista apenas atividades identificadas na auditoria.
 7. **BPO / produto financeiro:** painel demonstrativo em navy com pagamentos, recebimentos, fluxo/compromissos e fechamento. Controles alternam a vista entre rotinas; nenhuma fórmula tributária ou integração real é sugerida.
 8. **Processo:** cinco passos conceituais (entender operação, organizar dados, assumir rotinas, entregar informação, acompanhar decisões), identificados internamente como pendentes de validação.
@@ -111,13 +111,27 @@ Dourado não será usado sozinho como texto de corpo sobre off-white: contraste 
 12. **CTA final:** convite direto para conversar sobre a situação financeira atual, apontando ao WhatsApp real publicado.
 13. **Footer:** navegação, serviços, localidade, telefone/WhatsApp, e-mail e redes atuais do site. Excluir CNPJ, CRC, endereço detalhado e política até validação.
 
+## Hierarquia de esforço
+
+O tempo visual e de interação concentra-se nos cinco momentos que sustentam a apresentação:
+
+**Prioridade essencial:** Hero; Problemas/contexto; Sistema Kapitalis/storytelling; BPO/Mesa de Controle; CTA final. Esses momentos recebem as composições próprias, maior refinamento tipográfico e a revisão iterativa de movimento e responsividade.
+
+**Suporte bem resolvido:** Header e footer (discretos, íntegros e acessíveis); serviços (editoriais); processo (simples); conteúdo/ferramentas (secundários). Não criar movimento ou painel decorativo só para preencher essas áreas.
+
+**Preparado, não publicado:** case e pessoa/equipe. As estruturas ficam disponíveis para conteúdo aprovado, mas não são renderizadas sem material real. Se houver escolha entre acrescentar interação secundária e refinar Hero, Storytelling ou BPO, a prioridade é refinar esses três momentos.
+
 ## Interação por scroll e movimento
 
 ### Sistema Kapitalis: capítulos coordenados
 
 Essa será a única sequência sticky de storytelling da home, agrupando o sistema e as quatro etapas. Em desktop, uma peça visual fixa na área central muda de estado quando o capítulo correspondente entra na região ativa. Fontes aparecem nas bordas, linhas conectam-se ao núcleo Kapitalis e o estado final organiza as saídas e destaca “decisão”. Movimento curto e funcional, ligado a organização e fluxo.
 
-Implementação prevista com estrutura semântica de capítulos e CSS para composição/clipping/escala discreta. JavaScript observa a entrada dos capítulos com IntersectionObserver e atualiza o capítulo ativo; não há leitura contínua do scroll, WebGL, canvas, vídeo, partículas, ou biblioteca grande de animação. A experiência deve continuar legível se JavaScript falhar. Mobile abandona sticky/scroll progressivo e apresenta capítulos verticais com cada diagrama visível junto ao texto.
+O motor de interação e o modelo de capítulos serão independentes. Conceitualmente, StorySection recebe capítulos; StoryChapter descreve identificador, texto e mídia; StoryMedia escolhe entre uma cena visual Kapitalis ou uma imagem editorial com texto alternativo; StoryProgress mantém somente o estado ativo necessário. Os nomes podem mudar na implementação, mas a fronteira deve ser preservada. Textos, imagens e diagramas ficam nos dados dos capítulos, nunca embutidos na lógica de progressão. Assim, uma narrativa futura de origem → crescimento → atuação → resultado ou de problema → intervenção → resultado troca os dados e as mídias sem reescrever sticky, progresso e transições.
+
+Na demo, o adaptador visual usa cenas 2D próprias; uma mídia fotográfica será um tipo de conteúdo intercambiável, não uma exceção acoplada à cena financeira. O cliente ainda não forneceu fotos, portanto nenhuma foto de banco será usada.
+
+Implementação prevista com estrutura semântica de capítulos e CSS para composição/clipping/escala discreta. JavaScript observa a entrada dos capítulos com IntersectionObserver e atualiza o capítulo ativo; não há leitura contínua do scroll, WebGL, canvas, vídeo, partículas, ou biblioteca grande de animação. Sem JavaScript, texto e mídia de cada capítulo ficam em sequência estática e legível. Mobile abandona sticky/scroll progressivo e apresenta capítulos verticais com a respectiva mídia junto ao texto.
 
 ### Sistema global
 
@@ -161,6 +175,9 @@ Implementação prevista com estrutura semântica de capítulos e CSS para compo
 - Todos os claims e contatos derivam do site auditado; pendências profissionais/legais permanecem omitidas ou marcadas no código.
 - O painel BPO exibe de forma persistente que seus dados são demonstrativos.
 - Case e biografia não aparecem como conteúdo real antes da validação.
+- StorySection troca a mídia de um capítulo por imagem editorial aprovada sem alterar o motor de estado ou progressão.
+- A mídia e o texto de cada capítulo permanecem legíveis com JavaScript desativado e em mobile sem sticky.
+- O refinamento visual prioriza Hero, Problemas/contexto, Storytelling, BPO e CTA; as demais partes recebem apenas o esforço necessário ao seu papel.
 - O plano técnico mantém o escopo em uma home, não em várias páginas.
 
 ## Fontes observadas
