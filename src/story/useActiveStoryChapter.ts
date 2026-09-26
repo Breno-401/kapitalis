@@ -1,15 +1,34 @@
 import { useEffect, useState, type RefObject } from 'react'
+import type { StoryChapterId } from './types'
 
-type ChaptersRef = RefObject<HTMLElement | null>
+type StoryRootRef = RefObject<HTMLElement | null>
+
+type CenteredChapter = {
+  id: string
+  center: number
+}
+
+export function selectNearestChapter<T extends CenteredChapter>(
+  chapters: readonly T[],
+  viewportCenter: number,
+): T | undefined {
+  return chapters.reduce<T | undefined>((nearest, chapter) => {
+    if (!nearest) return chapter
+
+    return Math.abs(chapter.center - viewportCenter) <
+      Math.abs(nearest.center - viewportCenter)
+      ? chapter
+      : nearest
+  }, undefined)
+}
 
 export function useActiveStoryChapter(
-  chaptersRef: ChaptersRef,
-): string | null {
-  const [activeChapterId, setActiveChapterId] = useState<string | null>(null)
+  chaptersRef: StoryRootRef,
+): StoryChapterId | null {
+  const [activeChapterId, setActiveChapterId] =
+    useState<StoryChapterId | null>(null)
 
   useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined') return
-
     const root = chaptersRef.current
     if (!root) return
 
@@ -18,45 +37,53 @@ export function useActiveStoryChapter(
     )
     if (chapters.length === 0) return
 
-    const visibility = new Map<
-      Element,
-      { isIntersecting: boolean; ratio: number }
-    >()
-    chapters.forEach((chapter) =>
-      visibility.set(chapter, { isIntersecting: false, ratio: 0 }),
-    )
-    const verticalInset = Math.min(Math.round(window.innerHeight * 0.28), 180)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          visibility.set(entry.target, {
-            isIntersecting: entry.isIntersecting,
-            ratio: entry.intersectionRatio,
-          })
-        })
+    let centers: CenteredChapter[] = []
+    let frame = 0
 
-        const current = chapters
-          .map((chapter) => {
-            const state = visibility.get(chapter)
-            return {
-              chapter,
-              isIntersecting: state?.isIntersecting ?? false,
-              ratio: state?.ratio ?? 0,
-            }
-          })
-          .filter((entry) => entry.isIntersecting)
-          .sort((first, second) => second.ratio - first.ratio)[0]
+    function measure() {
+      centers = chapters.map((chapter) => {
+        const rect = chapter.getBoundingClientRect()
+        return {
+          id: chapter.dataset.storyId ?? '',
+          center: rect.top + window.scrollY + rect.height / 2,
+        }
+      })
+      schedule()
+    }
 
-        if (current?.chapter.id) setActiveChapterId(current.chapter.id)
-      },
-      {
-        rootMargin: `-${verticalInset}px 0px -${verticalInset}px 0px`,
-        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-      },
-    )
+    function updateActiveChapter() {
+      frame = 0
+      const nearest = selectNearestChapter(
+        centers,
+        window.scrollY + window.innerHeight / 2,
+      )
+      if (nearest && nearest.id) {
+        setActiveChapterId(nearest.id as StoryChapterId)
+      }
+    }
 
-    chapters.forEach((chapter) => observer.observe(chapter))
-    return () => observer.disconnect()
+    function schedule() {
+      if (frame) return
+      frame = window.requestAnimationFrame(updateActiveChapter)
+    }
+
+    const observer =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(measure)
+    observer?.observe(root)
+    chapters.forEach((chapter) => observer?.observe(chapter))
+
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', measure)
+    measure()
+
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', measure)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
   }, [chaptersRef])
 
   return activeChapterId

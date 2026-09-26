@@ -1,18 +1,23 @@
-import { StoryMedia } from './StoryMedia'
 import styles from './StorySection.module.css'
 import type { StoryChapter as StoryChapterData } from './types'
 
 type StoryChapterProps = {
   chapter: StoryChapterData
   isActive: boolean
+  targetId?: string
 }
 
-export function StoryChapter({ chapter, isActive }: StoryChapterProps) {
+export function StoryChapter({
+  chapter,
+  isActive,
+  targetId,
+}: StoryChapterProps) {
   return (
     <article
       className={styles.chapter}
-      id={chapter.id}
+      id={targetId}
       data-story-chapter
+      data-story-id={chapter.id}
       data-active={isActive}
       aria-current={isActive ? 'step' : undefined}
     >
@@ -20,9 +25,11 @@ export function StoryChapter({ chapter, isActive }: StoryChapterProps) {
         <p className={styles.chapterEyebrow}>{chapter.eyebrow}</p>
         <h3>{chapter.title}</h3>
         <p className={styles.chapterBody}>{chapter.body}</p>
-      </div>
-      <div className={styles.mobileMedia}>
-        <StoryMedia media={chapter.media} />
+        <ul className={styles.chapterItems} aria-label={`${chapter.title}: tópicos`}>
+          {chapter.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
       </div>
     </article>
   )

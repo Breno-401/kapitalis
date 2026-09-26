@@ -1,0 +1,199 @@
+.core {
+  width: min(56vw, 47rem);
+  margin: 0;
+  pointer-events: none;
+  transition:
+    opacity 520ms var(--ease-standard),
+    filter 520ms var(--ease-standard);
+}
+
+.artwork {
+  width: 100%;
+  overflow: visible;
+}
+
+.orbit {
+  fill: none;
+  stroke: rgb(232 213 143 / 26%);
+  stroke-width: 1;
+  transition:
+    opacity 520ms var(--ease-standard),
+    stroke 520ms var(--ease-standard),
+    stroke-dasharray 520ms var(--ease-standard);
+}
+
+.outerOrbit {
+  stroke-dasharray: 1 8;
+  stroke-linecap: round;
+  opacity: 0.62;
+}
+
+.innerOrbit {
+  stroke: rgb(232 213 143 / 17%);
+}
+
+.connection path {
+  fill: none;
+  stroke: rgb(232 213 143 / 31%);
+  stroke-dasharray: 3 9;
+  stroke-linecap: round;
+  stroke-width: 1.2;
+  transition:
+    opacity 520ms var(--ease-standard),
+    stroke 520ms var(--ease-standard);
+}
+
+.signalPath {
+  fill: none;
+  stroke: var(--color-gold-soft);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  opacity: 0;
+  transition: opacity 360ms var(--ease-standard);
+}
+
+.nodeRing {
+  fill: var(--color-navy);
+  stroke: rgb(232 213 143 / 48%);
+  stroke-width: 1.2;
+  transition:
+    fill 360ms var(--ease-standard),
+    stroke 360ms var(--ease-standard),
+    transform 360ms var(--ease-standard);
+}
+
+.nodeDot {
+  fill: var(--color-gold-soft);
+  opacity: 0.8;
+}
+
+.nodeLabel,
+.centerLabel {
+  fill: rgb(243 241 234 / 83%);
+  font-family: var(--font-interface);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.065em;
+  opacity: 0.76;
+  transition: opacity 360ms var(--ease-standard);
+}
+
+.centerHalo {
+  fill: var(--color-gold);
+  opacity: 0.045;
+  transition: opacity 520ms var(--ease-standard);
+}
+
+.centerRing {
+  fill: none;
+  stroke: rgb(232 213 143 / 62%);
+  stroke-width: 1;
+  transition:
+    stroke 360ms var(--ease-standard),
+    stroke-width 360ms var(--ease-standard);
+}
+
+.centerDisc {
+  fill: var(--color-navy);
+  stroke: rgb(243 241 234 / 18%);
+  stroke-width: 1;
+}
+
+.centerMark {
+  fill: none;
+  stroke: var(--color-gold-soft);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+}
+
+.centerLabel {
+  fill: var(--color-gold-soft);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.015em;
+}
+
+.visibilityPoint {
+  fill: var(--color-gold-soft);
+  opacity: 0.15;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 360ms var(--ease-standard),
+    transform 360ms var(--ease-standard);
+}
+
+.core[data-revealed='false'] .nodeLabel {
+  opacity: 0;
+}
+
+.core[data-state='entradas'] .node .nodeRing {
+  stroke: rgb(232 213 143 / 72%);
+}
+
+.core[data-state='organizacao'] .innerOrbit {
+  stroke: rgb(232 213 143 / 64%);
+  stroke-dasharray: 4 6;
+}
+
+.core[data-state='organizacao'] .signalOrganized {
+  opacity: 0.92;
+}
+
+.core[data-state='organizacao'] .connection path {
+  stroke: rgb(232 213 143 / 49%);
+}
+
+.core[data-state='visibilidade'] .outerOrbit {
+  stroke: rgb(232 213 143 / 67%);
+  stroke-dasharray: 1 5;
+}
+
+.core[data-state='visibilidade'] .signalVisible,
+.core[data-state='visibilidade'] .visibilityPoint {
+  opacity: 0.94;
+}
+
+.core[data-state='visibilidade'] .visibilityPoint {
+  transform: scale(1.35);
+}
+
+.core[data-state='decisao'] .centerHalo {
+  opacity: 0.13;
+}
+
+.core[data-state='decisao'] .centerRing {
+  stroke: var(--color-gold);
+  stroke-width: 2;
+}
+
+.core[data-state='decisao'] .signalDecision {
+  opacity: 1;
+}
+
+@media (max-width: 43.75rem) {
+  .core {
+    width: min(78vw, 25rem);
+  }
+
+  .core[data-revealed='false'] .nodeLabel {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .core,
+  .orbit,
+  .connection path,
+  .signalPath,
+  .nodeRing,
+  .nodeLabel,
+  .centerHalo,
+  .centerRing,
+  .visibilityPoint {
+    transition: none;
+  }
+}

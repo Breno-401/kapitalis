@@ -6,74 +6,67 @@ import { StorySection } from './StorySection'
 
 const chapters: readonly StoryChapter[] = [
   {
-    id: 'sources',
-    eyebrow: '01 · FONTES',
-    title: 'Fontes entram na rotina.',
-    body: 'Bancos, vendas e obrigações formam a origem.',
-    media: { kind: 'diagram', scene: 'sources' },
+    id: 'entradas',
+    eyebrow: '01 · ENTRADAS',
+    title: 'Entradas',
+    body: 'As diferentes fontes da rotina financeira.',
+    items: ['Vendas', 'Bancos', 'Notas', 'Folha', 'Despesas'],
   },
   {
-    id: 'organized',
-    eyebrow: '02 · ROTINA',
-    title: 'Rotinas ganham ordem.',
-    body: 'Pagamentos e recebimentos são organizados.',
-    media: { kind: 'diagram', scene: 'organized' },
+    id: 'organizacao',
+    eyebrow: '02 · ORGANIZAÇÃO',
+    title: 'Organização',
+    body: 'As rotinas financeiras em uma mesma leitura.',
+    items: ['Pagamentos', 'Recebimentos', 'Conciliação', 'Tributos', 'Fechamento'],
   },
   {
-    id: 'information',
-    eyebrow: '03 · INFORMAÇÃO',
-    title: 'O fluxo fica mais claro.',
-    body: 'A informação acompanha o período.',
-    media: { kind: 'diagram', scene: 'information' },
+    id: 'visibilidade',
+    eyebrow: '03 · VISIBILIDADE',
+    title: 'Visibilidade',
+    body: 'Leituras para acompanhar o período.',
+    items: ['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade'],
   },
   {
-    id: 'decision',
+    id: 'decisao',
     eyebrow: '04 · DECISÃO',
-    title: 'Decisões ganham contexto.',
-    body: 'A conversa olha para os próximos passos.',
-    media: { kind: 'diagram', scene: 'decision' },
+    title: 'Decisão',
+    body: 'Contexto para organizar uma próxima conversa.',
+    items: ['Contexto', 'Prioridade', 'Próximo passo'],
   },
 ]
 const currentStory = kapitalisStoryData as readonly StoryChapter[]
 
-describe('reusable story section', () => {
-  it('kapitalis_chapters_have_nonempty_copy_and_media', () => {
-    expect(currentStory.length).toBe(4)
+describe('Kapitalis system story', () => {
+  it('kapitalis_chapters_have_the_approved_concepts_in_order', () => {
     expect(
-      currentStory.every(
-        (chapter) =>
-          chapter.id.trim() &&
-          chapter.title.trim() &&
-          chapter.body.trim() &&
-          (chapter.media.kind === 'image'
-            ? chapter.media.src.trim() && chapter.media.alt.trim()
-            : chapter.media.scene.trim()),
-      ),
-    ).toBe(true)
+      currentStory.map(({ eyebrow, title, items }) => [eyebrow, title, items]),
+    ).toEqual(chapters.map(({ eyebrow, title, items }) => [eyebrow, title, items]))
   })
 
-  it('story_chapters_render_in_order', () => {
-    render(<StorySection chapters={chapters} />)
+  it('story_chapters_render_in_order_with_one_active_step', () => {
+    render(<StorySection chapters={chapters} activeChapterId="organizacao" />)
 
-    expect(
-      screen.getAllByRole('heading', { level: 3 }).map((heading) =>
-        heading.textContent?.trim(),
-      ),
-    ).toEqual(chapters.map(({ title }) => title))
+    const headings = screen.getAllByRole('heading', { level: 3 })
+    expect(headings.map((heading) => heading.textContent?.trim())).toEqual(
+      chapters.map(({ title }) => title),
+    )
+    expect(document.querySelector('[aria-current="step"]')?.id).toBe(
+      'organizacao',
+    )
+    expect(screen.getAllByRole('listitem').map((item) => item.textContent)).toEqual(
+      chapters.flatMap(({ items }) => items),
+    )
   })
 
-  it('story_chapters_remain_in_order_without_intersection_observer', () => {
+  it('story_chapters_remain_readable_without_intersection_observer', () => {
     vi.stubGlobal('IntersectionObserver', undefined)
     render(<StorySection chapters={chapters} />)
 
-    expect(
-      document.querySelector('[data-observer="missing"]'),
-    ).toBeTruthy()
+    expect(document.querySelectorAll('[data-story-chapter]')).toHaveLength(4)
     expect(
       screen.getAllByRole('heading', { level: 3 }).map((heading) =>
         heading.textContent?.trim(),
       ),
     ).toEqual(chapters.map(({ title }) => title))
-    expect(document.querySelectorAll('[data-scene]').length).toBe(4)
   })
 })

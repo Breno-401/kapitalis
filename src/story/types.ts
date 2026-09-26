@@ -1,3 +1,17 @@
+export type StoryChapterId =
+  | 'entradas'
+  | 'organizacao'
+  | 'visibilidade'
+  | 'decisao'
+
+export type StoryChapter = {
+  id: StoryChapterId
+  eyebrow: string
+  title: string
+  body: string
+  items: readonly string[]
+}
+
 export type StoryMedia =
   | {
       kind: 'diagram'
@@ -9,11 +23,3 @@ export type StoryMedia =
       alt: string
       objectPosition?: string
     }
-
-export type StoryChapter = {
-  id: string
-  eyebrow: string
-  title: string
-  body: string
-  media: StoryMedia
-}

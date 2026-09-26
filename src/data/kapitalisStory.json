@@ -1,30 +1,30 @@
 [
   {
-    "id": "fontes",
-    "eyebrow": "01 · FONTES",
-    "title": "Tudo começa com a informação certa.",
-    "body": "Movimentos bancários, contas a pagar e a receber e obrigações entram na rotina financeira.",
-    "media": { "kind": "diagram", "scene": "sources" }
+    "id": "entradas",
+    "eyebrow": "01 · ENTRADAS",
+    "title": "Entradas",
+    "body": "Vendas, bancos, notas, folha e despesas fazem parte de uma mesma rotina financeira.",
+    "items": ["Vendas", "Bancos", "Notas", "Folha", "Despesas"]
   },
   {
-    "id": "rotinas",
+    "id": "organizacao",
     "eyebrow": "02 · ORGANIZAÇÃO",
-    "title": "A rotina ganha ordem e acompanhamento.",
-    "body": "Conciliação, pagamentos e recebimentos ficam organizados em um fluxo de trabalho.",
-    "media": { "kind": "diagram", "scene": "organized" }
+    "title": "Organização",
+    "body": "Pagamentos, recebimentos, conciliação, tributos e fechamento compõem o acompanhamento do período.",
+    "items": ["Pagamentos", "Recebimentos", "Conciliação", "Tributos", "Fechamento"]
   },
   {
-    "id": "informacao-util",
-    "eyebrow": "03 · INFORMAÇÃO ÚTIL",
-    "title": "O que aconteceu vira informação para acompanhar.",
-    "body": "Fluxo e compromissos do período ajudam a observar a operação com mais contexto.",
-    "media": { "kind": "diagram", "scene": "information" }
+    "id": "visibilidade",
+    "eyebrow": "03 · VISIBILIDADE",
+    "title": "Visibilidade",
+    "body": "Fluxo de caixa, compromissos, indicadores e previsibilidade ajudam a compor a leitura do negócio.",
+    "items": ["Fluxo de caixa", "Compromissos", "Indicadores", "Previsibilidade"]
   },
   {
     "id": "decisao",
     "eyebrow": "04 · DECISÃO",
-    "title": "Informação dá contexto às decisões.",
-    "body": "Com a rotina em ordem, a conversa pode se voltar aos próximos passos do negócio.",
-    "media": { "kind": "diagram", "scene": "decision" }
+    "title": "Decisão",
+    "body": "Contexto, prioridade e próximo passo podem orientar uma conversa sobre a rotina financeira.",
+    "items": ["Contexto", "Prioridade", "Próximo passo"]
   }
 ]

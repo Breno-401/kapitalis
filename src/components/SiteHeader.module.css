@@ -1,169 +1,267 @@
 .header {
-  position: relative;
-  z-index: 20;
-  background: var(--color-navy);
+  position: fixed;
+  z-index: 50;
+  top: 1.05rem;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 2rem);
   color: var(--color-paper);
+  transform: translateX(-50%);
+  transition: top 220ms var(--ease-standard);
 }
 
-.header :focus-visible {
-  outline-color: var(--color-gold-soft);
+.header[data-scrolled='true'] {
+  top: 0.72rem;
 }
 
 .inner {
-  display: grid;
-  grid-template-columns: minmax(14rem, 1fr) auto auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  column-gap: clamp(1.25rem, 3vw, 3rem);
-  min-height: 5.5rem;
+  gap: 0.7rem;
+  min-height: 3.55rem;
+  padding: 0.34rem 0.42rem 0.34rem 0.8rem;
+  border: 1px solid rgb(232 213 143 / 13%);
+  border-radius: 999px;
+  background: rgb(5 21 41 / 89%);
+  box-shadow:
+    0 0.75rem 2.4rem rgb(0 0 0 / 20%),
+    inset 0 1px rgb(255 255 255 / 5%);
+  backdrop-filter: blur(18px) saturate(1.05);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .inner {
+    background: var(--color-navy);
+  }
+}
+
+.skipLink {
+  position: absolute;
+  top: -4rem;
+  left: 1rem;
+  z-index: 60;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-small);
+  background: var(--color-paper);
+  color: var(--color-navy);
+}
+
+.skipLink:focus {
+  top: 0;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
-  width: max-content;
-  color: inherit;
+  gap: 0.48rem;
+  flex: 0 0 auto;
+  color: var(--color-paper);
   text-decoration: none;
 }
 
 .brandMark {
-  flex: 0 0 auto;
-  width: 4rem;
-  height: auto;
-}
-
-.brandText {
-  display: grid;
-  gap: 0.18rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .brandName {
   font-family: var(--font-display);
-  font-size: 1.35rem;
-  line-height: 1;
+  font-size: 1.12rem;
+  letter-spacing: -0.03em;
 }
 
-.brandDescriptor {
-  color: var(--color-gold-soft);
-  font-size: 0.59rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1.35;
-  text-transform: uppercase;
+.navigation {
+  position: relative;
+  display: block;
 }
 
 .navigationList {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(0.9rem, 1.9vw, 1.75rem);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.navigationList li {
+  position: relative;
+  z-index: 1;
+}
+
 .navigationLink {
-  color: rgb(243 241 234 / 88%);
-  font-size: 0.86rem;
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.78rem;
+  border-radius: 999px;
+  color: rgb(243 241 234 / 76%);
+  font-size: 0.77rem;
+  font-weight: 550;
   text-decoration: none;
-  text-underline-offset: 0.38em;
   transition: color var(--duration-fast) var(--ease-standard);
   white-space: nowrap;
 }
 
-.navigationLink:hover {
-  color: var(--color-gold-soft);
-  text-decoration: underline;
+.navigationLink:hover,
+.navigationLink[aria-current='location'] {
+  color: var(--color-paper);
+}
+
+.navigationLink:focus-visible,
+.contactLink:focus-visible,
+.menuButton:focus-visible,
+.brand:focus-visible {
+  outline-color: var(--color-gold-soft);
+}
+
+.activeIndicator {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  border: 1px solid rgb(232 213 143 / 15%);
+  border-radius: 999px;
+  background: rgb(212 175 55 / 11%);
+  box-shadow: inset 0 1px rgb(255 255 255 / 5%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 260ms var(--ease-standard),
+    height 260ms var(--ease-standard),
+    transform 260ms var(--ease-standard),
+    opacity 160ms linear;
+}
+
+.activeIndicator[data-visible='true'] {
+  opacity: 1;
 }
 
 .contactLink {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 2.8rem;
-  padding-inline: 1.05rem;
-  border: 1px solid rgb(232 213 143 / 72%);
-  border-radius: var(--radius-small);
-  color: var(--color-paper);
-  font-size: 0.84rem;
-  font-weight: 600;
+  gap: 0.45rem;
+  min-height: 2.7rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid rgb(232 213 143 / 44%);
+  border-radius: 999px;
+  background: var(--color-gold);
+  color: var(--color-navy);
+  font-size: 0.72rem;
+  font-weight: 700;
   text-decoration: none;
-  white-space: nowrap;
   transition:
     background-color var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard);
+    border-color var(--duration-fast) var(--ease-standard);
+  white-space: nowrap;
 }
 
 .contactLink:hover {
-  background: var(--color-gold);
-  color: var(--color-navy);
+  border-color: var(--color-gold-soft);
+  background: var(--color-gold-soft);
+}
+
+.contactLink svg {
+  width: 0.9rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
 }
 
 .menuButton {
   display: none;
 }
 
-.skipLink {
-  position: absolute;
-  z-index: 100;
-  top: var(--space-2);
-  left: var(--space-4);
-  padding: var(--space-2) var(--space-4);
-  transform: translateY(-160%);
-  border-radius: var(--radius-small);
-  background: var(--color-paper);
-  color: var(--color-navy);
-  font-weight: 700;
-  text-decoration: none;
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.skipLink:focus-visible {
-  transform: translateY(0);
-  outline-color: var(--color-gold);
-}
-
 @media (max-width: 56.25rem) {
   .inner {
-    display: flex;
-    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .navigationLink {
+    padding-inline: 0.58rem;
+    font-size: 0.71rem;
+  }
+
+  .contactLink {
+    padding-inline: 0.7rem;
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 43.75rem) {
+  .header {
+    top: 0.6rem;
+    width: calc(100% - 1rem);
+    max-width: 27rem;
+  }
+
+  .header[data-scrolled='true'] {
+    top: 0.45rem;
+  }
+
+  .inner {
     justify-content: space-between;
-    gap: var(--space-4);
-    padding-block: var(--space-3);
+    gap: 0.45rem;
+    min-height: 3.25rem;
+    padding: 0.3rem 0.34rem 0.3rem 0.72rem;
+    border-radius: 1rem;
   }
 
   .brand {
-    margin-right: auto;
+    gap: 0.35rem;
+  }
+
+  .brandMark {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  .brandName {
+    font-size: 1.04rem;
   }
 
   .menuButton {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: var(--space-2);
-    min-height: 2.8rem;
-    padding: 0.55rem 0.75rem;
-    border: 1px solid var(--color-border-dark);
-    border-radius: var(--radius-small);
+    gap: 0.3rem;
+    min-height: 2.55rem;
+    padding: 0.45rem 0.58rem;
+    border: 1px solid rgb(243 241 234 / 14%);
+    border-radius: 999px;
     background: transparent;
     color: var(--color-paper);
     cursor: pointer;
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 0.69rem;
   }
 
   .menuButton svg {
-    width: 1.2rem;
+    width: 1rem;
+    fill: none;
     stroke: currentColor;
     stroke-linecap: round;
-    stroke-width: 1.7;
+    stroke-width: 1.5;
   }
 
   .navigation {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    left: 0;
     display: none;
-    order: 4;
-    flex: 1 0 100%;
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border-dark);
+    padding: 0.4rem;
+    border: 1px solid rgb(232 213 143 / 13%);
+    border-radius: 1.1rem;
+    background: rgb(5 21 41 / 96%);
+    box-shadow: 0 0.9rem 2.4rem rgb(0 0 0 / 25%);
+    backdrop-filter: blur(18px) saturate(1.05);
   }
 
   .navigation[data-open='true'] {
@@ -172,42 +270,73 @@
 
   .navigationList {
     display: grid;
-    gap: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.1rem;
   }
 
   .navigationLink {
-    display: block;
-    padding-block: 0.7rem;
-    font-size: 0.96rem;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 2.65rem;
+    padding-inline: 0.75rem;
+    font-size: 0.77rem;
   }
 
   .contactLink {
-    min-height: 2.8rem;
+    min-height: 2.55rem;
+    padding: 0.48rem 0.7rem;
+    font-size: 0.66rem;
+  }
+
+  .contactLink svg {
+    display: none;
+  }
+
+  .activeIndicator {
+    border-radius: 0.8rem;
   }
 }
 
-@media (max-width: 37.5rem) {
-  .brandMark {
-    width: 2.75rem;
+@media (max-width: 23.5rem) {
+  .header {
+    width: calc(100% - 0.75rem);
+  }
+
+  .inner {
+    gap: 0.28rem;
+    padding-inline: 0.55rem 0.28rem;
   }
 
   .brandName {
-    font-size: 1.15rem;
+    font-size: 0.98rem;
   }
 
-  .brandDescriptor {
-    display: none;
+  .menuButton {
+    min-height: 2.4rem;
+    padding-inline: 0.48rem;
+  }
+
+  .menuButton span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
   }
 
   .contactLink {
-    min-height: 2.6rem;
-    padding-inline: 0.75rem;
-    font-size: 0.76rem;
+    min-height: 2.4rem;
+    padding-inline: 0.55rem;
+    font-size: 0.59rem;
   }
 }
 
-@media (max-width: 24.99rem) {
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .navigationLink,
+  .activeIndicator,
   .contactLink {
-    display: none;
+    transition: none;
   }
 }

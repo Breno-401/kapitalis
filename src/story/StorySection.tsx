@@ -1,69 +1,45 @@
-import { useRef } from 'react'
-import { SectionHeading } from '../components/SectionHeading'
+import type { RefObject } from 'react'
 import { StoryChapter } from './StoryChapter'
-import { StoryMedia } from './StoryMedia'
 import styles from './StorySection.module.css'
-import type { StoryChapter as StoryChapterData } from './types'
-import { useActiveStoryChapter } from './useActiveStoryChapter'
+import type {
+  StoryChapter as StoryChapterData,
+  StoryChapterId,
+} from './types'
 
 type StorySectionProps = {
   chapters: readonly StoryChapterData[]
+  activeChapterId?: StoryChapterId | null
+  rootRef?: RefObject<HTMLElement | null>
+  trackRef?: RefObject<HTMLDivElement | null>
 }
 
-export function StorySection({ chapters }: StorySectionProps) {
-  const chaptersRef = useRef<HTMLDivElement>(null)
-  const activeChapterId = useActiveStoryChapter(chaptersRef)
-  const observerAvailable = typeof IntersectionObserver !== 'undefined'
-  const activeChapter =
-    chapters.find((chapter) => chapter.id === activeChapterId) ?? chapters[0]
-  const activeIndex = activeChapter
-    ? chapters.findIndex((chapter) => chapter.id === activeChapter.id)
-    : -1
-
+export function StorySection({
+  chapters,
+  activeChapterId = null,
+  rootRef,
+  trackRef,
+}: StorySectionProps) {
   return (
     <section
+      aria-label="Narrativa do Sistema Kapitalis"
       className={styles.storySection}
-      id="sistema"
-      aria-labelledby="story-title"
-      data-observer={observerAvailable ? 'ready' : 'missing'}
+      ref={rootRef}
     >
-      <div className={`container ${styles.inner}`}>
-        <p className={styles.storyEyebrow}>Sistema Kapitalis</p>
-        <SectionHeading
-          className={styles.storyHeading}
-          id="story-title"
-          title="Da origem dos dados à clareza para decidir."
-          description="Uma representação visual de como diferentes fontes podem se transformar em informação útil para acompanhar a rotina."
-        />
-
-        <div className={styles.storyGrid}>
-          {activeChapter && observerAvailable ? (
-            <div className={styles.visualColumn}>
-              <div className={styles.visualSticky}>
-                <div className={styles.visualMeta}>
-                  <span>Fluxo demonstrativo</span>
-                  <span>
-                    {String(activeIndex + 1).padStart(2, '0')} / {String(chapters.length).padStart(2, '0')}
-                  </span>
-                </div>
-                <div className={styles.visualFrame} key={activeChapter.id}>
-                  <StoryMedia media={activeChapter.media} />
-                </div>
-                <p className={styles.visualTitle}>{activeChapter.title}</p>
-              </div>
-            </div>
-          ) : null}
-
-          <div className={styles.chapters} ref={chaptersRef}>
-            {chapters.map((chapter) => (
-              <StoryChapter
-                chapter={chapter}
-                isActive={chapter.id === activeChapterId}
-                key={chapter.id}
-              />
-            ))}
-          </div>
-        </div>
+      <div
+        className={styles.trackLead}
+        data-hero-track
+        aria-hidden="true"
+        ref={trackRef}
+      />
+      <div className={styles.chapters}>
+        {chapters.map((chapter, index) => (
+          <StoryChapter
+            chapter={chapter}
+            isActive={chapter.id === activeChapterId}
+            key={chapter.id}
+            targetId={index === 0 ? 'sistema' : chapter.id}
+          />
+        ))}
       </div>
     </section>
   )

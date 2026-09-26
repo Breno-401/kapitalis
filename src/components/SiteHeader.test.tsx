@@ -1,6 +1,26 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import App from '../App'
+import { site } from '../data/site'
+
+type ObserverRecord = {
+  callback: IntersectionObserverCallback
+  targets: Element[]
+}
+
+function rectangle(left: number, top: number, width: number, height: number) {
+  return {
+    x: left,
+    y: top,
+    left,
+    top,
+    right: left + width,
+    bottom: top + height,
+    width,
+    height,
+    toJSON: () => ({}),
+  } as DOMRect
+}
 
 const approvedAnchors = [
   '#inicio',
@@ -54,5 +74,116 @@ describe('site navigation', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1)
     expect(screen.getAllByRole('contentinfo')).toHaveLength(1)
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+  })
+
+  it('floating_pill_contains_navigation_contact_and_active_indicator', () => {
+    render(<App />)
+
+    const navigation = screen.getByRole('navigation', {
+      name: 'Navegação principal',
+    })
+    expect(
+      within(navigation).getByRole('link', { name: 'Contexto' }).getAttribute('href'),
+    ).toBe('#contexto')
+    expect(
+      within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
+    ).toBe('#sistema')
+    expect(
+      screen
+        .getByRole('link', { name: 'Conversar no WhatsApp' })
+        .getAttribute('href'),
+    ).toBe(site.whatsappUrl)
+    expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
+  })
+
+  it('active_indicator_tracks_the_current_link_when_the_mobile_menu_opens', () => {
+    const observers: ObserverRecord[] = []
+    const originalInnerWidth = window.innerWidth
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(callback: IntersectionObserverCallback) {
+          observers.push({ callback, targets: [] })
+        }
+
+        observe(target: Element) {
+          observers.at(-1)?.targets.push(target)
+        }
+
+        disconnect() {}
+      },
+    )
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 390,
+    })
+    const measureRect = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(
+      function (this: HTMLElement) {
+        if (this.id === 'site-navigation') return rectangle(10, 20, 200, 60)
+        if (
+          this instanceof HTMLAnchorElement &&
+          this.closest('#site-navigation')
+        ) {
+          return rectangle(50, 25, 40, 40)
+        }
+        return rectangle(0, 0, 0, 0)
+      },
+      )
+
+    try {
+      render(<App />)
+      const observer = observers.at(-1)
+      expect(observer).toBeDefined()
+      const activeObserver = observer as ObserverRecord
+      const firstChapter = activeObserver.targets.find(
+        (target) => (target as HTMLElement).dataset.storyId === 'entradas',
+      )
+      expect(firstChapter).toBeDefined()
+
+      act(() => {
+        activeObserver.callback(
+          [
+            {
+              target: firstChapter as Element,
+              isIntersecting: true,
+              intersectionRatio: 0.5,
+            } as IntersectionObserverEntry,
+          ],
+          {} as IntersectionObserver,
+        )
+      })
+
+      const menuButton = screen.getByRole('button', { name: 'Abrir menu' })
+      fireEvent.click(menuButton)
+      expect(menuButton.getAttribute('aria-expanded')).toBe('true')
+      expect(
+        document.querySelector('#site-navigation a[href="#sistema"]')?.getAttribute(
+          'aria-current',
+        ),
+      ).toBe('location')
+      expect(
+        measureRect.mock.contexts.map((context) => {
+          const element = context as HTMLElement
+          return element.id || element.tagName
+        }),
+      ).toContain('site-navigation')
+
+      const indicator = document.querySelector<HTMLElement>(
+        '[data-nav-indicator]',
+      )
+      expect(indicator?.dataset.visible).toBe('true')
+      expect(indicator?.style.width).toBe('40px')
+      expect(indicator?.style.height).toBe('40px')
+      expect(indicator?.style.transform).toContain('translate3d(40px, 5px')
+    } finally {
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
+        value: originalInnerWidth,
+      })
+    }
   })
 })
