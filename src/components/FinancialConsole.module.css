@@ -1,0 +1,209 @@
+.console {
+  width: min(100%, 32rem);
+  justify-self: end;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid rgb(232 213 143 / 24%);
+  border-radius: var(--radius-large);
+  background: var(--color-navy-surface);
+  color: var(--color-paper);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--color-gold-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  max-width: 18ch;
+  font-family: var(--font-interface);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.signal {
+  flex: 0 0 auto;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-top: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-gold);
+  box-shadow: 0 0 0 0.3rem var(--color-gold-wash);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: var(--space-6);
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgb(232 213 143 / 28%);
+  border-radius: var(--radius-small);
+  background: rgb(3 16 30 / 40%);
+  color: var(--color-gold-soft);
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1.45;
+}
+
+.noticeMark {
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--color-gold);
+}
+
+.weekHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.weekHeader h3 {
+  font-family: var(--font-interface);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.weekHeader span {
+  color: rgb(243 241 234 / 62%);
+  font-size: 0.71rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.balance {
+  margin-top: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-3);
+  border-radius: var(--radius-medium);
+  background: var(--color-navy-original-deep);
+}
+
+.balance > p:first-child {
+  color: rgb(243 241 234 / 72%);
+  font-size: 0.78rem;
+}
+
+.balanceValue {
+  margin-top: 0.15rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.balanceNote {
+  margin-top: 0.25rem;
+  color: rgb(243 241 234 / 62%);
+  font-size: 0.72rem;
+}
+
+.flowValues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding: 0 var(--space-1) var(--space-4);
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.flowValues div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.flowValues dt {
+  color: rgb(243 241 234 / 63%);
+  font-size: 0.72rem;
+}
+
+.flowValues dd {
+  margin: 0;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.routines {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: var(--space-2) 0 0;
+  list-style: none;
+}
+
+.routines li {
+  display: grid;
+  grid-template-columns: 0.45rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding-block: 0.72rem;
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.routines li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.routineMarker {
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid var(--color-gold-soft);
+  border-radius: 50%;
+}
+
+.routineName {
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.routineDetail {
+  color: rgb(243 241 234 / 68%);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+@media (max-width: 37.5rem) {
+  .console {
+    justify-self: stretch;
+    padding: 1.15rem;
+    border-radius: 1rem;
+  }
+
+  .header h2 {
+    font-size: 1.13rem;
+  }
+
+  .weekHeader {
+    align-items: flex-start;
+  }
+
+  .weekHeader span {
+    font-size: 0.68rem;
+  }
+
+  .routineName,
+  .routineDetail {
+    font-size: 0.7rem;
+  }
+}
