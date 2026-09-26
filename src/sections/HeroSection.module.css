@@ -191,9 +191,9 @@
   position: absolute;
   z-index: 2;
   top: auto;
-  right: clamp(1.25rem, 4vw, 4rem);
+  right: calc(clamp(1.65rem, 4vw, 4rem) - 5rem);
   bottom: -0.5rem;
-  width: min(52vw, 52rem);
+  width: min(55vw, 55rem);
   height: auto;
   aspect-ratio: 1.08;
   margin: 0;
