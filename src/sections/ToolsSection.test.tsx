@@ -1,10 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { toolGroups } from '../data/tools'
 import { ToolsSection } from './ToolsSection'
 
-describe('tools directory', () => {
-  it('keeps all seven audited tools in their tax and people categories', () => {
+describe('native tools workspace', () => {
+  it('keeps all seven tools inside the tributary and people categories', () => {
     render(<ToolsSection />)
 
     const names = toolGroups.flatMap((group) => group.tools.map((tool) => tool.name))
@@ -18,23 +18,49 @@ describe('tools directory', () => {
       'Calculadora Simples Nacional',
       'Calculadora Fator R',
     ]) {
-      expect(screen.getByRole('heading', { name })).toBeTruthy()
+      expect(screen.getByRole('button', { name })).toBeTruthy()
     }
     expect(screen.getByRole('heading', { name: 'Tributário' })).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Pessoas e folha' })).toBeTruthy()
   })
 
-  it('links each tool to a verified published destination without pretending to calculate locally', () => {
+  it('opens an unverified calculator natively and keeps its result unavailable', () => {
     render(<ToolsSection />)
 
-    for (const tool of toolGroups.flatMap((group) => group.tools)) {
-      const link = screen.getByRole('link', {
-        name: `Abrir ${tool.name} no site oficial`,
-      })
-      expect(link.getAttribute('href')).toBe(tool.destination.href)
-      expect(link.getAttribute('href')).not.toBe('#')
-      expect(tool.destination.state).toMatch(/single-page/)
-    }
-    expect(screen.getByText(/não têm uma URL própria/i)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Calculadora Simples Nacional' }))
+
+    expect(
+      screen.getByRole('region', { name: 'Calculadora Simples Nacional' }),
+    ).toBeTruthy()
+    expect(screen.getByText(/fórmula aguardando validação/i)).toBeTruthy()
+    expect(
+      (screen.getByRole('button', { name: 'Resultado indisponível' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true)
+    expect(screen.queryByRole('link', { name: /site oficial/i })).toBeNull()
+  })
+
+  it('updates the verified Fator R ratio from the rolling twelve-month inputs', () => {
+    render(<ToolsSection />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Calculadora Fator R' }))
+    fireEvent.change(
+      screen.getByLabelText(/Receita bruta anual/),
+      { target: { value: '100000' } },
+    )
+    fireEvent.change(
+      screen.getByLabelText(/Folha anual incluindo pró-labore/),
+      { target: { value: '28000' } },
+    )
+
+    expect(screen.getByText('28,0%')).toBeTruthy()
+    expect(screen.getByText('Parâmetro de 28% atingido')).toBeTruthy()
+
+    fireEvent.change(
+      screen.getByLabelText(/Folha anual incluindo pró-labore/),
+      { target: { value: '27000' } },
+    )
+    expect(screen.getByText('27,0%')).toBeTruthy()
+    expect(screen.getByText('Abaixo do parâmetro de 28%')).toBeTruthy()
   })
 })
