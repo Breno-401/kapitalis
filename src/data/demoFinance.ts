@@ -4,10 +4,19 @@ export type DemoFinanceTone = 'neutral' | 'positive' | 'attention'
 
 export type DemoFinanceRecord = {
   id: string
+  date: string
   title: string
   detail: string
   amount: string
   status: string
+  tone: DemoFinanceTone
+}
+
+export type DemoFinanceMetric = {
+  id: string
+  label: string
+  value: string
+  note: string
   tone: DemoFinanceTone
 }
 
@@ -17,6 +26,8 @@ export type DemoFinanceViewState = {
   summaryLabel: string
   summaryValue: string
   summaryNote: string
+  timelineLabel: string
+  metrics: readonly DemoFinanceMetric[]
   records: readonly DemoFinanceRecord[]
 }
 
@@ -62,27 +73,54 @@ export const DEMO_FINANCE_STATE: DemoFinanceState = {
       summaryLabel: 'Compromissos previstos',
       summaryValue: 'R$ 7.160',
       summaryNote: 'Organização ilustrativa da semana',
+      timelineLabel: 'Compromissos previstos no período',
+      metrics: [
+        {
+          id: 'proximo-vencimento',
+          label: 'Próximo vencimento',
+          value: '02 OUT',
+          note: 'primeira data da agenda',
+          tone: 'attention',
+        },
+        {
+          id: 'programados',
+          label: 'Programados',
+          value: '3',
+          note: 'no período demonstrativo',
+          tone: 'neutral',
+        },
+        {
+          id: 'maior-compromisso',
+          label: 'Maior compromisso',
+          value: 'R$ 4.280',
+          note: 'valor demonstrativo',
+          tone: 'neutral',
+        },
+      ],
       records: [
         {
           id: 'obrigacao-proxima',
+          date: '02 OUT',
           title: 'Obrigação próxima',
-          detail: 'Vence em 02 out',
+          detail: 'Primeiro vencimento',
           amount: 'R$ 4.280',
           status: 'Próximo vencimento',
           tone: 'attention',
         },
         {
           id: 'despesas-periodo',
+          date: '04 OUT',
           title: 'Despesas do período',
-          detail: 'Vence em 04 out',
+          detail: 'Compromisso programado',
           amount: 'R$ 1.940',
           status: 'Programado',
           tone: 'neutral',
         },
         {
           id: 'outros-compromissos',
+          date: '05 OUT',
           title: 'Outros compromissos',
-          detail: 'Vence em 05 out',
+          detail: 'Compromisso organizado',
           amount: 'R$ 940',
           status: 'Organizado',
           tone: 'positive',
@@ -95,50 +133,103 @@ export const DEMO_FINANCE_STATE: DemoFinanceState = {
       summaryLabel: 'Entradas previstas',
       summaryValue: 'R$ 25.800',
       summaryNote: 'Previsão ilustrativa até 05 out',
-      records: [
+      timelineLabel: 'Entradas previstas e recebidas',
+      metrics: [
         {
-          id: 'entradas-inicio',
-          title: 'Entradas do início da semana',
-          detail: 'Até 02 out',
-          amount: 'R$ 8.950',
-          status: 'Previsto',
+          id: 'recebimentos-previstos',
+          label: 'Previsto',
+          value: 'R$ 25.800',
+          note: 'no período demonstrativo',
           tone: 'neutral',
         },
         {
+          id: 'recebimentos-confirmados',
+          label: 'Recebido',
+          value: 'R$ 8.950',
+          note: 'entrada confirmada',
+          tone: 'positive',
+        },
+        {
+          id: 'recebimentos-pendentes',
+          label: 'Pendente',
+          value: 'R$ 16.850',
+          note: 'previsto para a semana',
+          tone: 'attention',
+        },
+      ],
+      records: [
+        {
+          id: 'entradas-inicio',
+          date: '01 OUT',
+          title: 'Entrada confirmada',
+          detail: 'Início da semana',
+          amount: 'R$ 8.950',
+          status: 'Recebido',
+          tone: 'positive',
+        },
+        {
           id: 'valores-conciliacao',
-          title: 'Valores em conciliação',
-          detail: 'Até 04 out',
+          date: '03 OUT',
+          title: 'Lote em conciliação',
+          detail: 'Data prevista',
           amount: 'R$ 6.200',
-          status: 'Em conferência',
+          status: 'Pendente',
           tone: 'attention',
         },
         {
           id: 'demais-recebimentos',
+          date: '05 OUT',
           title: 'Demais recebimentos',
-          detail: 'Até 05 out',
+          detail: 'Data prevista',
           amount: 'R$ 10.650',
-          status: 'Previsto',
+          status: 'Pendente',
           tone: 'neutral',
         },
       ],
     },
     closing: {
       title: 'Fechamento e leitura do período',
-      panelStatus: 'ACOMPANHAMENTO · DEMONSTRATIVO',
+      panelStatus: 'FECHAMENTO · DEMONSTRATIVO',
       summaryLabel: 'Saldo projetado',
       summaryValue: 'R$ 18.640',
       summaryNote: 'Estimativa ilustrativa até sexta-feira',
+      timelineLabel: 'Rotina de fechamento demonstrativa',
+      metrics: [
+        {
+          id: 'movimentos-conciliados',
+          label: 'Movimentos conciliados',
+          value: '18 de 21',
+          note: 'etapa demonstrativa',
+          tone: 'positive',
+        },
+        {
+          id: 'movimentos-revisao',
+          label: 'A revisar',
+          value: '3 movimentos',
+          note: 'em conferência',
+          tone: 'attention',
+        },
+        {
+          id: 'dias-periodo',
+          label: 'Resumo do período',
+          value: '5 dias',
+          note: '01 a 05 de outubro',
+          tone: 'neutral',
+        },
+      ],
       records: [
         {
           id: 'entradas-fechamento',
-          title: 'Entradas previstas',
-          detail: 'Movimento da semana',
+          date: '01—02 OUT',
+          title: 'Entradas do período',
+          detail: 'Resumo das entradas previstas',
           amount: 'R$ 25.800',
           status: 'Acompanhadas',
           tone: 'positive',
         },
         {
           id: 'compromissos-fechamento',
+          date: '03—04 OUT',
           title: 'Compromissos',
           detail: 'Pagamentos do período',
           amount: '− R$ 7.160',
@@ -147,9 +238,10 @@ export const DEMO_FINANCE_STATE: DemoFinanceState = {
         },
         {
           id: 'conciliacao-fechamento',
+          date: '05 OUT',
           title: 'Conciliação bancária',
-          detail: 'Revisão do movimento',
-          amount: '—',
+          detail: 'Resumo do período',
+          amount: 'R$ 18.640',
           status: 'Em conferência',
           tone: 'attention',
         },

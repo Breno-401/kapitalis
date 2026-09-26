@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useId, useRef, useState } from 'react'
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { FinancialConsole } from '../components/FinancialConsole'
 import { SectionHeading } from '../components/SectionHeading'
 import type { DemoFinanceView } from '../data/demoFinance'
@@ -16,6 +17,33 @@ const views: {
 
 export function BpoSection() {
   const [activeView, setActiveView] = useState<DemoFinanceView>('payments')
+  const tabRefs = useRef<Partial<Record<DemoFinanceView, HTMLButtonElement>>>({})
+  const panelId = `${useId()}-finance-panel`
+  const activeTabId = `${panelId}-${activeView}`
+
+  function handleTabKeyDown(
+    event: ReactKeyboardEvent<HTMLButtonElement>,
+    currentIndex: number,
+  ) {
+    let nextIndex = currentIndex
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextIndex = (currentIndex + 1) % views.length
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextIndex = (currentIndex - 1 + views.length) % views.length
+    } else if (event.key === 'Home') {
+      nextIndex = 0
+    } else if (event.key === 'End') {
+      nextIndex = views.length - 1
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    const nextView = views[nextIndex]!.id
+    setActiveView(nextView)
+    tabRefs.current[nextView]?.focus()
+  }
 
   return (
     <section
@@ -29,37 +57,53 @@ export function BpoSection() {
           className={styles.heading}
           id="bpo-title"
           title="Uma mesa de controle para a rotina financeira."
-          description="Alterne entre pagamentos, recebimentos e fechamento para acompanhar como as rotinas podem ser organizadas."
+          description="Veja o que começa a ficar claro quando a Kapitalis organiza pagamentos, recebimentos e fechamento."
         />
 
         <div className={styles.workspace}>
           <div
             className={styles.controls}
-            role="group"
-            aria-label="Vistas da Mesa de Controle"
           >
             <p className={styles.controlsLabel}>Visualizar rotina</p>
-            {views.map(({ id, label, detail }) => (
-              <button
-                aria-label={label}
-                aria-pressed={activeView === id}
-                className={styles.viewButton}
-                key={id}
-                onClick={() => setActiveView(id)}
-                type="button"
-              >
-                <span className={styles.buttonIndicator} aria-hidden="true" />
-                <span className={styles.buttonText}>
-                  <span>{label}</span>
-                  <span className={styles.buttonDetail} aria-hidden="true">
-                    {detail}
+            <div
+              className={styles.viewTabs}
+              role="tablist"
+              aria-label="Vistas da Mesa de Controle"
+            >
+              {views.map(({ id, label, detail }, index) => (
+                <button
+                  ref={(element) => {
+                    tabRefs.current[id] = element ?? undefined
+                  }}
+                  id={`${panelId}-${id}`}
+                  aria-controls={panelId}
+                  aria-selected={activeView === id}
+                  tabIndex={activeView === id ? 0 : -1}
+                  role="tab"
+                  className={styles.viewButton}
+                  key={id}
+                  onClick={() => setActiveView(id)}
+                  onKeyDown={(event) => handleTabKeyDown(event, index)}
+                  type="button"
+                >
+                  <span className={styles.buttonIndicator} aria-hidden="true" />
+                  <span className={styles.buttonText}>
+                    <span>{label}</span>
+                    <span className={styles.buttonDetail} aria-hidden="true">
+                      {detail}
+                    </span>
                   </span>
-                </span>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <FinancialConsole view={activeView} expanded />
+          <FinancialConsole
+            view={activeView}
+            expanded
+            panelId={panelId}
+            tabId={activeTabId}
+          />
         </div>
       </div>
     </section>

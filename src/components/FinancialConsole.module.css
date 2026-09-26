@@ -192,6 +192,44 @@
 
 .interactivePanel {
   margin-top: var(--space-6);
+  overflow: hidden;
+  border: 1px solid rgb(243 241 234 / 10%);
+  border-radius: var(--radius-medium);
+  background: linear-gradient(155deg, rgb(13 34 55 / 96%), rgb(5 21 41 / 99%));
+  box-shadow: 0 1.8rem 4.2rem rgb(0 0 0 / 18%), inset 0 1px rgb(255 255 255 / 3%);
+}
+
+.panelToolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.85rem;
+  padding: 0.65rem clamp(1rem, 2vw, 1.6rem);
+  border-bottom: 1px solid rgb(243 241 234 / 9%);
+  color: rgb(243 241 234 / 69%);
+  font-size: 0.69rem;
+  font-weight: 600;
+}
+
+.panelStatusMark {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #a7c8a0;
+}
+
+.panelToolbarPeriod {
+  margin-left: auto;
+  color: rgb(243 241 234 / 49%);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.07em;
+}
+
+.viewBody {
+  padding: clamp(1.2rem, 2.7vw, 2rem);
+  animation: view-arrives 320ms var(--ease-standard) both;
 }
 
 .viewSummary {
@@ -199,9 +237,8 @@
   justify-content: space-between;
   align-items: flex-end;
   gap: var(--space-6);
-  padding: clamp(1.1rem, 2.2vw, 1.7rem);
-  border-radius: var(--radius-medium);
-  background: var(--color-navy-original-deep);
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid var(--color-border-dark);
 }
 
 .viewSummaryLabel {
@@ -246,13 +283,67 @@
   font-weight: 550;
 }
 
+.metricStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 1.2rem 0 1.35rem;
+  border-bottom: 1px solid var(--color-border-dark);
+}
+
+.metric {
+  display: grid;
+  align-content: start;
+  gap: 0.28rem;
+  min-width: 0;
+  padding: 0 1rem;
+  border-left: 1px solid rgb(243 241 234 / 11%);
+}
+
+.metric:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.metric:last-child {
+  padding-right: 0;
+}
+
+.metric dt {
+  color: rgb(243 241 234 / 60%);
+  font-size: 0.68rem;
+}
+
+.metric dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--color-paper);
+  font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.metric[data-tone='positive'] dd {
+  color: #a7c8a0;
+}
+
+.metric[data-tone='attention'] dd {
+  color: var(--color-gold-soft);
+}
+
+.metric span {
+  color: rgb(243 241 234 / 48%);
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
 .recordsHeader {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-end;
   gap: var(--space-4);
-  margin-top: var(--space-6);
-  padding-bottom: var(--space-3);
+  margin-top: 1.35rem;
+  padding-bottom: 0.85rem;
   border-bottom: 1px solid var(--color-border-dark);
 }
 
@@ -264,11 +355,19 @@
 }
 
 .recordsHeader p {
+  margin-top: 0.3rem;
   color: var(--color-gold-soft);
   font-size: 0.63rem;
   font-weight: 700;
   letter-spacing: 0.075em;
-  text-align: right;
+}
+
+.timelineHint {
+  color: rgb(243 241 234 / 43%);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
 }
 
 .viewRecords {
@@ -280,43 +379,94 @@
 
 .viewRecord {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(6.5rem, 0.35fr) minmax(8rem, 0.4fr);
+  grid-template-columns: 5.3rem 1rem minmax(0, 1fr) minmax(6rem, 0.28fr) minmax(7.5rem, 0.34fr);
   align-items: center;
-  gap: var(--space-4);
-  min-height: 4.8rem;
-  border-bottom: 1px solid var(--color-border-dark);
+  gap: 0.85rem;
+  min-height: 4.35rem;
+  border-bottom: 1px solid rgb(243 241 234 / 8%);
 }
 
 .viewRecord:last-child {
   border-bottom: 0;
 }
 
+.recordDate {
+  color: rgb(243 241 234 / 53%);
+  font-size: 0.64rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.035em;
+  white-space: nowrap;
+}
+
+.recordPath {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+
+.recordPath::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgb(232 213 143 / 24%);
+  content: '';
+}
+
+.viewRecord:last-child .recordPath::before {
+  bottom: 50%;
+}
+
+.recordMarker {
+  position: relative;
+  z-index: 1;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid var(--color-gold-soft);
+  border-radius: 50%;
+  background: var(--color-navy-original-deep);
+}
+
+.viewRecord[data-tone='positive'] .recordMarker {
+  background: #a7c8a0;
+}
+
+.viewRecord[data-tone='attention'] .recordMarker {
+  background: var(--color-gold);
+  box-shadow: 0 0 0 0.18rem var(--color-gold-wash);
+}
+
 .recordDescription {
   display: grid;
+  min-width: 0;
   gap: 0.25rem;
 }
 
 .recordDescription strong {
-  font-size: 0.85rem;
+  font-size: 0.81rem;
   font-weight: 600;
 }
 
 .recordDescription small {
-  color: rgb(243 241 234 / 62%);
-  font-size: 0.73rem;
+  color: rgb(243 241 234 / 56%);
+  font-size: 0.68rem;
 }
 
 .recordAmount {
-  font-size: 0.9rem;
+  color: rgb(243 241 234 / 89%);
+  font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   text-align: right;
+  white-space: nowrap;
 }
 
 .statusBadge {
   justify-self: end;
-  color: rgb(243 241 234 / 68%);
-  font-size: 0.72rem;
+  color: rgb(243 241 234 / 62%);
+  font-size: 0.68rem;
   text-align: right;
 }
 
@@ -326,6 +476,18 @@
 
 .statusBadge[data-tone='attention'] {
   color: var(--color-gold-soft);
+}
+
+@keyframes view-arrives {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 37.5rem) {
@@ -370,6 +532,15 @@
     margin-top: var(--space-4);
   }
 
+  .panelToolbar {
+    gap: 0.45rem 0.55rem;
+  }
+
+  .panelToolbarPeriod {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
   .viewSummary {
     align-items: flex-start;
     flex-direction: column;
@@ -377,11 +548,42 @@
   }
 
   .viewSummaryValue {
-    font-size: 2.3rem;
+    max-width: 100%;
+    font-size: clamp(1.8rem, 9vw, 2.3rem);
+    overflow-wrap: anywhere;
   }
 
   .viewPeriod {
+    display: none;
     text-align: left;
+  }
+
+  .metricStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 0;
+  }
+
+  .metric {
+    padding-inline: 0.65rem;
+  }
+
+  .metric:first-child {
+    padding-left: 0;
+  }
+
+  .metric:nth-child(2) {
+    border-left: 1px solid rgb(243 241 234 / 11%);
+  }
+
+  .metric:nth-child(3) {
+    grid-column: 1 / -1;
+    padding: 0.8rem 0 0;
+    border-top: 1px solid rgb(243 241 234 / 11%);
+    border-left: 0;
+  }
+
+  .metric dd {
+    font-size: 0.82rem;
   }
 
   .recordsHeader {
@@ -395,21 +597,48 @@
   }
 
   .viewRecord {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.5rem var(--space-3);
+    grid-template-columns: 4.1rem 0.75rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.22rem 0.7rem;
+    min-height: auto;
     padding-block: 0.9rem;
   }
 
-  .recordAmount {
+  .recordDate {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    padding-top: 0.12rem;
+    font-size: 0.58rem;
+  }
+
+  .recordPath {
     grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+
+  .recordDescription {
+    grid-column: 3;
     grid-row: 1;
-    font-size: 0.8rem;
+  }
+
+  .recordAmount {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: start;
+    font-size: 0.76rem;
   }
 
   .statusBadge {
-    grid-column: 1 / -1;
+    grid-column: 3;
+    grid-row: 3;
     justify-self: start;
     font-size: 0.68rem;
     text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewBody {
+    animation: none;
   }
 }
