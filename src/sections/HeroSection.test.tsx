@@ -39,6 +39,20 @@ describe('Kapitalis hero', () => {
     ).toBeTruthy()
   })
 
+  it('hero_uses_the_real_responsible_person_photo_and_keeps_the_story_core', () => {
+    render(<HeroSection />)
+
+    const portrait = screen.getByRole('img', { name: 'Responsável pela Kapitalis' })
+    expect(portrait.getAttribute('src')).toBe(
+      '/assets/kapitalis-responsavel-recortado.png',
+    )
+    expect(
+      portrait.closest('[data-hero-portrait]')?.getAttribute('data-portrait-crop'),
+    ).toBe('upper-torso')
+    expect(document.querySelectorAll('[data-financial-core]')).toHaveLength(1)
+    expect(screen.getByRole('heading', { name: 'Sistema Kapitalis' })).toBeTruthy()
+  })
+
   it('hero_eyebrow_has_no_decorative_dash_and_preserves_locality_punctuation', () => {
     render(<HeroSection />)
 

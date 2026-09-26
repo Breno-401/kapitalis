@@ -106,10 +106,10 @@ describe('Kapitalis financial core visual', () => {
     ).toBe(true)
   })
 
-  it('visibility_mutes_source_names_and_sequences_flow_points_and_insights', () => {
+  it('visibility_mutes_source_names_and_sequences_only_supported_insights', () => {
     const { container } = render(<FinancialCore state="visibilidade" />)
     const core = container.querySelector('[data-financial-core]')
-    const labels = ['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade']
+    const labels = ['Fluxo de caixa', 'Compromissos', 'Previsibilidade']
 
     expect(
       Array.from(core?.querySelectorAll('[data-source-label]') ?? []).map((label) =>
@@ -130,27 +130,17 @@ describe('Kapitalis financial core visual', () => {
       Array.from(core?.querySelectorAll('[data-financial-insight]') ?? []).map(
         (label) => label.getAttribute('data-insight-order'),
       ),
-    ).toEqual(['0', '1', '3'])
+      ).toEqual(['0', '1', '2'])
   })
 
-  it('visibility_hides_only_the_indicators_label_and_preserves_its_flow_and_point', () => {
-    const { container, rerender } = render(<FinancialCore state="visibilidade" />)
-    const core = () => container.querySelector('[data-financial-core]')
+  it('visibility_removes_the_entire_indicators_branch', () => {
+    const { container } = render(<FinancialCore state="visibilidade" />)
+    const core = container.querySelector('[data-financial-core]')
 
-    expect(core()?.querySelector('[data-financial-insight="Indicadores"]')).toBeNull()
-    expect(
-      core()?.querySelector('[data-insight-flow="Indicadores"]')?.getAttribute('d'),
-    ).toBe('M 354 358 C 398 380 420 410 405 433 C 395 451 366 467 320 478')
-    expect(core()?.querySelector('[data-insight-point="Indicadores"]')?.getAttribute('cx'))
-      .toBe('320')
-    expect(core()?.querySelector('[data-insight-point="Indicadores"]')?.getAttribute('cy'))
-      .toBe('478')
-
-    for (const state of ['entradas', 'organizacao', 'decisao'] as const) {
-      rerender(<FinancialCore state={state} />)
-      expect(
-        core()?.querySelector('[data-financial-insight="Indicadores"]')?.getAttribute('data-insight-active'),
-      ).toBe('false')
-    }
+    expect(core?.querySelector('[data-financial-insight="Indicadores"]')).toBeNull()
+    expect(core?.querySelector('[data-insight-flow="Indicadores"]')).toBeNull()
+    expect(core?.querySelector('[data-insight-point="Indicadores"]')).toBeNull()
+    expect(core?.querySelectorAll('[data-insight-flow]')).toHaveLength(3)
+    expect(core?.querySelectorAll('[data-insight-point]')).toHaveLength(3)
   })
 })

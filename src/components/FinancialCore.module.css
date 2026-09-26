@@ -75,10 +75,6 @@
   --insight-delay: 320ms;
 }
 
-.insight[data-insight-order='3'] {
-  --insight-delay: 480ms;
-}
-
 .nodeRing {
   fill: var(--color-navy);
   stroke: rgb(232 213 143 / 48%);

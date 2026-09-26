@@ -35,18 +35,9 @@ const insights = [
     textAnchor: 'start',
   },
   {
-    label: 'Indicadores',
-    text: 'INDICADORES',
-    order: 2,
-    point: { x: 320, y: 478 },
-    path: 'M 354 358 C 398 380 420 410 405 433 C 395 451 366 467 320 478',
-    labelPosition: { x: 320, y: 449 },
-    textAnchor: 'middle',
-  },
-  {
     label: 'Previsibilidade',
     text: 'PREVISIBILIDADE',
-    order: 3,
+    order: 2,
     point: { x: 157, y: 320 },
     path: 'M 269 320 L 163 320',
     labelPosition: { x: 128, y: 354 },
@@ -186,19 +177,17 @@ export function FinancialCore({
                 data-insight-point={label}
                 r="5"
               />
-              {state === 'visibilidade' && label === 'Indicadores' ? null : (
-                <text
-                  className={styles.insightLabel}
-                  data-financial-insight={label}
-                  data-insight-active={state === 'visibilidade'}
-                  data-insight-order={order}
-                  textAnchor={textAnchor}
-                  x={labelPosition.x}
-                  y={labelPosition.y}
-                >
-                  {text}
-                </text>
-              )}
+              <text
+                className={styles.insightLabel}
+                data-financial-insight={label}
+                data-insight-active={state === 'visibilidade'}
+                data-insight-order={order}
+                textAnchor={textAnchor}
+                x={labelPosition.x}
+                y={labelPosition.y}
+              >
+                {text}
+              </text>
             </g>
           ))}
         </g>

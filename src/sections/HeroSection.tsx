@@ -41,8 +41,10 @@ export function HeroSection() {
                 Contabilidade &amp; BPO Financeiro · {site.locality}
               </p>
               <h1 className={styles.title} id="hero-title">
-                <span data-entry="headline-one">Seus números sob controle.</span>
-                <span data-entry="headline-two">
+                <span className={styles.titleLine} data-entry="headline-one">
+                  <span>Seus números sob controle.</span>
+                </span>
+                <span className={styles.titleLine} data-entry="headline-two">
                   Suas decisões com <em>mais clareza.</em>
                 </span>
               </h1>
@@ -67,6 +69,22 @@ export function HeroSection() {
                 </a>
               </div>
             </div>
+
+            <figure
+              className={styles.heroPortrait}
+              data-hero-portrait
+              data-portrait-crop="upper-torso"
+              aria-label="Responsável pela Kapitalis"
+            >
+              <img
+                alt="Responsável pela Kapitalis"
+                decoding="async"
+                fetchPriority="high"
+                height="1417"
+                src="/assets/kapitalis-responsavel-recortado.png"
+                width="1110"
+              />
+            </figure>
 
             <div
               className={styles.systemLabel}

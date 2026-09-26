@@ -63,7 +63,7 @@ export function useHeroScrollProgress(
       )
       experience.style.setProperty(
         '--hero-core-opacity',
-        (0.34 + value * 0.66).toFixed(4),
+        (0.22 + value * 0.78).toFixed(4),
       )
       experience.style.setProperty(
         '--hero-core-blur',
@@ -74,6 +74,11 @@ export function useHeroScrollProgress(
         Math.max(0, 1 - value / 0.78).toFixed(4),
       )
       experience.style.setProperty('--hero-copy-y', `${value * -20}px`)
+      experience.style.setProperty(
+        '--hero-photo-opacity',
+        Math.max(0, 1 - value / 0.72).toFixed(4),
+      )
+      experience.style.setProperty('--hero-photo-y', `${value * 34}px`)
       experience.style.setProperty(
         '--hero-system-opacity',
         Math.max(0, Math.min(1, (value - 0.56) / 0.34)).toFixed(4),

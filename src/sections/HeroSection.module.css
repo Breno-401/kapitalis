@@ -48,19 +48,19 @@
 
 .heroCopy {
   position: absolute;
-  z-index: 2;
-  top: 43%;
-  left: 50%;
-  width: min(calc(100% - 2 * var(--layout-gutter)), 78rem);
-  text-align: center;
+  z-index: 4;
+  top: 50%;
+  left: clamp(2rem, 5.8vw, 6.5rem);
+  width: min(44vw, 42rem);
+  text-align: left;
   opacity: var(--hero-copy-opacity, 1);
-  transform: translate3d(-50%, -50%, 0) translateY(var(--hero-copy-y, 0px));
+  transform: translate3d(0, calc(-50% + var(--hero-copy-y, 0px)), 0);
   pointer-events: auto;
 }
 
 .kicker {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.72rem;
   color: var(--color-gold-soft);
@@ -74,13 +74,22 @@
 .title {
   display: grid;
   gap: 0.04em;
+  max-width: 11.5ch;
   margin-top: clamp(1.25rem, 2.4vh, 2rem);
-  font-size: clamp(3.55rem, 6.4vw, 6.8rem);
+  font-size: clamp(3.25rem, 4.35vw, 5rem);
   line-height: 0.99;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.045em;
 }
 
 .title > span {
+  display: block;
+}
+
+.titleLine {
+  overflow: clip;
+}
+
+.titleLine > span {
   display: block;
 }
 
@@ -91,7 +100,7 @@
 
 .description {
   max-width: 43ch;
-  margin: clamp(1.25rem, 2.3vh, 1.8rem) auto 0;
+  margin: clamp(1.25rem, 2.3vh, 1.8rem) 0 0;
   color: rgb(243 241 234 / 74%);
   font-size: clamp(0.98rem, 1.3vw, 1.12rem);
   line-height: 1.7;
@@ -99,7 +108,7 @@
 
 .actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.7rem 1.4rem;
@@ -162,10 +171,10 @@
   position: absolute;
   z-index: 1;
   top: 50%;
-  left: 50%;
-  width: min(56vw, 47rem);
-  opacity: var(--hero-core-opacity, 0.34);
-  filter: blur(var(--hero-core-blur, 1.4px));
+  left: 56%;
+  width: min(47vw, 42rem);
+  opacity: var(--hero-core-opacity, 0.22);
+  filter: blur(var(--hero-core-blur, 1.8px));
   transform: translate3d(
       calc(-50% + var(--hero-core-x, 0vw)),
       calc(-50% + var(--hero-core-y, 17vh)),
@@ -178,13 +187,50 @@
   will-change: transform;
 }
 
+.heroPortrait {
+  position: absolute;
+  z-index: 2;
+  top: auto;
+  right: clamp(0.75rem, 2vw, 2rem);
+  bottom: 0;
+  width: min(46vw, 40rem);
+  height: auto;
+  aspect-ratio: 1.08;
+  margin: 0;
+  overflow: hidden;
+  opacity: var(--hero-photo-opacity, 1);
+  transform: translate3d(0, var(--hero-photo-y, 0px), 0);
+  pointer-events: none;
+  will-change: opacity, transform;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
+}
+
+.heroPortrait::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, var(--color-navy) 0%, rgb(5 21 41 / 74%) 14%, transparent 42%, transparent 82%, rgb(5 21 41 / 16%) 100%),
+    linear-gradient(0deg, var(--color-navy) 0%, rgb(5 21 41 / 72%) 4%, transparent 18%),
+    linear-gradient(180deg, rgb(5 21 41 / 18%), transparent 17%);
+  content: '';
+  pointer-events: none;
+}
+
+.heroPortrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
 .corePosition > * {
   width: 100%;
 }
 
 .systemLabel {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: 19vh;
   right: clamp(2rem, 8vw, 8rem);
   color: var(--color-paper);
@@ -249,59 +295,60 @@
 
 .experience[data-static-layout='true'] .stage {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: block;
   width: 100%;
-  height: auto;
-  min-height: 45rem;
+  height: min(100svh, 62rem);
+  min-height: 38rem;
   margin: 0;
-  overflow: hidden;
-  padding: 9rem var(--layout-gutter) 6rem;
+  overflow: clip;
+  padding: 0;
 }
 
 .experience[data-static-layout='true'] .heroCopy {
-  position: relative;
-  top: auto;
-  left: auto;
-  width: min(100%, 68rem);
-  margin: auto;
+  top: 50%;
+  left: clamp(2rem, 5.8vw, 6.5rem);
+  width: min(44vw, 42rem);
+  margin: 0;
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.experience[data-static-layout='true'] .title {
+  font-size: clamp(3.25rem, 4.35vw, 5rem);
+}
+
+.experience[data-static-layout='true'] .heroPortrait {
   opacity: 1;
   transform: none;
 }
 
-.experience[data-static-layout='true'] .title {
-  font-size: clamp(3.5rem, 7vw, 6.5rem);
-}
-
 .experience[data-static-layout='true'] .corePosition {
-  position: relative;
-  top: auto;
-  left: auto;
-  width: min(100%, 31rem);
-  margin: -0.5rem auto -4.5rem;
-  opacity: 0.76;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(47vw, 42rem);
+  margin: 0;
+  opacity: 0.3;
   filter: none;
-  transform: none;
+  transform: translate(-50%, -50%) scale(0.72);
   will-change: auto;
 }
 
 .experience[data-static-layout='true'] .systemLabel {
-  position: relative;
   top: auto;
-  right: auto;
-  margin: 2rem auto 0;
+  right: clamp(2rem, 8vw, 8rem);
+  bottom: 11vh;
+  margin: 0;
   opacity: 1;
-  text-align: center;
-  transform: none;
+  text-align: right;
 }
 
 .experience[data-static-layout='true'] .scrollCue {
-  position: relative;
-  right: auto;
-  bottom: auto;
-  left: auto;
-  margin-top: 3rem;
+  position: absolute;
+  right: 0;
+  bottom: 1.8rem;
+  left: 0;
+  margin: 0 auto;
   opacity: 1;
 }
 
@@ -311,7 +358,7 @@
 
 @media (max-width: 56.25rem) and (prefers-reduced-motion: no-preference) {
   .title {
-    font-size: clamp(3.5rem, 7vw, 5.4rem);
+    font-size: clamp(3.1rem, 5.8vw, 4.5rem);
   }
 }
 
@@ -332,10 +379,10 @@
     justify-content: center;
     width: 100%;
     height: auto;
-    min-height: 47rem;
+    min-height: 0;
     margin: 0;
     overflow: hidden;
-    padding: 8.5rem var(--layout-gutter) 5.5rem;
+    padding: 8.5rem var(--layout-gutter) 3.75rem;
   }
 
   .heroCopy {
@@ -343,7 +390,7 @@
     top: auto;
     left: auto;
     width: 100%;
-    margin: auto;
+    margin: 0;
     opacity: 1;
     transform: none;
   }
@@ -356,7 +403,8 @@
   .title {
     gap: 0.08em;
     margin-top: 1.2rem;
-    font-size: clamp(3.2rem, 11.1vw, 4.6rem);
+    max-width: 12ch;
+    font-size: clamp(3.15rem, 10.2vw, 4.4rem);
     line-height: 0.98;
   }
 
@@ -386,11 +434,32 @@
     top: auto;
     left: auto;
     width: min(100%, 27rem);
-    margin: -0.25rem auto -4rem;
-    opacity: 0.82;
+    margin: -1rem auto -2.7rem;
+    opacity: 0.45;
     filter: none;
     transform: none;
     will-change: auto;
+  }
+
+  .heroPortrait {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 27rem);
+    height: auto;
+    aspect-ratio: 1.15;
+    margin: 1.6rem auto -1rem;
+    opacity: 1;
+    transform: none;
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
+
+  .heroPortrait::after {
+    background:
+      linear-gradient(90deg, var(--color-navy) 0%, transparent 16%, transparent 84%, var(--color-navy) 100%),
+      linear-gradient(0deg, var(--color-navy) 0%, rgb(5 21 41 / 62%) 10%, transparent 32%);
   }
 
   .systemLabel {
@@ -417,15 +486,67 @@
     right: auto;
     bottom: auto;
     left: auto;
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     opacity: 1;
+  }
+
+  .experience[data-static-layout='true'] .stage {
+    height: auto;
+    min-height: 0;
+    padding: 8.5rem var(--layout-gutter) 3.75rem;
+  }
+
+  .experience[data-static-layout='true'] .heroCopy {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    transform: none;
+  }
+
+  .experience[data-static-layout='true'] .heroPortrait {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 27rem);
+    height: auto;
+    aspect-ratio: 1.15;
+    margin: 1.6rem auto -1rem;
+  }
+
+  .experience[data-static-layout='true'] .corePosition {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 27rem);
+    margin: -1rem auto -2.7rem;
+    opacity: 0.45;
+    transform: none;
+  }
+
+  .experience[data-static-layout='true'] .systemLabel {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    margin: 1.35rem auto 0;
+    text-align: center;
+  }
+
+  .experience[data-static-layout='true'] .scrollCue {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    margin: 2rem auto 0;
   }
 }
 
 @media (max-width: 23.5rem) {
   .stage {
     min-height: auto;
-    padding: 8rem 1rem 4rem;
+    padding: 8rem 1rem 3.25rem;
   }
 
   .title {
@@ -439,27 +560,36 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .heroCopy [data-entry='eyebrow'] {
-    animation: hero-enter 760ms var(--ease-standard) 80ms both;
+    animation: hero-enter 760ms var(--ease-standard) 120ms both;
   }
 
   .heroCopy [data-entry='headline-one'] {
-    animation: hero-enter 820ms var(--ease-standard) 180ms both;
+    animation: hero-line-reveal 920ms var(--ease-standard) 260ms both;
   }
 
   .heroCopy [data-entry='headline-two'] {
-    animation: hero-enter 820ms var(--ease-standard) 300ms both;
+    animation: hero-line-reveal 920ms var(--ease-standard) 420ms both;
   }
 
-  .heroCopy [data-entry='subcopy'] {
-    animation: hero-enter 760ms var(--ease-standard) 460ms both;
-  }
-
-  .heroCopy [data-entry='cta'] {
+  .heroCopy .titleLine em {
+    display: inline-block;
     animation: hero-enter 760ms var(--ease-standard) 620ms both;
   }
 
+  .heroCopy [data-entry='subcopy'] {
+    animation: hero-enter 760ms var(--ease-standard) 700ms both;
+  }
+
+  .heroCopy [data-entry='cta'] {
+    animation: hero-enter 760ms var(--ease-standard) 840ms both;
+  }
+
+  .heroPortrait img {
+    animation: portrait-reveal 1200ms var(--ease-standard) 560ms both;
+  }
+
   .scrollCue[data-entry='scroll-cue'] {
-    animation: hero-enter 760ms var(--ease-standard) 820ms both;
+    animation: hero-enter 760ms var(--ease-standard) 1040ms both;
   }
 }
 
@@ -475,8 +605,35 @@
   }
 }
 
+@keyframes hero-line-reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.28;
+    transform: translateY(0.28em);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes portrait-reveal {
+  from {
+    clip-path: inset(0 0 0 100%);
+    filter: blur(10px);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+    filter: blur(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .heroCopy,
+  .heroPortrait img,
   .corePosition,
   .systemLabel,
   .scrollCue {
