@@ -175,7 +175,7 @@
 .connection path[data-active='true'] {
   stroke: rgb(232 213 143 / 50%);
   stroke-dasharray: 2 7;
-  animation: converge 1.6s linear infinite;
+  animation: converge calc(var(--duration-flow) - 0.2s) linear infinite;
 }
 
 .signalPath[data-active='true'] {
@@ -184,7 +184,7 @@
 
 .signalOrganized[data-active='true'] {
   stroke-dasharray: 5 8;
-  animation: converge 1.8s linear infinite;
+  animation: converge var(--duration-flow) linear infinite;
 }
 
 .innerOrbit[data-active='true'] {

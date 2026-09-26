@@ -3,22 +3,17 @@
   z-index: 45;
   right: max(1rem, env(safe-area-inset-right));
   bottom: max(1rem, env(safe-area-inset-bottom));
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.55rem;
+  display: grid;
+  place-items: center;
   width: 3.4rem;
   height: 3.4rem;
-  overflow: hidden;
   border: 1px solid rgb(255 255 255 / 46%);
   border-radius: 999px;
   background: #25d366;
   box-shadow: 0 0.55rem 1.6rem rgb(0 0 0 / 22%);
   color: #ffffff;
   text-decoration: none;
-  white-space: nowrap;
   transition:
-    width 180ms var(--ease-standard),
     transform 180ms var(--ease-standard),
     box-shadow 180ms var(--ease-standard),
     opacity 140ms linear,
@@ -27,9 +22,8 @@
 
 .button:hover,
 .button:focus-visible {
-  width: 12.2rem;
   box-shadow: 0 0.8rem 1.9rem rgb(0 0 0 / 27%);
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px) scale(1.04);
 }
 
 .button:focus-visible {
@@ -44,26 +38,8 @@
 }
 
 .button svg {
-  flex: 0 0 1.9rem;
   width: 1.9rem;
   height: 1.9rem;
-}
-
-.button span {
-  max-width: 0;
-  overflow: hidden;
-  font-size: 0.78rem;
-  font-weight: 700;
-  opacity: 0;
-  transition:
-    max-width 180ms var(--ease-standard),
-    opacity 100ms linear;
-}
-
-.button:hover span,
-.button:focus-visible span {
-  max-width: 8rem;
-  opacity: 1;
 }
 
 @media (max-width: 56.25rem) {
@@ -76,18 +52,12 @@
 
   .button:hover,
   .button:focus-visible {
-    width: 3.1rem;
     transform: translateY(-1px) scale(1.03);
-  }
-
-  .button span {
-    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .button,
-  .button span {
+  .button {
     transition: none;
   }
 

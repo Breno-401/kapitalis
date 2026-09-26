@@ -15,6 +15,7 @@ describe('floating WhatsApp contact', () => {
     expect(link.getAttribute('target')).toBe('_blank')
     expect(link.getAttribute('rel')).toBe('noopener noreferrer')
     expect(link.querySelector('svg')).toBeTruthy()
+    expect(link.querySelector('span')).toBeNull()
   })
 
   it('moves out of the way while the mobile navigation is open', () => {

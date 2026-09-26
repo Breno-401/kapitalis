@@ -229,7 +229,7 @@
 
 .viewBody {
   padding: clamp(1.2rem, 2.7vw, 2rem);
-  animation: view-arrives 320ms var(--ease-standard) both;
+  animation: view-arrives var(--duration-reveal) var(--ease-standard) both;
 }
 
 .viewSummary {

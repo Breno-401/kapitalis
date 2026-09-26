@@ -154,7 +154,7 @@
     radial-gradient(ellipse at 95% 4%, rgb(232 213 143 / 8%), transparent 45%),
     linear-gradient(145deg, var(--color-navy-deep), var(--color-navy-original-deep));
   color: var(--color-paper);
-  animation: step-reveal 300ms var(--ease-standard) both;
+  animation: step-reveal var(--duration-reveal) var(--ease-standard) both;
 }
 
 .panel:focus-visible {
@@ -240,7 +240,7 @@
 .progress::-webkit-progress-value {
   border-radius: inherit;
   background: var(--color-gold);
-  transition: width 240ms var(--ease-standard);
+  transition: width var(--duration-standard) var(--ease-standard);
 }
 
 .progress::-moz-progress-bar {
@@ -256,7 +256,7 @@
 @keyframes step-reveal {
   from {
     opacity: 0.4;
-    transform: translateY(0.4rem);
+    transform: translateY(var(--distance-reveal));
   }
 
   to {

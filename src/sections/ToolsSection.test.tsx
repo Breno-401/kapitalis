@@ -4,6 +4,14 @@ import { toolGroups } from '../data/tools'
 import { ToolsSection } from './ToolsSection'
 
 describe('native tools workspace', () => {
+  it('connects the tools workspace to the next process section', () => {
+    render(<ToolsSection />)
+
+    expect(
+      screen.getByRole('link', { name: 'Conhecer as etapas do processo' }).getAttribute('href'),
+    ).toBe('#processo')
+  })
+
   it('keeps all seven tools inside the tributary and people categories', () => {
     render(<ToolsSection />)
 

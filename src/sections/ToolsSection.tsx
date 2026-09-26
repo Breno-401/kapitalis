@@ -209,6 +209,12 @@ export function ToolsSection() {
             <ToolResult tool={selectedTool} values={values} />
           </section>
         </div>
+
+        <div className={styles.nextSection}>
+          <span className={styles.nextNode} aria-hidden="true" />
+          <span className={styles.nextLabel}>Na sequência</span>
+          <a href="#processo">Conhecer as etapas do processo</a>
+        </div>
       </div>
     </section>
   )

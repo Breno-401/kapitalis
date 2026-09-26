@@ -23,7 +23,7 @@
   padding: clamp(3rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem);
   border-top: 1px solid rgb(243 241 234 / 13%);
   opacity: 0.46;
-  transition: opacity 420ms var(--ease-standard);
+  transition: opacity var(--duration-crossfade) var(--ease-standard);
   scroll-margin-top: 7rem;
 }
 

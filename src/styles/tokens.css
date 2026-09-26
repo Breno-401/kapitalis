@@ -45,6 +45,10 @@
 
   --duration-fast: 160ms;
   --duration-standard: 260ms;
+  --duration-reveal: 320ms;
+  --duration-crossfade: 420ms;
+  --duration-flow: 1.8s;
+  --distance-reveal: 0.45rem;
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
