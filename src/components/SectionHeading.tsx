@@ -17,9 +17,9 @@ export function SectionHeading({
   const Heading = as
 
   return (
-    <header className={className}>
+    <div className={className}>
       <Heading id={id}>{title}</Heading>
       {description ? <p>{description}</p> : null}
-    </header>
+    </div>
   )
 }
