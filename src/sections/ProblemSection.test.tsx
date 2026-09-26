@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ProblemSection } from './ProblemSection'
 
@@ -10,7 +10,7 @@ const questions = [
 ]
 
 describe('financial context section', () => {
-  it('problem_section_renders_editorial_questions_without_fake_proof', () => {
+  it('keeps four routine questions in an accessible selector', () => {
     render(<ProblemSection />)
 
     expect(
@@ -19,11 +19,17 @@ describe('financial context section', () => {
         name: 'A rotina da empresa também deixa perguntas.',
       }),
     ).toBeTruthy()
-    expect(
-      screen.getAllByRole('heading', { level: 3 }).map((heading) =>
-        heading.textContent?.trim(),
-      ),
-    ).toEqual(questions)
+    expect(screen.getAllByRole('tab')).toHaveLength(4)
+    expect(screen.getByRole('tab', { name: 'CAIXA' }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByRole('tabpanel').textContent).toContain(questions[0])
+
+    fireEvent.keyDown(screen.getByRole('tab', { name: 'CAIXA' }), { key: 'ArrowDown' })
+    expect(screen.getByRole('tab', { name: 'PAGAMENTOS' }).getAttribute('aria-selected')).toBe('true')
+
+    fireEvent.click(screen.getByRole('tab', { name: 'TRIBUTOS' }))
+    expect(screen.getByRole('tab', { name: 'TRIBUTOS' }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByRole('tabpanel').textContent).toContain(questions[2])
+    expect(screen.getByRole('tabpanel').textContent).toContain('Obrigações fiscais')
 
     const text = document.body.textContent ?? ''
     expect(
