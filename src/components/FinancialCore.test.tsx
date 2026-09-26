@@ -53,8 +53,8 @@ describe('Kapitalis financial core visual', () => {
       Array.from(core()?.querySelectorAll('[data-financial-insight]') ?? []).map(
         (node) => node.getAttribute('data-financial-insight'),
       ),
-    ).toEqual(['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade'])
-    expect(core()?.querySelectorAll('[data-insight-active="true"]')).toHaveLength(4)
+    ).toEqual(['Fluxo de caixa', 'Compromissos', 'Previsibilidade'])
+    expect(core()?.querySelectorAll('[data-insight-active="true"]')).toHaveLength(3)
 
     rerender(<FinancialCore state="decisao" />)
     expect(core()?.querySelector('[data-output="next-step"]')?.getAttribute('data-active'))
@@ -97,7 +97,7 @@ describe('Kapitalis financial core visual', () => {
       container.querySelectorAll('[data-source-label]'),
     ).map((label) => Number(label.getAttribute('y')) + 49)
 
-    expect(insightY).toHaveLength(4)
+    expect(insightY).toHaveLength(3)
     expect(fixedLabelY).toHaveLength(5)
     expect(
       insightY.every((y) =>
@@ -130,6 +130,27 @@ describe('Kapitalis financial core visual', () => {
       Array.from(core?.querySelectorAll('[data-financial-insight]') ?? []).map(
         (label) => label.getAttribute('data-insight-order'),
       ),
-    ).toEqual(['0', '1', '2', '3'])
+    ).toEqual(['0', '1', '3'])
+  })
+
+  it('visibility_hides_only_the_indicators_label_and_preserves_its_flow_and_point', () => {
+    const { container, rerender } = render(<FinancialCore state="visibilidade" />)
+    const core = () => container.querySelector('[data-financial-core]')
+
+    expect(core()?.querySelector('[data-financial-insight="Indicadores"]')).toBeNull()
+    expect(
+      core()?.querySelector('[data-insight-flow="Indicadores"]')?.getAttribute('d'),
+    ).toBe('M 354 358 C 398 380 420 410 405 433 C 395 451 366 467 320 478')
+    expect(core()?.querySelector('[data-insight-point="Indicadores"]')?.getAttribute('cx'))
+      .toBe('320')
+    expect(core()?.querySelector('[data-insight-point="Indicadores"]')?.getAttribute('cy'))
+      .toBe('478')
+
+    for (const state of ['entradas', 'organizacao', 'decisao'] as const) {
+      rerender(<FinancialCore state={state} />)
+      expect(
+        core()?.querySelector('[data-financial-insight="Indicadores"]')?.getAttribute('data-insight-active'),
+      ).toBe('false')
+    }
   })
 })

@@ -186,17 +186,19 @@ export function FinancialCore({
                 data-insight-point={label}
                 r="5"
               />
-              <text
-                className={styles.insightLabel}
-                data-financial-insight={label}
-                data-insight-active={state === 'visibilidade'}
-                data-insight-order={order}
-                textAnchor={textAnchor}
-                x={labelPosition.x}
-                y={labelPosition.y}
-              >
-                {text}
-              </text>
+              {state === 'visibilidade' && label === 'Indicadores' ? null : (
+                <text
+                  className={styles.insightLabel}
+                  data-financial-insight={label}
+                  data-insight-active={state === 'visibilidade'}
+                  data-insight-order={order}
+                  textAnchor={textAnchor}
+                  x={labelPosition.x}
+                  y={labelPosition.y}
+                >
+                  {text}
+                </text>
+              )}
             </g>
           ))}
         </g>
