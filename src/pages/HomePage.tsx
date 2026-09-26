@@ -2,6 +2,7 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { HeroSection } from '../sections/HeroSection'
 import { ProblemSection } from '../sections/ProblemSection'
+import { ServicesSection } from '../sections/ServicesSection'
 import { StorySection } from '../story/StorySection'
 import { TrustStrip } from '../sections/TrustStrip'
 import type { StoryChapter } from '../story/types'
@@ -18,6 +19,7 @@ export function HomePage() {
         <TrustStrip />
         <ProblemSection />
         <StorySection chapters={kapitalisStory} />
+        <ServicesSection />
       </main>
       <SiteFooter />
     </>
