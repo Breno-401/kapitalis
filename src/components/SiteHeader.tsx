@@ -7,6 +7,7 @@ const navigation = [
   { href: '#sistema', label: 'Sistema' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
+  { href: '#conteudo', label: 'Ferramentas' },
   { href: '#contato', label: 'Contato' },
 ] as const
 
@@ -31,6 +32,17 @@ export function SiteHeader() {
 
     document.addEventListener('keydown', closeOnEscape)
     return () => document.removeEventListener('keydown', closeOnEscape)
+  }, [isMenuOpen])
+
+  useEffect(() => {
+    document.documentElement.dataset.mobileMenuOpen = String(isMenuOpen)
+    window.dispatchEvent(
+      new CustomEvent('kapitalis:mobile-menu-state', { detail: isMenuOpen }),
+    )
+
+    return () => {
+      delete document.documentElement.dataset.mobileMenuOpen
+    }
   }, [isMenuOpen])
 
   useEffect(() => {

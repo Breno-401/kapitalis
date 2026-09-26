@@ -38,6 +38,7 @@ const expectedNavigation = [
   'Sistema',
   'Serviços',
   'BPO Financeiro',
+  'Ferramentas',
   'Contato',
 ]
 
@@ -174,7 +175,11 @@ describe('site navigation', () => {
 
     try {
       render(<App />)
-      const observer = observers.at(-1)
+      const observer = observers.find((record) =>
+        record.targets.some(
+          (target) => (target as HTMLElement).dataset.storyId === 'entradas',
+        ),
+      )
       expect(observer).toBeDefined()
       const activeObserver = observer as ObserverRecord
       const firstChapter = activeObserver.targets.find(

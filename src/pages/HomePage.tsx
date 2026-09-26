@@ -1,5 +1,6 @@
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
+import { WhatsAppFloating } from '../components/WhatsAppFloating'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { BpoSection } from '../sections/BpoSection'
 import { HeroSection } from '../sections/HeroSection'
@@ -21,6 +22,7 @@ export function HomePage() {
         <BpoSection />
       </main>
       <SiteFooter />
+      <WhatsAppFloating />
     </>
   )
 }
