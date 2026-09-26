@@ -1,5 +1,6 @@
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
+import { BpoSection } from '../sections/BpoSection'
 import { HeroSection } from '../sections/HeroSection'
 import { ProblemSection } from '../sections/ProblemSection'
 import { ServicesSection } from '../sections/ServicesSection'
@@ -20,6 +21,7 @@ export function HomePage() {
         <ProblemSection />
         <StorySection chapters={kapitalisStory} />
         <ServicesSection />
+        <BpoSection />
       </main>
       <SiteFooter />
     </>
