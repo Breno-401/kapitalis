@@ -7,6 +7,7 @@ import { HeroSection } from '../sections/HeroSection'
 import { ProblemSection } from '../sections/ProblemSection'
 import { ReviewsSection } from '../sections/ReviewsSection'
 import { ServicesSection } from '../sections/ServicesSection'
+import { ToolsSection } from '../sections/ToolsSection'
 import { TrustStrip } from '../sections/TrustStrip'
 
 export function HomePage() {
@@ -20,6 +21,7 @@ export function HomePage() {
         <ProblemSection />
         <ServicesSection />
         <BpoSection />
+        <ToolsSection />
       </main>
       <SiteFooter />
       <WhatsAppFloating />
