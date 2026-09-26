@@ -64,10 +64,8 @@
 }
 
 .brandMark {
-  width: 1.3;
-  height: 1.3;
-   position: relative;
-   top: 2px;
+  position: relative;
+  top: 4px;
 }
 
 .brandName {
