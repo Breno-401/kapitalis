@@ -1,0 +1,138 @@
+.section {
+  position: relative;
+  overflow: clip;
+  background:
+    radial-gradient(ellipse at 88% 46%, rgb(26 56 80 / 42%), transparent 38rem),
+    var(--color-navy);
+  color: var(--color-paper);
+}
+
+.inner {
+  position: relative;
+  padding-block: clamp(4.8rem, 8.5vw, 7.6rem);
+}
+
+.eyebrow {
+  margin-bottom: 1.15rem;
+  color: var(--color-gold-soft);
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: clamp(2rem, 8vw, 8rem);
+}
+
+.content > div {
+  max-width: 51rem;
+}
+
+.content h2 {
+  max-width: 14ch;
+  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.content p {
+  max-width: 42ch;
+  margin-top: 1rem;
+  color: rgb(243 241 234 / 71%);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.action {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 0 0 auto;
+  min-height: 3.3rem;
+  padding-inline: 1.2rem;
+  border: 1px solid rgb(232 213 143 / 44%);
+  border-radius: 999px;
+  background: var(--color-gold);
+  color: var(--color-navy);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.action:hover {
+  border-color: var(--color-gold-soft);
+  background: var(--color-gold-soft);
+  transform: translateY(-1px);
+}
+
+.action:focus-visible {
+  outline-color: var(--color-gold-soft);
+}
+
+.action svg {
+  width: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.action:hover svg {
+  transform: translateX(0.12rem);
+}
+
+.rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: clamp(3rem, 5vw, 4.5rem);
+  background: linear-gradient(90deg, var(--color-gold), rgb(243 241 234 / 10%) 72%);
+  opacity: 0.55;
+}
+
+@media (max-width: 43.75rem) {
+  .content {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  .content h2 {
+    max-width: 11ch;
+    font-size: clamp(2.6rem, 9.5vw, 3.45rem);
+  }
+
+  .content p {
+    max-width: 35ch;
+  }
+
+  .action {
+    min-height: 3.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action,
+  .action svg {
+    transition: none;
+  }
+
+  .action:hover {
+    transform: none;
+  }
+
+  .action:hover svg {
+    transform: none;
+  }
+}

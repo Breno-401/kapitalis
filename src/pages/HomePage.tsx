@@ -3,8 +3,10 @@ import { SiteHeader } from '../components/SiteHeader'
 import { WhatsAppFloating } from '../components/WhatsAppFloating'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { BpoSection } from '../sections/BpoSection'
+import { FinalCtaSection } from '../sections/FinalCtaSection'
 import { HeroSection } from '../sections/HeroSection'
 import { ProblemSection } from '../sections/ProblemSection'
+import { ProcessSection } from '../sections/ProcessSection'
 import { ReviewsSection } from '../sections/ReviewsSection'
 import { ServicesSection } from '../sections/ServicesSection'
 import { ToolsSection } from '../sections/ToolsSection'
@@ -22,6 +24,8 @@ export function HomePage() {
         <ServicesSection />
         <BpoSection />
         <ToolsSection />
+        <ProcessSection />
+        <FinalCtaSection />
       </main>
       <SiteFooter />
       <WhatsAppFloating />

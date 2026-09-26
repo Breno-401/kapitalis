@@ -76,6 +76,10 @@ describe('site navigation', () => {
 
     expect(hrefs).toEqual(expect.arrayContaining(approvedAnchors))
     expect(hrefs).not.toContain('#')
+    for (const href of hrefs) {
+      expect(href).toBeTruthy()
+      if (href) expect(container.querySelector(href)).toBeTruthy()
+    }
   })
 
   it('home_renders_semantic_landmarks_and_one_h1', () => {

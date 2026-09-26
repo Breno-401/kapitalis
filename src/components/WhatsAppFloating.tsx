@@ -44,7 +44,7 @@ export function WhatsAppFloating() {
 
       const overlapsAction = Array.from(
         document.querySelectorAll<HTMLElement>(
-          'h1, h2, h3, p, li, a[href], button, input, select, textarea, [data-review-card], [data-tool-card]',
+          'h1, h2, h3, p, li, a[href], button, input, select, textarea, [data-review-card], [data-tool-card], [data-whatsapp-avoid]',
         ),
       ).some((element) => {
         if (element === buttonRef.current) return false

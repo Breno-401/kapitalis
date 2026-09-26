@@ -22,6 +22,7 @@ export function FinancialConsole({
     <section
       className={`${styles.console} ${expanded ? styles.expanded : ''}`}
       aria-labelledby={titleId}
+      data-whatsapp-avoid
     >
       <div className={styles.header}>
         <div>

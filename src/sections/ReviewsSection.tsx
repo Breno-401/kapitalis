@@ -16,7 +16,10 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     if (!track) return
     const card = track.querySelector<HTMLElement>('[data-review-card]')
     const distance = card ? card.offsetWidth + 24 : track.clientWidth * 0.8
-    track.scrollBy({ left: direction * distance, behavior: 'smooth' })
+    const behavior = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth'
+    track.scrollBy({ left: direction * distance, behavior })
   }
 
   return (

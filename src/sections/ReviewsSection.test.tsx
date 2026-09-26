@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
 
@@ -47,5 +47,34 @@ describe('Google Reviews section', () => {
       ),
     ).toBe(true)
     expect(document.querySelector('a[href="#"]')).toBeNull()
+  })
+
+  it('uses non-animated track movement when reduced motion is requested', () => {
+    const scrollBy = vi.fn()
+    const originalScrollBy = HTMLUListElement.prototype.scrollBy
+    Object.defineProperty(HTMLUListElement.prototype, 'scrollBy', {
+      configurable: true,
+      value: scrollBy,
+    })
+    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+
+    try {
+      render(<ReviewsSection data={googleReviewsSnapshot} />)
+      fireEvent.click(screen.getByRole('button', { name: 'Próximas avaliações' }))
+
+      expect(scrollBy).toHaveBeenCalledWith(
+        expect.objectContaining({ behavior: 'auto' }),
+      )
+    } finally {
+      vi.unstubAllGlobals()
+      if (originalScrollBy) {
+        Object.defineProperty(HTMLUListElement.prototype, 'scrollBy', {
+          configurable: true,
+          value: originalScrollBy,
+        })
+      } else {
+        delete (HTMLUListElement.prototype as Partial<HTMLUListElement>).scrollBy
+      }
+    }
   })
 })
