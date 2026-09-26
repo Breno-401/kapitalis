@@ -50,8 +50,8 @@
   position: absolute;
   z-index: 4;
   top: 50%;
-  left: clamp(2rem, 5.8vw, 6.5rem);
-  width: min(44vw, 42rem);
+  left: clamp(2.7rem, 7vw, 8rem);
+  width: min(48vw, 52rem);
   text-align: left;
   opacity: var(--hero-copy-opacity, 1);
   transform: translate3d(0, calc(-50% + var(--hero-copy-y, 0px)), 0);
@@ -76,7 +76,7 @@
   gap: 0.04em;
   max-width: 11.5ch;
   margin-top: clamp(1.25rem, 2.4vh, 2rem);
-  font-size: clamp(3.25rem, 4.35vw, 5rem);
+  font-size: clamp(3.75rem, 5vw, 6.25rem);
   line-height: 0.99;
   letter-spacing: -0.045em;
 }
@@ -171,7 +171,7 @@
   position: absolute;
   z-index: 1;
   top: 50%;
-  left: 56%;
+  left: 48%;
   width: min(47vw, 42rem);
   opacity: var(--hero-core-opacity, 0.22);
   filter: blur(var(--hero-core-blur, 1.8px));
@@ -191,9 +191,9 @@
   position: absolute;
   z-index: 2;
   top: auto;
-  right: clamp(0.75rem, 2vw, 2rem);
-  bottom: 0;
-  width: min(46vw, 40rem);
+  right: clamp(1.25rem, 4vw, 4rem);
+  bottom: -0.5rem;
+  width: min(52vw, 52rem);
   height: auto;
   aspect-ratio: 1.08;
   margin: 0;
@@ -306,15 +306,15 @@
 
 .experience[data-static-layout='true'] .heroCopy {
   top: 50%;
-  left: clamp(2rem, 5.8vw, 6.5rem);
-  width: min(44vw, 42rem);
+  left: clamp(2.7rem, 7vw, 8rem);
+  width: min(48vw, 52rem);
   margin: 0;
   opacity: 1;
   transform: translateY(-50%);
 }
 
 .experience[data-static-layout='true'] .title {
-  font-size: clamp(3.25rem, 4.35vw, 5rem);
+  font-size: clamp(3.75rem, 5vw, 6.25rem);
 }
 
 .experience[data-static-layout='true'] .heroPortrait {
@@ -382,7 +382,7 @@
     min-height: 0;
     margin: 0;
     overflow: hidden;
-    padding: 8.5rem var(--layout-gutter) 3.75rem;
+    padding: 7.75rem var(--layout-gutter) 3.75rem;
   }
 
   .heroCopy {
@@ -403,9 +403,13 @@
   .title {
     gap: 0.08em;
     margin-top: 1.2rem;
-    max-width: 12ch;
-    font-size: clamp(3.15rem, 10.2vw, 4.4rem);
+    max-width: none;
+    font-size: clamp(2.75rem, 11.5vw, 3.15rem);
     line-height: 0.98;
+  }
+
+  .experience[data-static-layout='true'] .title {
+    font-size: clamp(2.75rem, 11.5vw, 3.15rem);
   }
 
   .description {
@@ -493,7 +497,7 @@
   .experience[data-static-layout='true'] .stage {
     height: auto;
     min-height: 0;
-    padding: 8.5rem var(--layout-gutter) 3.75rem;
+    padding: 7.75rem var(--layout-gutter) 3.75rem;
   }
 
   .experience[data-static-layout='true'] .heroCopy {
@@ -546,11 +550,19 @@
 @media (max-width: 23.5rem) {
   .stage {
     min-height: auto;
-    padding: 8rem 1rem 3.25rem;
+    padding: 7.25rem 1rem 3.25rem;
   }
 
   .title {
-    font-size: 3rem;
+    font-size: 2.75rem;
+  }
+
+  .experience[data-static-layout='true'] .stage {
+    padding: 7.25rem 1rem 3.25rem;
+  }
+
+  .experience[data-static-layout='true'] .title {
+    font-size: 2.75rem;
   }
 
   .actions {
