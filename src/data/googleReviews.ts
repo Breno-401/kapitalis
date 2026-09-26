@@ -5,6 +5,7 @@ export type GoogleReview = {
   text: string
   period: string
   sourceUrl: string
+  avatarUrl?: string
 }
 
 export type GoogleReviewsSnapshot = {
@@ -49,6 +50,7 @@ export const googleReviewsSnapshot: GoogleReviewsSnapshot = {
       rating: 5,
       text: 'Excelente atendimento, profissional qualificado que passa segurança, no meu primeiro contato já fechei contrato.',
       period: '3 meses atrás',
+      avatarUrl: '/reviews/claudinei-bazoni.png',
       sourceUrl:
         'https://www.google.com/maps/contrib/103791107278955304422/reviews?hl=pt-BR',
     },
@@ -67,6 +69,7 @@ export const googleReviewsSnapshot: GoogleReviewsSnapshot = {
       rating: 5,
       text: 'Simplesmente a melhor contabilidade com a qual já fui atendido. Serviço de qualidade, com uma visão mais humana e aquele tratamento diferenciado. Indico a todos!',
       period: '6 meses atrás',
+      avatarUrl: '/reviews/maicon-c-boone.png',
       sourceUrl:
         'https://www.google.com/maps/contrib/111656301095879725808/reviews?hl=pt-BR',
     },
@@ -103,6 +106,7 @@ export const googleReviewsSnapshot: GoogleReviewsSnapshot = {
       rating: 5,
       text: 'Ótimo preço Ótimo atendimento! Minha demanda foi resolvida em minutos.',
       period: '2 meses atrás',
+      avatarUrl: '/reviews/lorena-barros.png',
       sourceUrl:
         'https://www.google.com/maps/contrib/106269992790627880150/reviews?hl=pt-BR',
     },

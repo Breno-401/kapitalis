@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
-import { GoogleMark } from '../components/GoogleMark'
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewCard } from './ReviewCard'
 import styles from './ReviewsSection.module.css'
@@ -39,6 +38,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     let frame: number | null = null
     let lastTime: number | null = null
     let isVisible = typeof IntersectionObserver === 'undefined'
+    let wasCompact = compactLayout?.matches ?? false
 
     function moveRail(nextOffset: number) {
       const seam = seamRef.current
@@ -79,14 +79,18 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
 
     function syncLayout() {
       measureSeam()
-      if (compactLayout?.matches) {
+      const isCompact = compactLayout?.matches ?? false
+      if (isCompact) {
         stopAutoplay()
         offsetRef.current = 0
         activeRail.style.transform = ''
-        activeTrack.scrollLeft = 0
+        if (!wasCompact) activeTrack.scrollLeft = 0
+        wasCompact = true
         return
       }
 
+      if (wasCompact) activeTrack.scrollLeft = 0
+      wasCompact = false
       moveRail(offsetRef.current)
       if (reducedMotion?.matches) stopAutoplay()
       else startAutoplay()
@@ -266,31 +270,9 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             Relatos públicos de pessoas que já confiaram sua rotina à equipe.
           </p>
         </div>
-
-        <div className={styles.aggregate} aria-label="Avaliação no Google">
-          <div className={styles.aggregateScore}>
-            <span className={styles.score}>{data.averageRating.toFixed(1).replace('.', ',')}</span>
-            <span className={styles.aggregateStars} aria-hidden="true">
-              ★★★★★
-            </span>
-          </div>
-          <div className={styles.aggregateSource}>
-            <GoogleMark />
-            <span>{data.totalReviews} avaliações no Google</span>
-          </div>
-          <a
-            className={styles.allReviewsLink}
-            href={data.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ver avaliações no Google
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
       </div>
 
-      <div className={styles.trackFrame}>
+      <div className={styles.trackFrame} data-review-frame>
         <div
           className={styles.track}
           data-review-track
@@ -326,25 +308,17 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
                 inert={duplicate || undefined}
               >
                 {data.reviews.map((review) => (
-                  <li className={styles.trackItem} key={`${review.id}-${duplicate ? 'duplicate' : 'primary'}`} data-review-card>
+                  <li
+                    className={styles.trackItem}
+                    key={`${review.id}-${duplicate ? 'duplicate' : 'primary'}`}
+                    data-review-card
+                  >
                     <ReviewCard review={review} idPrefix={duplicate ? 'duplicate-' : ''} />
                   </li>
                 ))}
               </ul>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div className={`container ${styles.controls}`}>
-        <span className={styles.trackHint}>Arraste para explorar · pausa ao passar o cursor ou focar</span>
-        <div className={styles.buttons} aria-label="Controles das avaliações">
-          <button type="button" aria-label="Avaliações anteriores" onClick={() => moveBy(-1)}>
-            <span aria-hidden="true">←</span>
-          </button>
-          <button type="button" aria-label="Próximas avaliações" onClick={() => moveBy(1)}>
-            <span aria-hidden="true">→</span>
-          </button>
         </div>
       </div>
     </section>

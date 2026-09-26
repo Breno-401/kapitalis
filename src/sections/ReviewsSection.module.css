@@ -9,10 +9,7 @@
 }
 
 .header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 17rem);
-  align-items: flex-end;
-  gap: clamp(2rem, 7vw, 7rem);
+  display: block;
 }
 
 .intro {
@@ -44,72 +41,10 @@
   line-height: 1.65;
 }
 
-.aggregate {
-  display: grid;
-  justify-items: start;
-  gap: 0.55rem;
-  width: 100%;
-  min-width: 0;
-  max-width: 17rem;
-  padding: 1rem 0 0.2rem 1.4rem;
-  border-left: 1px solid rgb(243 241 234 / 16%);
-}
-
-.aggregateScore {
-  display: flex;
-  align-items: baseline;
-  gap: 0.7rem;
-}
-
-.score {
-  color: var(--color-paper);
-  font-family: var(--font-display);
-  font-size: 2.6rem;
-  letter-spacing: -0.04em;
-  line-height: 1;
-}
-
-.aggregateStars {
-  color: #fbbc04;
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
-}
-
-.aggregateSource {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: rgb(243 241 234 / 76%);
-  font-size: 0.76rem;
-}
-
-.aggregateSource svg {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
-.allReviewsLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.15rem;
-  color: var(--color-gold-soft);
-  font-size: 0.76rem;
-  font-weight: 650;
-  text-underline-offset: 0.24em;
-}
-
-.allReviewsLink span {
-  font-size: 0.9rem;
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.allReviewsLink:hover span {
-  transform: translate(0.12rem, -0.12rem);
-}
-
 .trackFrame {
+  position: relative;
   width: 100%;
+  height: 26rem;
   margin-top: clamp(2.5rem, 5vw, 4rem);
   overflow: clip;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
@@ -118,6 +53,7 @@
 
 .track {
   width: 100%;
+  height: 100%;
   margin: 0;
   overflow: hidden;
   cursor: grab;
@@ -144,6 +80,7 @@
 
 .reviewSet {
   display: flex;
+  align-items: flex-start;
   flex: 0 0 auto;
   gap: 1rem;
   width: max-content;
@@ -157,14 +94,16 @@
 }
 
 .trackItem {
-  flex: 0 0 min(25rem, calc(100vw - 2 * var(--layout-gutter)));
+  position: relative;
+  align-self: flex-start;
+  flex: 0 0 min(26.5rem, calc(100vw - 2 * var(--layout-gutter)));
   min-width: 0;
+  padding-inline: 0.75rem;
 }
 
 .reviewCard {
   display: flex;
   flex-direction: column;
-  height: 100%;
   min-height: 14.5rem;
   padding: clamp(1.2rem, 2.4vw, 1.55rem);
   border: 0.5px solid rgb(243 241 234 / 15%);
@@ -177,6 +116,10 @@
     border-color var(--duration-fast) var(--ease-standard),
     transform var(--duration-fast) var(--ease-standard),
     box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.reviewCard[data-expanded='true'] {
+  z-index: 2;
 }
 
 .reviewCard:hover {
@@ -193,11 +136,20 @@
 }
 
 .googleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
   color: rgb(243 241 234 / 53%);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
+}
+
+.googleLabel svg {
+  flex: 0 0 0.86rem;
+  width: 0.86rem;
+  height: 0.86rem;
 }
 
 .stars {
@@ -256,6 +208,17 @@
   font-weight: 700;
 }
 
+.reviewerAvatar {
+  display: block;
+  flex: 0 0 2.15rem;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1px solid rgb(232 213 143 / 26%);
+  border-radius: 50%;
+  background: rgb(232 213 143 / 9%);
+  object-fit: cover;
+}
+
 .reviewer {
   display: grid;
   min-width: 0;
@@ -276,72 +239,6 @@
   font-size: 0.66rem;
 }
 
-.sourceLink {
-  display: grid;
-  place-items: center;
-  flex: 0 0 2rem;
-  width: 2rem;
-  height: 2rem;
-  margin-left: auto;
-  border: 1px solid rgb(243 241 234 / 14%);
-  border-radius: 50%;
-  color: var(--color-paper);
-  font-size: 0.9rem;
-  line-height: 1;
-  text-decoration: none;
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard);
-}
-
-.sourceLink:hover {
-  border-color: rgb(232 213 143 / 35%);
-  background: rgb(232 213 143 / 8%);
-  color: var(--color-gold-soft);
-}
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.35rem;
-}
-
-.trackHint {
-  color: rgb(243 241 234 / 51%);
-  font-size: 0.7rem;
-}
-
-.buttons {
-  display: flex;
-  gap: 0.55rem;
-}
-
-.buttons button {
-  display: grid;
-  place-items: center;
-  width: 2.35rem;
-  height: 2.35rem;
-  border: 1px solid rgb(243 241 234 / 18%);
-  border-radius: 50%;
-  background: transparent;
-  color: var(--color-paper);
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    background-color var(--duration-fast) var(--ease-standard),
-    color var(--duration-fast) var(--ease-standard);
-}
-
-.buttons button:hover {
-  border-color: rgb(232 213 143 / 38%);
-  background: rgb(232 213 143 / 9%);
-  color: var(--color-gold-soft);
-}
-
 .visuallyHidden {
   position: absolute;
   width: 1px;
@@ -352,68 +249,18 @@
   clip-path: inset(50%);
 }
 
-.allReviewsLink:focus-visible,
-.sourceLink:focus-visible,
-.expandButton:focus-visible,
-.buttons button:focus-visible {
+.expandButton:focus-visible {
   outline: 2px solid var(--color-gold-soft);
   outline-offset: 3px;
 }
 
-@media (max-width: 80rem) {
-  .header {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: flex-start;
-    gap: 1.7rem;
-  }
-
-  .aggregate {
-    max-width: 20rem;
-  }
-}
-
 @media (max-width: 43.75rem) {
-  .header {
-    gap: 1.6rem;
-  }
-
   .intro h2 {
     max-width: 13ch;
   }
 
-  .aggregate {
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: 0.8rem;
-    max-width: none;
-    padding: 0.9rem 0 0;
-    border-top: 1px solid rgb(243 241 234 / 16%);
-    border-left: 0;
-  }
-
-  .aggregateScore {
-    grid-row: span 2;
-    align-items: center;
-  }
-
-  .score {
-    font-size: 2.25rem;
-  }
-
-  .aggregateSource,
-  .allReviewsLink {
-    grid-column: 2;
-  }
-
-  .aggregateSource {
-    grid-row: 1;
-  }
-
-  .allReviewsLink {
-    grid-row: 2;
-  }
-
   .trackFrame {
+    height: 26rem;
     margin-top: 2rem;
     -webkit-mask-image: none;
     mask-image: none;
@@ -452,20 +299,20 @@
   }
 
   .trackItem {
-    flex-basis: min(22rem, calc(100vw - 2 * var(--layout-gutter)));
+    flex-basis: min(23.5rem, calc(100vw - 2 * var(--layout-gutter)));
     scroll-snap-align: start;
   }
 
   .reviewCard {
     min-height: 15rem;
   }
-
-  .controls {
-    margin-top: 0.25rem;
-  }
 }
 
 @media (max-width: 22.5rem) {
+  .trackFrame {
+    height: 28rem;
+  }
+
   .trackItem {
     flex-basis: calc(100vw - 2 * var(--layout-gutter));
   }
@@ -477,9 +324,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .reviewCard,
-  .allReviewsLink span,
-  .sourceLink,
-  .buttons button {
+  .expandButton {
     transition: none;
   }
 

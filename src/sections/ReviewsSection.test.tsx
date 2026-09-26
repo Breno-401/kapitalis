@@ -4,11 +4,12 @@ import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
 
 describe('Google Reviews section', () => {
-  it('renders the verified aggregate and nine sourced customer reviews', () => {
+  it('renders nine real reviews without an aggregate block or external navigation', () => {
     render(<ReviewsSection data={googleReviewsSnapshot} />)
 
-    expect(screen.getByText('5,0')).toBeTruthy()
-    expect(screen.getByText('52 avaliações no Google')).toBeTruthy()
+    expect(screen.queryByText('5,0')).toBeNull()
+    expect(screen.queryByText('52 avaliações no Google')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Ver avaliações no Google' })).toBeNull()
     expect(screen.getAllByRole('article')).toHaveLength(9)
     expect(
       within(screen.getByRole('article', { name: 'Avaliação de Jimmy Campos' })).getByText(
@@ -20,9 +21,20 @@ describe('Google Reviews section', () => {
         'Lorena Barros',
       ),
     ).toBeTruthy()
-    expect(
-      screen.getByRole('link', { name: 'Ver avaliações no Google' }).getAttribute('href'),
-    ).toBe(googleReviewsSnapshot.sourceUrl)
+    for (const review of screen.getAllByRole('article')) {
+      expect(within(review).queryAllByRole('link')).toHaveLength(0)
+    }
+  })
+
+  it('omits the carousel hint and arrow controls while keeping the Google mark', () => {
+    render(<ReviewsSection data={googleReviewsSnapshot} />)
+
+    expect(screen.queryByText(/Arraste para explorar/)).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Avaliações anteriores' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Próximas avaliações' })).toBeNull()
+    for (const review of screen.getAllByRole('article')) {
+      expect(within(review).getByRole('img', { name: 'Google' })).toBeTruthy()
+    }
   })
 
   it('loops a visual duplicate set without exposing duplicate reviews to assistive technology', () => {
@@ -46,32 +58,37 @@ describe('Google Reviews section', () => {
     render(<ReviewsSection data={googleReviewsSnapshot} />)
 
     const review = screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' })
+    const sibling = screen.getByRole('article', { name: 'Avaliação de Maicon C. Boone' })
+    const siblingExpand = within(sibling).getByRole('button', { name: 'Ler mais' })
     expect(within(review).getByText(/Melhor coisa que fiz/).textContent).not.toContain(
       'hoje em dia pra achar profissional bom ta muito difícil.',
     )
 
-    const expand = within(review).getByRole('button', {
-      name: 'Ler avaliação completa de Rafael de Oliveira Matos',
-    })
+    const expand = within(review).getByRole('button', { name: 'Ler mais' })
     fireEvent.click(expand)
 
     expect(expand.getAttribute('aria-expanded')).toBe('true')
+    expect(expand.textContent).toBe('Recolher')
+    expect(review.dataset.expanded).toBe('true')
+    expect(sibling.dataset.expanded).toBe('false')
+    expect(siblingExpand.getAttribute('aria-expanded')).toBe('false')
+    expect(siblingExpand.textContent).toBe('Ler mais')
     expect(
       within(review).getByText(/hoje em dia pra achar profissional bom ta muito difícil\./),
     ).toBeTruthy()
   })
 
-  it('labels each five-star rating and links each review to its Google source', () => {
+  it('shows a verified reviewer photo or the author initials fallback', () => {
     render(<ReviewsSection data={googleReviewsSnapshot} />)
-
     const reviews = screen.getAllByRole('article')
-    expect(
-      reviews.every((review) =>
-        within(review).getByText('5 de 5 estrelas') &&
-        within(review).getByRole('link', { name: /Ver avaliação de .+ no Google/ }),
-      ),
-    ).toBe(true)
-    expect(document.querySelector('a[href="#"]')).toBeNull()
+    const portraits = reviews.filter((review) => within(review).queryByRole('img', { name: /^Foto de / }))
+    expect(portraits).toHaveLength(3)
+    expect(within(screen.getByRole('article', { name: 'Avaliação de Jimmy Campos' })).getByText('JC')).toBeTruthy()
+    const claudinei = screen.getByRole('article', { name: 'Avaliação de claudinei bazoni' })
+    const portrait = within(claudinei).getByRole('img', { name: 'Foto de claudinei bazoni' })
+    fireEvent.error(portrait)
+    expect(within(claudinei).getByText('CB')).toBeTruthy()
+    expect(reviews.every((review) => within(review).getByText('5 de 5 estrelas'))).toBe(true)
   })
 
   it('does_not_start_automatic_motion_when_reduced_motion_is_requested', () => {
@@ -85,6 +102,39 @@ describe('Google Reviews section', () => {
     } finally {
       vi.unstubAllGlobals()
       requestFrame.mockRestore()
+    }
+  })
+
+  it('preserves the mobile swipe position when a review expands and collapses', () => {
+    let resizeCallback: ResizeObserverCallback | undefined
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallback = callback
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+
+    try {
+      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+      const track = container.querySelector<HTMLElement>('[data-review-track]')!
+      const review = screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' })
+      const expand = within(review).getByRole('button', { name: 'Ler mais' })
+      track.scrollLeft = 240
+
+      fireEvent.click(expand)
+      resizeCallback?.([], {} as ResizeObserver)
+      expect(track.scrollLeft).toBe(240)
+
+      fireEvent.click(expand)
+      resizeCallback?.([], {} as ResizeObserver)
+      expect(track.scrollLeft).toBe(240)
+    } finally {
+      vi.unstubAllGlobals()
     }
   })
 
@@ -277,7 +327,7 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it('does not start a drag from a review link', () => {
+  it('does not start a drag from an interactive review control', () => {
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
@@ -288,23 +338,22 @@ describe('Google Reviews section', () => {
     try {
       const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
       const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-      const reviewLink = screen.getByRole('link', {
-        name: 'Ver avaliação de Jimmy Campos no Google',
-      })
+      const review = screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' })
+      const reviewButton = within(review).getByRole('button', { name: 'Ler mais' })
 
-      fireEvent.pointerDown(reviewLink, {
+      fireEvent.pointerDown(reviewButton, {
         pointerType: 'mouse',
         pointerId: 1,
         clientX: 200,
         button: 0,
       })
-      fireEvent.pointerMove(reviewLink, {
+      fireEvent.pointerMove(reviewButton, {
         pointerType: 'mouse',
         pointerId: 1,
         clientX: 150,
         button: 0,
       })
-      fireEvent.pointerUp(reviewLink, { pointerType: 'mouse', pointerId: 1 })
+      fireEvent.pointerUp(reviewButton, { pointerType: 'mouse', pointerId: 1 })
 
       expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
     } finally {
