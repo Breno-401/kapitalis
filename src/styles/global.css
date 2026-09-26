@@ -12,6 +12,14 @@ html {
   background: var(--color-paper);
 }
 
+html[data-theme-transitioning] *,
+html[data-theme-transitioning] *::before,
+html[data-theme-transitioning] *::after {
+  transition-property: background-color, color, border-color, fill, stroke !important;
+  transition-duration: 260ms !important;
+  transition-timing-function: ease-out !important;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -99,6 +107,12 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  html[data-theme-transitioning] *,
+  html[data-theme-transitioning] *::before,
+  html[data-theme-transitioning] *::after {
+    transition-duration: 0ms !important;
   }
 
   *,

@@ -25,6 +25,7 @@ export function HeroSection() {
       aria-labelledby="hero-title"
       className={styles.experience}
       data-static-layout={staticLayout}
+      data-theme-surface="dark"
       id="inicio"
       ref={experienceRef}
     >

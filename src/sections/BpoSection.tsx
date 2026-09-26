@@ -48,6 +48,7 @@ export function BpoSection() {
   return (
     <section
       className={styles.section}
+      data-theme-surface="dark"
       id="bpo"
       aria-labelledby="bpo-title"
     >

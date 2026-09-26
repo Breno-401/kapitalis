@@ -21,7 +21,7 @@
   align-content: center;
   min-height: 100svh;
   padding: clamp(3rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem);
-  border-top: 1px solid rgb(243 241 234 / 13%);
+  border-top: 1px solid var(--color-on-dark-border-medium);
   opacity: 0.46;
   transition: opacity var(--duration-crossfade) var(--ease-standard);
   scroll-margin-top: 7rem;
@@ -58,7 +58,7 @@
 .chapterBody {
   max-width: 35ch;
   margin-top: var(--space-6);
-  color: rgb(243 241 234 / 72%);
+  color: var(--color-on-dark-muted);
   font-size: clamp(1rem, 1.3vw, 1.13rem);
   line-height: 1.7;
 }
@@ -69,7 +69,7 @@
   gap: 0.55rem 1.2rem;
   margin: var(--space-8) 0 0;
   padding: 0;
-  color: rgb(243 241 234 / 84%);
+  color: var(--color-on-dark-strong);
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.035em;

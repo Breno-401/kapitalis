@@ -3,7 +3,11 @@ import styles from './FinalCtaSection.module.css'
 
 export function FinalCtaSection() {
   return (
-    <section className={styles.section} aria-labelledby="final-cta-title">
+    <section
+      className={styles.section}
+      data-theme-surface="dark"
+      aria-labelledby="final-cta-title"
+    >
       <div className={`container ${styles.inner}`}>
         <div className={styles.topline}>
           <p className={styles.eyebrow}>Próximo passo</p>

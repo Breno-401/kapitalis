@@ -15,7 +15,7 @@ const footerNavigation = [
 
 export function SiteFooter() {
   return (
-    <footer className={styles.footer} id="contato">
+    <footer className={styles.footer} data-theme-surface="dark" id="contato">
       <div className={`container ${styles.content}`}>
         <div className={styles.brandBlock}>
           <a className={styles.brand} href="#inicio">

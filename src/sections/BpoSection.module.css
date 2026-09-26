@@ -33,7 +33,7 @@
 .heading p {
   max-width: 36ch;
   padding-bottom: 0.25rem;
-  color: rgb(243 241 234 / 72%);
+  color: var(--color-on-dark-muted);
   font-size: 1rem;
   line-height: 1.7;
 }
@@ -59,7 +59,7 @@
 
 .controlsLabel {
   margin-bottom: var(--space-3);
-  color: rgb(243 241 234 / 53%);
+  color: var(--color-on-dark-subtle);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -76,9 +76,9 @@
   padding: 0.75rem 0.5rem 0.75rem 0.8rem;
   border: 0;
   border-bottom: 1px solid var(--color-border-dark);
-  border-left: 1px solid rgb(243 241 234 / 13%);
+  border-left: 1px solid var(--color-on-dark-border-medium);
   background: transparent;
-  color: rgb(243 241 234 / 72%);
+  color: var(--color-on-dark-muted);
   cursor: pointer;
   text-align: left;
   transition:
@@ -106,7 +106,7 @@
 .buttonIndicator {
   width: 0.45rem;
   height: 0.45rem;
-  border: 1px solid rgb(243 241 234 / 44%);
+  border: 1px solid var(--color-on-dark-outline);
   border-radius: 50%;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .buttonDetail {
-  color: rgb(243 241 234 / 56%);
+  color: var(--color-on-dark-subtle);
   font-size: 0.7rem;
   font-weight: 400;
 }

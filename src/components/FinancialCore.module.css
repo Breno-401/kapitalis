@@ -92,7 +92,7 @@
 
 .nodeLabel,
 .centerLabel {
-  fill: rgb(243 241 234 / 83%);
+  fill: var(--color-on-dark-strong);
   font-family: var(--font-interface);
   font-size: 12px;
   font-weight: 600;
@@ -118,7 +118,7 @@
 
 .centerDisc {
   fill: var(--color-navy);
-  stroke: rgb(243 241 234 / 18%);
+  stroke: var(--color-on-dark-border-strong);
   stroke-width: 1;
 }
 
@@ -165,7 +165,7 @@
 }
 
 .decisionOutput text {
-  fill: var(--color-navy);
+  fill: var(--color-brand-ink);
   font-family: var(--font-interface);
   font-size: 10px;
   font-weight: 750;

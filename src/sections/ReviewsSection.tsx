@@ -248,6 +248,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   return (
     <section
       className={styles.section}
+      data-theme-surface="dark"
       id="avaliacoes"
       aria-labelledby="reviews-title"
       ref={sectionRef}

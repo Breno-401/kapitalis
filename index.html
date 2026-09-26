@@ -10,6 +10,22 @@
     />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>Kapitalis | Contabilidade &amp; BPO Financeiro</title>
+    <script>
+      (() => {
+        let theme = 'dark'
+        try {
+          const savedTheme = localStorage.getItem('kapitalis-theme')
+          if (savedTheme === 'light' || savedTheme === 'dark') {
+            theme = savedTheme
+          } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            theme = 'light'
+          }
+        } catch {
+          // Use the dark palette when browser preferences cannot be read.
+        }
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

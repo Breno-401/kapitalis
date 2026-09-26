@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import { site } from '../data/site'
 
@@ -41,6 +41,36 @@ const expectedNavigation = [
   'Ferramentas',
   'Contato',
 ]
+
+function mockMediaQueries(matches: Record<string, boolean>) {
+  const originalMatchMedia = window.matchMedia
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    value: vi.fn((media: string) => ({
+      matches: matches[media] ?? false,
+      media,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  })
+
+  return () => {
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: originalMatchMedia,
+    })
+  }
+}
+
+beforeEach(() => {
+  window.localStorage.clear()
+  delete document.documentElement.dataset.theme
+  delete document.documentElement.dataset.themeTransitioning
+})
 
 describe('site navigation', () => {
   it('mobile_menu_opens_and_closes_with_escape_and_returns_focus', () => {
@@ -113,6 +143,71 @@ describe('site navigation', () => {
         .every((link) => link.getAttribute('href') === site.whatsappUrl),
     ).toBe(true)
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
+    expect(screen.getAllByRole('button', { name: 'Mudar para o tema claro' })).toHaveLength(2)
+  })
+
+  it('theme_toggle_updates_the_page_and_persists_the_selected_theme', () => {
+    render(<App />)
+
+    const themeButtons = screen.getAllByRole('button', {
+      name: 'Mudar para o tema claro',
+    })
+    expect(document.documentElement.dataset.theme).toBe('dark')
+
+    fireEvent.click(themeButtons[0]!)
+
+    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(window.localStorage.getItem('kapitalis-theme')).toBe('light')
+    expect(
+      screen.getAllByRole('button', { name: 'Mudar para o tema escuro' }),
+    ).toHaveLength(2)
+  })
+
+  it('uses_the_system_light_preference_when_no_manual_choice_exists', () => {
+    const restoreMatchMedia = mockMediaQueries({
+      '(prefers-color-scheme: light)': true,
+    })
+
+    try {
+      render(<App />)
+      expect(document.documentElement.dataset.theme).toBe('light')
+    } finally {
+      restoreMatchMedia()
+    }
+  })
+
+  it('prefers_the_saved_theme_over_the_system_preference', () => {
+    const restoreMatchMedia = mockMediaQueries({
+      '(prefers-color-scheme: light)': true,
+    })
+    window.localStorage.setItem('kapitalis-theme', 'dark')
+
+    try {
+      render(<App />)
+      expect(document.documentElement.dataset.theme).toBe('dark')
+    } finally {
+      restoreMatchMedia()
+    }
+  })
+
+  it('does_not_add_a_theme_transition_when_reduced_motion_is_requested', () => {
+    const restoreMatchMedia = mockMediaQueries({
+      '(prefers-reduced-motion: reduce)': true,
+    })
+
+    try {
+      render(<App />)
+      fireEvent.click(
+        screen.getAllByRole('button', { name: 'Mudar para o tema claro' })[0]!,
+      )
+
+      expect(document.documentElement.dataset.theme).toBe('light')
+      expect(document.documentElement.hasAttribute('data-theme-transitioning')).toBe(
+        false,
+      )
+    } finally {
+      restoreMatchMedia()
+    }
   })
 
   it('navbar_brand_uses_the_previous_approved_original_asset_implementation', () => {
@@ -140,6 +235,7 @@ describe('site navigation', () => {
     ])
     expect(links.at(-1)?.getAttribute('href')).toBe(site.whatsappUrl)
     expect(links.at(-1)?.hasAttribute('data-mobile-contact')).toBe(true)
+    expect(within(navigation).getByText('Tema')).toBeTruthy()
   })
 
   it('active_indicator_tracks_the_current_link_when_the_mobile_menu_opens', () => {
@@ -233,6 +329,106 @@ describe('site navigation', () => {
       Object.defineProperty(window, 'innerWidth', {
         configurable: true,
         value: originalInnerWidth,
+      })
+    }
+  })
+
+  it('repositions_the_active_indicator_after_a_window_resize', () => {
+    const observers: ObserverRecord[] = []
+    const originalInnerWidth = window.innerWidth
+    const originalRequestAnimationFrame = window.requestAnimationFrame
+    let linkLeft = 50
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(callback: IntersectionObserverCallback) {
+          observers.push({ callback, targets: [] })
+        }
+
+        observe(target: Element) {
+          observers.at(-1)?.targets.push(target)
+        }
+
+        disconnect() {}
+      },
+    )
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    )
+    Object.defineProperty(window, 'innerWidth', {
+      configurable: true,
+      value: 1200,
+    })
+    Object.defineProperty(window, 'requestAnimationFrame', {
+      configurable: true,
+      value: vi.fn((callback: FrameRequestCallback) => {
+        callback(0)
+        return 1
+      }),
+    })
+    const measureRect = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        if (this.id === 'site-navigation') return rectangle(10, 20, 900, 60)
+        if (
+          this instanceof HTMLAnchorElement &&
+          this.closest('#site-navigation')
+        ) {
+          return rectangle(linkLeft, 25, 80, 40)
+        }
+        return rectangle(0, 0, 0, 0)
+      })
+
+    try {
+      render(<App />)
+      const observer = observers.find((record) =>
+        record.targets.some(
+          (target) => (target as HTMLElement).dataset.storyId === 'entradas',
+        ),
+      )
+      const storyEntry = observer?.targets.find(
+        (target) => (target as HTMLElement).dataset.storyId === 'entradas',
+      )
+      expect(storyEntry).toBeDefined()
+
+      act(() => {
+        observer?.callback(
+          [
+            {
+              target: storyEntry as Element,
+              isIntersecting: true,
+              intersectionRatio: 0.5,
+            } as IntersectionObserverEntry,
+          ],
+          {} as IntersectionObserver,
+        )
+      })
+
+      const indicator = document.querySelector<HTMLElement>(
+        '[data-nav-indicator]',
+      )
+      expect(indicator?.dataset.visible).toBe('true')
+      expect(indicator?.style.transform).toContain('translate3d(40px, 5px')
+
+      linkLeft = 130
+      act(() => window.dispatchEvent(new Event('resize')))
+
+      expect(indicator?.style.transform).toContain('translate3d(120px, 5px')
+      expect(measureRect).toHaveBeenCalled()
+    } finally {
+      vi.restoreAllMocks()
+      vi.unstubAllGlobals()
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
+        value: originalInnerWidth,
+      })
+      Object.defineProperty(window, 'requestAnimationFrame', {
+        configurable: true,
+        value: originalRequestAnimationFrame,
       })
     }
   })
