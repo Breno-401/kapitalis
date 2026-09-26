@@ -1,0 +1,30 @@
+[
+  {
+    "id": "fontes",
+    "eyebrow": "01 · FONTES",
+    "title": "Tudo começa com a informação certa.",
+    "body": "Movimentos bancários, contas a pagar e a receber e obrigações entram na rotina financeira.",
+    "media": { "kind": "diagram", "scene": "sources" }
+  },
+  {
+    "id": "rotinas",
+    "eyebrow": "02 · ORGANIZAÇÃO",
+    "title": "A rotina ganha ordem e acompanhamento.",
+    "body": "Conciliação, pagamentos e recebimentos ficam organizados em um fluxo de trabalho.",
+    "media": { "kind": "diagram", "scene": "organized" }
+  },
+  {
+    "id": "informacao-util",
+    "eyebrow": "03 · INFORMAÇÃO ÚTIL",
+    "title": "O que aconteceu vira informação para acompanhar.",
+    "body": "Fluxo e compromissos do período ajudam a observar a operação com mais contexto.",
+    "media": { "kind": "diagram", "scene": "information" }
+  },
+  {
+    "id": "decisao",
+    "eyebrow": "04 · DECISÃO",
+    "title": "Informação dá contexto às decisões.",
+    "body": "Com a rotina em ordem, a conversa pode se voltar aos próximos passos do negócio.",
+    "media": { "kind": "diagram", "scene": "decision" }
+  }
+]
