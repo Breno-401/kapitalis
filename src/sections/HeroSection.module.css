@@ -132,7 +132,9 @@
   padding-inline: 1.35rem;
   background: var(--color-gold);
   color: var(--color-brand-ink);
-  transition: background-color var(--duration-fast) var(--ease-standard);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    filter var(--duration-fast) var(--ease-standard);
 }
 
 .primaryAction:hover {
@@ -153,12 +155,25 @@
   transform: translateX(0.15rem);
 }
 
+.primaryAction:active {
+  filter: brightness(0.96);
+}
+
 .secondaryAction {
   padding-inline: 0.25rem;
   color: var(--color-paper);
   text-decoration: underline;
   text-decoration-color: var(--color-on-dark-decoration);
   text-underline-offset: 0.35em;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    text-decoration-color var(--duration-fast) var(--ease-standard);
+}
+
+.secondaryAction:hover,
+.secondaryAction:active {
+  color: var(--color-gold-soft);
+  text-decoration-color: currentColor;
 }
 
 .primaryAction:focus-visible,

@@ -6,16 +6,18 @@ describe('Kapitalis hero', () => {
   it('hero_primary_contact_targets_published_whatsapp', () => {
     render(<HeroSection />)
 
-    expect(
-      screen
-        .getByRole('link', { name: 'Conversar com a Kapitalis' })
-        .getAttribute('href'),
-    ).toBe('https://wa.me/5527998829289')
-    expect(
-      screen
-        .getByRole('link', { name: 'Conhecer o sistema Kapitalis' })
-        .getAttribute('href'),
-    ).toBe('#sistema')
+    const primaryAction = screen.getByRole('link', {
+      name: 'Conversar com a Kapitalis',
+    })
+    expect(primaryAction.getAttribute('href')).toBe('https://wa.me/5527998829289')
+    expect(primaryAction.getAttribute('target')).toBe('_blank')
+    expect(primaryAction.getAttribute('rel')).toBe('noopener noreferrer')
+
+    const secondaryAction = screen.getByRole('link', {
+      name: 'Conhecer o sistema Kapitalis',
+    })
+    expect(secondaryAction.getAttribute('href')).toBe('#sistema')
+    expect(secondaryAction.tagName).toBe('A')
   })
 
   it('hero_and_story_share_one_financial_core', () => {

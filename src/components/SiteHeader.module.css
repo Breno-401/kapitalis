@@ -41,7 +41,7 @@
 
 .skipLink {
   position: absolute;
-  top: -4rem;
+  top: calc(-100vh - 1rem);
   left: 1rem;
   z-index: 60;
   padding: 0.65rem 0.9rem;
@@ -50,8 +50,8 @@
   color: var(--color-navy);
 }
 
-.skipLink:focus {
-  top: 0;
+.skipLink:focus-visible {
+  top: calc(100% + 0.75rem);
 }
 
 .brand {

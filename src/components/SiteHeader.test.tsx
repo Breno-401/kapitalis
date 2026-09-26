@@ -73,6 +73,16 @@ beforeEach(() => {
 })
 
 describe('site navigation', () => {
+  it('skip_link_keeps_its_semantic_destination_and_can_receive_focus', () => {
+    render(<App />)
+
+    const skipLink = screen.getByRole('link', { name: 'Pular para o conteúdo' })
+    expect(skipLink.getAttribute('href')).toBe('#conteudo-principal')
+
+    skipLink.focus()
+    expect(document.activeElement).toBe(skipLink)
+  })
+
   it('mobile_menu_opens_and_closes_with_escape_and_returns_focus', () => {
     render(<App />)
 
