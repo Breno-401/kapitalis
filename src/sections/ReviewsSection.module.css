@@ -1,0 +1,434 @@
+.section {
+  overflow: clip;
+  padding-block: clamp(4.5rem, 8vw, 7rem) clamp(3.5rem, 6vw, 5rem);
+  background:
+    radial-gradient(ellipse at 78% 0%, rgb(27 58 82 / 32%), transparent 37rem),
+    var(--color-navy);
+  color: var(--color-paper);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: clamp(2rem, 7vw, 7rem);
+}
+
+.intro {
+  max-width: 47rem;
+}
+
+.eyebrow {
+  margin-bottom: 1.1rem;
+  color: var(--color-gold-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.intro h2 {
+  max-width: 14ch;
+  font-size: clamp(2.55rem, 4.5vw, 4rem);
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+.description {
+  max-width: 42ch;
+  margin-top: 1.1rem;
+  color: rgb(243 241 234 / 69%);
+  font-size: 0.93rem;
+  line-height: 1.65;
+}
+
+.aggregate {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+  flex: 0 0 auto;
+  min-width: 15rem;
+  padding: 1rem 0 0.2rem 1.4rem;
+  border-left: 1px solid rgb(243 241 234 / 16%);
+}
+
+.aggregateScore {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+
+.score {
+  color: var(--color-paper);
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.aggregateStars {
+  color: #fbbc04;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+}
+
+.aggregateSource {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgb(243 241 234 / 76%);
+  font-size: 0.76rem;
+}
+
+.aggregateSource svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.allReviewsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+  color: var(--color-gold-soft);
+  font-size: 0.76rem;
+  font-weight: 650;
+  text-underline-offset: 0.24em;
+}
+
+.allReviewsLink span {
+  font-size: 0.9rem;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.allReviewsLink:hover span {
+  transform: translate(0.12rem, -0.12rem);
+}
+
+.allReviewsLink:focus-visible,
+.sourceLink:focus-visible,
+.expandButton:focus-visible,
+.buttons button:focus-visible,
+.track:focus-visible {
+  outline-color: var(--color-gold-soft);
+}
+
+.trackFrame {
+  width: 100%;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.track {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.4rem max(var(--layout-gutter), calc((100vw - var(--container-max)) / 2)) 1.1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: max(var(--layout-gutter), calc((100vw - var(--container-max)) / 2));
+  scroll-snap-type: x mandatory;
+  scrollbar-color: rgb(232 213 143 / 35%) transparent;
+  scrollbar-width: thin;
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trackItem {
+  flex: 0 0 min(23.5rem, calc(100vw - 2.5rem));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.reviewCard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 18rem;
+  padding: clamp(1.2rem, 2.4vw, 1.55rem);
+  border: 1px solid rgb(243 241 234 / 13%);
+  border-radius: 0.9rem;
+  background: linear-gradient(145deg, rgb(18 43 67 / 89%), rgb(8 28 48 / 92%));
+  box-shadow: 0 0.6rem 1.8rem rgb(0 0 0 / 12%), inset 0 1px rgb(255 255 255 / 3%);
+  backdrop-filter: blur(14px) saturate(1.08);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.reviewCard:hover {
+  border-color: rgb(232 213 143 / 29%);
+  box-shadow: 0 0.9rem 2.1rem rgb(0 0 0 / 18%), inset 0 1px rgb(255 255 255 / 4%);
+  transform: translateY(-2px);
+}
+
+.cardTopline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.googleLabel {
+  color: rgb(243 241 234 / 53%);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.stars {
+  flex: 0 0 auto;
+  color: #fbbc04;
+  font-size: 0.82rem;
+  letter-spacing: 0.09em;
+  line-height: 1;
+}
+
+.quote {
+  margin: 1.05rem 0 0;
+  color: var(--color-paper);
+}
+
+.quote p {
+  font-family: var(--font-display);
+  font-size: clamp(1.08rem, 1.55vw, 1.25rem);
+  line-height: 1.42;
+}
+
+.expandButton {
+  align-self: flex-start;
+  margin-top: 0.55rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-gold-soft);
+  font-size: 0.73rem;
+  font-weight: 650;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  cursor: pointer;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 1.05rem;
+}
+
+.initials {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.15rem;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 1px solid rgb(232 213 143 / 26%);
+  border-radius: 50%;
+  background: rgb(232 213 143 / 9%);
+  color: var(--color-gold-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.reviewer {
+  display: grid;
+  min-width: 0;
+  gap: 0.12rem;
+}
+
+.author {
+  overflow: hidden;
+  color: var(--color-paper);
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.period {
+  color: rgb(243 241 234 / 48%);
+  font-size: 0.66rem;
+}
+
+.sourceLink {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  border: 1px solid rgb(243 241 234 / 14%);
+  border-radius: 50%;
+  color: var(--color-paper);
+  font-size: 0.9rem;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+}
+
+.sourceLink:hover {
+  border-color: rgb(232 213 143 / 35%);
+  background: rgb(232 213 143 / 8%);
+  color: var(--color-gold-soft);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.trackHint {
+  color: rgb(243 241 234 / 51%);
+  font-size: 0.7rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.buttons button {
+  display: grid;
+  place-items: center;
+  width: 2.55rem;
+  height: 2.55rem;
+  border: 1px solid rgb(243 241 234 / 18%);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-paper);
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.buttons button:hover {
+  border-color: rgb(232 213 143 / 38%);
+  background: rgb(232 213 143 / 9%);
+  color: var(--color-gold-soft);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 56.25rem) {
+  .header {
+    align-items: flex-start;
+  }
+
+  .aggregate {
+    min-width: 13rem;
+  }
+
+  .trackItem {
+    flex-basis: min(22rem, calc(100vw - 2.25rem));
+  }
+}
+
+@media (max-width: 43.75rem) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.6rem;
+  }
+
+  .intro h2 {
+    max-width: 13ch;
+  }
+
+  .aggregate {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 0.8rem;
+    min-width: 0;
+    padding: 0.9rem 0 0;
+    border-top: 1px solid rgb(243 241 234 / 16%);
+    border-left: 0;
+  }
+
+  .aggregateScore {
+    grid-row: span 2;
+    align-items: center;
+  }
+
+  .score {
+    font-size: 2.25rem;
+  }
+
+  .aggregateSource,
+  .allReviewsLink {
+    grid-column: 2;
+  }
+
+  .aggregateSource {
+    grid-row: 1;
+  }
+
+  .allReviewsLink {
+    grid-row: 2;
+  }
+
+  .trackFrame {
+    margin-top: 2rem;
+  }
+
+  .track {
+    gap: 0.75rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .trackItem {
+    flex-basis: min(21rem, calc(100vw - 2.5rem));
+  }
+
+  .reviewCard {
+    min-height: 17.5rem;
+  }
+
+  .controls {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 22.5rem) {
+  .trackItem {
+    flex-basis: calc(100vw - 2.5rem);
+  }
+
+  .reviewCard {
+    min-height: 19rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviewCard,
+  .allReviewsLink span,
+  .sourceLink,
+  .buttons button {
+    transition: none;
+  }
+
+  .track {
+    scroll-behavior: auto;
+    scroll-snap-type: x proximity;
+  }
+}

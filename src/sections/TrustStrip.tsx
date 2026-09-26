@@ -13,17 +13,6 @@ export function TrustStrip() {
           ))}
           <li>{site.locality}</li>
         </ul>
-        <a
-          className={styles.reviewsLink}
-          href={site.googleReviewsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Ver avaliações no Google
-          <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-            <path d="M4.5 10h10m-4-4 4 4-4 4" />
-          </svg>
-        </a>
       </div>
     </section>
   )
