@@ -53,6 +53,32 @@
   transition: opacity 360ms var(--ease-standard);
 }
 
+.insightFlow {
+  fill: none;
+  stroke: rgb(232 213 143 / 46%);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-width: 1.35;
+  opacity: 0;
+}
+
+.insight[data-insight-order='0'] {
+  --insight-delay: 0ms;
+}
+
+.insight[data-insight-order='1'] {
+  --insight-delay: 160ms;
+}
+
+.insight[data-insight-order='2'] {
+  --insight-delay: 320ms;
+}
+
+.insight[data-insight-order='3'] {
+  --insight-delay: 480ms;
+}
+
 .nodeRing {
   fill: var(--color-navy);
   stroke: rgb(232 213 143 / 48%);
@@ -196,17 +222,33 @@
   stroke-dasharray: 1 5;
 }
 
-.core[data-state='visibilidade'] .signalVisible,
-.core[data-state='visibilidade'] .visibilityPoint {
+.core[data-state='visibilidade'] .signalVisible {
+  opacity: 0.24;
+}
+
+.core[data-state='visibilidade'] .node .nodeLabel {
+  opacity: 0.12;
+}
+
+.core[data-state='visibilidade'] .insightFlow[data-active='true'] {
+  animation: reveal-insight 660ms var(--ease-standard) var(--insight-delay, 0ms)
+    both;
+}
+
+.core[data-state='visibilidade'] .visibilityPoint[data-active='true'] {
   opacity: 0.94;
-}
-
-.core[data-state='visibilidade'] .insightLabel {
-  opacity: 0.96;
-}
-
-.core[data-state='visibilidade'] .visibilityPoint {
   transform: scale(1.35);
+  transition-delay: calc(var(--insight-delay, 0ms) + 720ms);
+}
+
+.core[data-state='visibilidade'] .insightLabel[data-insight-active='true'] {
+  opacity: 0.96;
+  transition-delay: calc(var(--insight-delay, 0ms) + 880ms);
+}
+
+.core[data-revealed='false'][data-state='visibilidade'] .nodeLabel {
+  opacity: 0;
+  transition-delay: 0ms;
 }
 
 .core[data-state='decisao'] .centerHalo {
@@ -240,6 +282,13 @@
   }
 }
 
+@keyframes reveal-insight {
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0.48;
+  }
+}
+
 @media (max-width: 43.75rem) {
   .core {
     width: min(78vw, 25rem);
@@ -252,6 +301,10 @@
   .insightLabel {
     display: none;
   }
+
+  .insightFlow {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -259,6 +312,7 @@
   .orbit,
   .connection path,
   .signalPath,
+  .insightFlow,
   .nodeRing,
   .nodeLabel,
   .centerHalo,
@@ -270,5 +324,16 @@
   .connection path[data-active='true'],
   .signalOrganized[data-active='true'] {
     animation: none;
+  }
+
+  .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: 0.48;
+  }
+
+  .core[data-state='visibilidade'] .visibilityPoint,
+  .core[data-state='visibilidade'] .insightLabel {
+    transition-delay: 0ms;
   }
 }

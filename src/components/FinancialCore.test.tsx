@@ -75,6 +75,19 @@ describe('Kapitalis financial core visual', () => {
     expect(Math.min(...signalYs)).toBeGreaterThan(wordmarkBaseline + 20)
   })
 
+  it('decision_output_sits_below_the_wordmark_and_connects_to_the_signal', () => {
+    const { container } = render(<FinancialCore state="decisao" />)
+    const output = container.querySelector('[data-output="next-step"]')
+
+    expect(output?.querySelector('rect')?.getAttribute('y')).toBe('466')
+    expect(output?.querySelector('text')?.getAttribute('y')).toBe('487')
+    expect(
+      container
+        .querySelector('[data-financial-signal="decision-link"]')
+        ?.getAttribute('d'),
+    ).toBe('M 320 438 L 320 466')
+  })
+
   it('visibility_labels_do_not_collide_with_source_node_labels', () => {
     const { container } = render(<FinancialCore state="visibilidade" />)
     const insightY = Array.from(
@@ -91,5 +104,32 @@ describe('Kapitalis financial core visual', () => {
         fixedLabelY.every((fixedY) => Math.abs(y - fixedY) >= 20),
       ),
     ).toBe(true)
+  })
+
+  it('visibility_mutes_source_names_and_sequences_flow_points_and_insights', () => {
+    const { container } = render(<FinancialCore state="visibilidade" />)
+    const core = container.querySelector('[data-financial-core]')
+    const labels = ['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade']
+
+    expect(
+      Array.from(core?.querySelectorAll('[data-source-label]') ?? []).map((label) =>
+        label.getAttribute('data-source-emphasis'),
+      ),
+    ).toEqual(Array(5).fill('muted'))
+    expect(
+      Array.from(core?.querySelectorAll('[data-insight-flow]') ?? []).map((flow) =>
+        flow.getAttribute('data-insight-flow'),
+      ),
+    ).toEqual(labels)
+    expect(
+      Array.from(core?.querySelectorAll('[data-insight-point]') ?? []).map((point) =>
+        point.getAttribute('data-insight-point'),
+      ),
+    ).toEqual(labels)
+    expect(
+      Array.from(core?.querySelectorAll('[data-financial-insight]') ?? []).map(
+        (label) => label.getAttribute('data-insight-order'),
+      ),
+    ).toEqual(['0', '1', '2', '3'])
   })
 })

@@ -15,6 +15,45 @@ const sources = [
   { id: 'despesas', label: 'Despesas', x: 95, y: 212 },
 ]
 
+const insights = [
+  {
+    label: 'Fluxo de caixa',
+    text: 'FLUXO DE CAIXA',
+    order: 0,
+    point: { x: 320, y: 157 },
+    path: 'M 320 269 L 320 163',
+    labelPosition: { x: 320, y: 198 },
+    textAnchor: 'middle',
+  },
+  {
+    label: 'Compromissos',
+    text: 'COMPROMISSOS',
+    order: 1,
+    point: { x: 483, y: 320 },
+    path: 'M 371 320 L 477 320',
+    labelPosition: { x: 501, y: 354 },
+    textAnchor: 'start',
+  },
+  {
+    label: 'Indicadores',
+    text: 'INDICADORES',
+    order: 2,
+    point: { x: 320, y: 478 },
+    path: 'M 354 358 C 398 380 420 410 405 433 C 395 451 366 467 320 478',
+    labelPosition: { x: 320, y: 449 },
+    textAnchor: 'middle',
+  },
+  {
+    label: 'Previsibilidade',
+    text: 'PREVISIBILIDADE',
+    order: 3,
+    point: { x: 157, y: 320 },
+    path: 'M 269 320 L 163 320',
+    labelPosition: { x: 128, y: 354 },
+    textAnchor: 'end',
+  },
+] as const
+
 export function FinancialCore({
   state,
   revealed = false,
@@ -68,6 +107,30 @@ export function FinancialCore({
           data-financial-signal="decision"
           d="M 210 456 L 282 456 L 300 438 L 340 438 L 358 456 L 430 456"
         />
+        <path
+          className={`${styles.signalPath} ${styles.signalDecisionLink}`}
+          data-financial-signal="decision-link"
+          data-active={state === 'decisao'}
+          d="M 320 438 L 320 466"
+        />
+        <g className={styles.insightFlows}>
+          {insights.map(({ label, order, path }) => (
+            <g
+              className={styles.insight}
+              data-active={state === 'visibilidade'}
+              data-insight-order={order}
+              key={label}
+            >
+              <path
+                className={styles.insightFlow}
+                data-active={state === 'visibilidade'}
+                data-insight-flow={label}
+                d={path}
+                pathLength="1"
+              />
+            </g>
+          ))}
+        </g>
 
         {sources.map(({ id, label, x, y }) => (
           <g
@@ -79,7 +142,13 @@ export function FinancialCore({
           >
             <circle className={styles.nodeRing} r="22" />
             <circle className={styles.nodeDot} r="4" />
-            <text className={styles.nodeLabel} data-source-label={label} textAnchor="middle" y="49">
+            <text
+              className={styles.nodeLabel}
+              data-source-emphasis={state === 'visibilidade' ? 'muted' : 'primary'}
+              data-source-label={label}
+              textAnchor="middle"
+              y="49"
+            >
               {label}
             </text>
           </g>
@@ -102,27 +171,39 @@ export function FinancialCore({
         </g>
 
         <g className={styles.insights}>
-          <circle className={styles.visibilityPoint} cx="320" cy="157" r="5" />
-          <text className={styles.insightLabel} data-financial-insight="Fluxo de caixa" data-insight-active={state === 'visibilidade'} textAnchor="middle" x="320" y="198">
-            FLUXO DE CAIXA
-          </text>
-          <circle className={styles.visibilityPoint} cx="483" cy="320" r="5" />
-          <text className={styles.insightLabel} data-financial-insight="Compromissos" data-insight-active={state === 'visibilidade'} textAnchor="start" x="501" y="354">
-            COMPROMISSOS
-          </text>
-          <circle className={styles.visibilityPoint} cx="320" cy="483" r="5" />
-          <text className={styles.insightLabel} data-financial-insight="Indicadores" data-insight-active={state === 'visibilidade'} textAnchor="middle" x="320" y="457">
-            INDICADORES
-          </text>
-          <circle className={styles.visibilityPoint} cx="157" cy="320" r="5" />
-          <text className={styles.insightLabel} data-financial-insight="Previsibilidade" data-insight-active={state === 'visibilidade'} textAnchor="end" x="128" y="354">
-            PREVISIBILIDADE
-          </text>
+          {insights.map(({ label, order, point, text, labelPosition, textAnchor }) => (
+            <g
+              className={styles.insight}
+              data-active={state === 'visibilidade'}
+              data-insight-order={order}
+              key={label}
+            >
+              <circle
+                className={styles.visibilityPoint}
+                cx={point.x}
+                cy={point.y}
+                data-active={state === 'visibilidade'}
+                data-insight-point={label}
+                r="5"
+              />
+              <text
+                className={styles.insightLabel}
+                data-financial-insight={label}
+                data-insight-active={state === 'visibilidade'}
+                data-insight-order={order}
+                textAnchor={textAnchor}
+                x={labelPosition.x}
+                y={labelPosition.y}
+              >
+                {text}
+              </text>
+            </g>
+          ))}
         </g>
 
         <g className={styles.decisionOutput} data-output="next-step" data-active={state === 'decisao'}>
-          <rect x="250" y="443" width="140" height="34" rx="17" />
-          <text textAnchor="middle" x="320" y="464">PRÓXIMO PASSO</text>
+          <rect x="250" y="466" width="140" height="34" rx="17" />
+          <text textAnchor="middle" x="320" y="487">PRÓXIMO PASSO</text>
         </g>
       </svg>
     </figure>

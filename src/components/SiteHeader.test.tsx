@@ -109,14 +109,15 @@ describe('site navigation', () => {
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
   })
 
-  it('brand_uses_the_original_symbol_without_distorting_its_aspect_ratio', () => {
+  it('navbar_brand_uses_the_previous_approved_original_asset_implementation', () => {
     render(<App />)
 
-    const source = document.querySelector('[data-kapitalis-brandmark]')
-    const mark = source?.closest('svg')
-    expect(source?.getAttribute('href')).toBe('/assets/kapitalis-logo-original.png')
-    expect(mark?.getAttribute('viewBox')).toBe('525 236 486 432')
-    expect(mark?.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet')
+    const mark = document.querySelector<HTMLImageElement>(
+      'header a[aria-label="Kapitalis, início"] img',
+    )
+    expect(mark?.getAttribute('src')).toBe('/assets/kapitalis-logo-original.png')
+    expect(mark?.getAttribute('width')).toBe('96')
+    expect(mark?.getAttribute('height')).toBe('64')
   })
 
   it('mobile_menu_has_only_the_five_requested_destinations_and_whatsapp_at_the_end', () => {

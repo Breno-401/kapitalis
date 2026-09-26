@@ -25,10 +25,10 @@
   top: 0;
   display: grid;
   place-items: center;
-  width: 100vw;
+  width: 200%;
   height: 100svh;
   min-height: 38rem;
-  margin-left: -50vw;
+  margin-left: -100%;
   overflow: clip;
   background:
     radial-gradient(ellipse at 50% 67%, rgb(212 175 55 / 7%), transparent 39%),
@@ -51,7 +51,7 @@
   z-index: 2;
   top: 43%;
   left: 50%;
-  width: min(calc(100vw - 2 * var(--layout-gutter)), 78rem);
+  width: min(calc(100% - 2 * var(--layout-gutter)), 78rem);
   text-align: center;
   opacity: var(--hero-copy-opacity, 1);
   transform: translate3d(-50%, -50%, 0) translateY(var(--hero-copy-y, 0px));

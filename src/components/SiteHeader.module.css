@@ -55,7 +55,7 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.66rem;
+  gap: 0.48rem;
   flex: 0 0 auto;
   color: var(--color-paper);
   text-decoration: none;
@@ -63,8 +63,7 @@
 
 .brandMark {
   width: 1.5rem;
-  height: 1.33rem;
-  object-fit: contain;
+  height: 1.5rem;
 }
 
 .brandName {
@@ -271,12 +270,12 @@
   }
 
   .brand {
-    gap: 0.55rem;
+    gap: 0.35rem;
   }
 
   .brandMark {
-    width: 1.36rem;
-    height: 1.21rem;
+    width: 1.3rem;
+    height: 1.3rem;
   }
 
   .brandName {
