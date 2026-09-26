@@ -38,6 +38,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     const compactLayout = window.matchMedia?.('(max-width: 700px)')
     let frame: number | null = null
     let lastTime: number | null = null
+    let isVisible = typeof IntersectionObserver === 'undefined'
 
     function moveRail(nextOffset: number) {
       const seam = seamRef.current
@@ -64,14 +65,14 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     function advance(timestamp: number) {
       if (lastTime !== null && pauseReasonsRef.current.size === 0 && !dragRef.current) {
         const elapsed = Math.min(timestamp - lastTime, 80)
-        moveRail(offsetRef.current + elapsed * 0.014)
+        moveRail(offsetRef.current + (elapsed * seamRef.current) / 50_000)
       }
       lastTime = timestamp
       frame = window.requestAnimationFrame(advance)
     }
 
     function startAutoplay() {
-      if (frame !== null || reducedMotion?.matches || compactLayout?.matches) return
+      if (frame !== null || !isVisible || reducedMotion?.matches || compactLayout?.matches) return
       lastTime = null
       frame = window.requestAnimationFrame(advance)
     }
@@ -93,9 +94,18 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
 
     const resizeObserver =
       typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(syncLayout)
+    const intersectionObserver =
+      typeof IntersectionObserver === 'undefined'
+        ? null
+        : new IntersectionObserver(([entry]) => {
+            isVisible = entry?.isIntersecting ?? false
+            if (isVisible) startAutoplay()
+            else stopAutoplay()
+          })
     resizeObserver?.observe(activeTrack)
     resizeObserver?.observe(activeRail)
     activeRail.querySelectorAll('[data-review-set]').forEach((set) => resizeObserver?.observe(set))
+    intersectionObserver?.observe(activeTrack)
     window.addEventListener('resize', syncLayout)
     reducedMotion?.addEventListener?.('change', syncLayout)
     compactLayout?.addEventListener?.('change', syncLayout)
@@ -104,6 +114,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     return () => {
       stopAutoplay()
       resizeObserver?.disconnect()
+      intersectionObserver?.disconnect()
       window.removeEventListener('resize', syncLayout)
       reducedMotion?.removeEventListener?.('change', syncLayout)
       compactLayout?.removeEventListener?.('change', syncLayout)
@@ -149,6 +160,13 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
 
   function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
     if (window.matchMedia?.('(max-width: 700px)').matches || event.button !== 0) return
+    if (dragRef.current) return
+    if (
+      event.target instanceof Element &&
+      event.target.closest('button, a, [role="button"], [data-clickable]')
+    ) {
+      return
+    }
 
     dragRef.current = {
       pointerId: event.pointerId,
@@ -157,36 +175,64 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       moved: false,
     }
     pauseReasonsRef.current.add('drag')
-    event.currentTarget.setPointerCapture?.(event.pointerId)
   }
 
-  function continueDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId) return
+  useEffect(() => {
+    const move = (event: PointerEvent) => {
+      const drag = dragRef.current
+      const track = trackRef.current
+      const rail = railRef.current
+      if (!drag || drag.pointerId !== event.pointerId) return
 
-    const distance = event.clientX - drag.startX
-    if (Math.abs(distance) > 4) {
+      const distance = event.clientX - drag.startX
+      if (Math.abs(distance) <= 5) return
+
+      if (!drag.moved) {
+        try {
+          track?.setPointerCapture(event.pointerId)
+        } catch {
+          // Pointer capture is optional; window listeners keep dragging available.
+        }
+      }
       drag.moved = true
       event.preventDefault()
-      event.currentTarget.dataset.dragging = 'true'
-      const rail = railRef.current
+      if (track) track.dataset.dragging = 'true'
       if (!rail || seamRef.current <= 0) return
+
       const nextOffset = ((drag.startOffset - distance) % seamRef.current + seamRef.current) % seamRef.current
       offsetRef.current = nextOffset
       rail.style.transform = `translate3d(${-Number(nextOffset.toFixed(3))}px, 0, 0)`
     }
-  }
 
-  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    const drag = dragRef.current
-    if (!drag || drag.pointerId !== event.pointerId) return
+    const finish = (event: PointerEvent) => {
+      const drag = dragRef.current
+      if (!drag || drag.pointerId !== event.pointerId) return
 
-    if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
-    dragRef.current = null
-    event.currentTarget.dataset.dragging = 'false'
-    pauseReasonsRef.current.delete('drag')
-    event.currentTarget.releasePointerCapture?.(event.pointerId)
-  }
+      if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
+      dragRef.current = null
+      const track = trackRef.current
+      if (track) {
+        track.dataset.dragging = 'false'
+        try {
+          if (track.hasPointerCapture?.(event.pointerId)) {
+            track.releasePointerCapture?.(event.pointerId)
+          }
+        } catch {
+          // The pointer may already have been released by the browser.
+        }
+      }
+      pauseReasonsRef.current.delete('drag')
+    }
+
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', finish)
+    window.addEventListener('pointercancel', finish)
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', finish)
+      window.removeEventListener('pointercancel', finish)
+    }
+  }, [])
 
   function handleClickCapture(event: ReactMouseEvent<HTMLDivElement>) {
     if (Date.now() > suppressClickUntilRef.current) return
@@ -259,11 +305,14 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             event.currentTarget.dataset.dragging = 'false'
           }}
           onPointerDown={beginDrag}
-          onPointerMove={continueDrag}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
           onLostPointerCapture={(event) => {
-            if (dragRef.current?.pointerId === event.pointerId) endDrag(event)
+            if (dragRef.current?.pointerId === event.pointerId) {
+              const drag = dragRef.current
+              if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
+              dragRef.current = null
+              event.currentTarget.dataset.dragging = 'false'
+              pauseReasonsRef.current.delete('drag')
+            }
           }}
           onClickCapture={handleClickCapture}
         >

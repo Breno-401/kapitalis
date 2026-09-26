@@ -120,6 +120,75 @@ describe('Google Reviews section', () => {
     }
   })
 
+  it('uses a fifty-second seamless loop and runs only while the rail is visible', () => {
+    const frames: FrameRequestCallback[] = []
+    let observerCallback: IntersectionObserverCallback | undefined
+    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.push(callback)
+      return frames.length
+    })
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        constructor(callback: IntersectionObserverCallback) {
+          observerCallback = callback
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        return { left, right: left + 1000, width: 1000 } as DOMRect
+      })
+
+    try {
+      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+      const track = container.querySelector<HTMLElement>('[data-review-track]')!
+      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+
+      expect(frames).toHaveLength(0)
+      observerCallback?.(
+        [{ isIntersecting: true, target: track } as unknown as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      )
+      frames.shift()?.(0)
+      frames.shift()?.(50)
+
+      expect(rail.style.transform).toBe('translate3d(-1.016px, 0, 0)')
+      fireEvent.pointerDown(track, {
+        pointerType: 'mouse',
+        pointerId: 2,
+        clientX: 10000,
+        button: 0,
+      })
+      fireEvent.pointerMove(track, {
+        pointerType: 'mouse',
+        pointerId: 2,
+        clientX: 8986.016,
+        button: 0,
+      })
+      fireEvent.pointerUp(track, { pointerType: 'mouse', pointerId: 2 })
+      expect(rail.style.transform).toBe('translate3d(-1015px, 0, 0)')
+      frames.shift()?.(100)
+      expect(rail.style.transform).toBe('translate3d(-0.016px, 0, 0)')
+
+      observerCallback?.(
+        [{ isIntersecting: false, target: track } as unknown as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      )
+      expect(cancelFrame).toHaveBeenCalled()
+    } finally {
+      vi.unstubAllGlobals()
+      requestFrame.mockRestore()
+      cancelFrame.mockRestore()
+      measureRects.mockRestore()
+    }
+  })
+
   it('pauses on hover and focus, supports pointer dragging, and resumes without a jump', () => {
     const frames: FrameRequestCallback[] = []
     const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
@@ -204,6 +273,42 @@ describe('Google Reviews section', () => {
       vi.unstubAllGlobals()
       requestFrame.mockRestore()
       cancelFrame.mockRestore()
+      measureRects.mockRestore()
+    }
+  })
+
+  it('does not start a drag from a review link', () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        return { left, right: left + 1000, width: 1000 } as DOMRect
+      })
+
+    try {
+      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      const reviewLink = screen.getByRole('link', {
+        name: 'Ver avaliação de Jimmy Campos no Google',
+      })
+
+      fireEvent.pointerDown(reviewLink, {
+        pointerType: 'mouse',
+        pointerId: 1,
+        clientX: 200,
+        button: 0,
+      })
+      fireEvent.pointerMove(reviewLink, {
+        pointerType: 'mouse',
+        pointerId: 1,
+        clientX: 150,
+        button: 0,
+      })
+      fireEvent.pointerUp(reviewLink, { pointerType: 'mouse', pointerId: 1 })
+
+      expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
+    } finally {
+      vi.unstubAllGlobals()
       measureRects.mockRestore()
     }
   })
