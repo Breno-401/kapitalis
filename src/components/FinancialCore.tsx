@@ -90,10 +90,6 @@ export function FinancialCore({
           d="M126 320h74l30-32h180l30 32h74"
         />
         <path
-          className={`${styles.signalPath} ${styles.signalVisible}`}
-          d="M174 386h68l32-35h92l32 35h68"
-        />
-        <path
           className={`${styles.signalPath} ${styles.signalDecision}`}
           data-financial-signal="decision"
           d="M 210 456 L 282 456 L 300 438 L 340 438 L 358 456 L 430 456"

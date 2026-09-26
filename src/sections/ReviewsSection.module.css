@@ -1,4 +1,5 @@
 .section {
+  width: 100%;
   overflow: clip;
   padding-block: clamp(4.5rem, 8vw, 7rem) clamp(3.5rem, 6vw, 5rem);
   background:
@@ -8,13 +9,14 @@
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 17rem);
   align-items: flex-end;
   gap: clamp(2rem, 7vw, 7rem);
 }
 
 .intro {
+  min-width: 0;
   max-width: 47rem;
 }
 
@@ -46,8 +48,9 @@
   display: grid;
   justify-items: start;
   gap: 0.55rem;
-  flex: 0 0 auto;
-  min-width: 15rem;
+  width: 100%;
+  min-width: 0;
+  max-width: 17rem;
   padding: 1rem 0 0.2rem 1.4rem;
   border-left: 1px solid rgb(243 241 234 / 16%);
 }
@@ -105,52 +108,70 @@
   transform: translate(0.12rem, -0.12rem);
 }
 
-.allReviewsLink:focus-visible,
-.sourceLink:focus-visible,
-.expandButton:focus-visible,
-.buttons button:focus-visible,
-.track:focus-visible {
-  outline-color: var(--color-gold-soft);
-}
-
 .trackFrame {
   width: 100%;
   margin-top: clamp(2.5rem, 5vw, 4rem);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
 
 .track {
-  display: flex;
-  gap: 1rem;
   width: 100%;
   margin: 0;
-  padding: 0.4rem max(var(--layout-gutter), calc((100vw - var(--container-max)) / 2)) 1.1rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-padding-inline: max(var(--layout-gutter), calc((100vw - var(--container-max)) / 2));
-  scroll-snap-type: x mandatory;
-  scrollbar-color: rgb(232 213 143 / 35%) transparent;
-  scrollbar-width: thin;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.track[data-dragging='true'] {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.track:focus-visible {
+  outline: 2px solid var(--color-gold-soft);
+  outline-offset: -2px;
+}
+
+.trackRail {
+  display: flex;
+  width: max-content;
+  gap: 1rem;
+  padding: 0.4rem var(--layout-gutter) 1.1rem;
+  will-change: transform;
+}
+
+.reviewSet {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  width: max-content;
+  margin: 0;
+  padding: 0;
   list-style: none;
-  -webkit-overflow-scrolling: touch;
+}
+
+.reviewSet[aria-hidden='true'] {
+  pointer-events: none;
 }
 
 .trackItem {
-  flex: 0 0 min(23.5rem, calc(100vw - 2.5rem));
+  flex: 0 0 min(25rem, calc(100vw - 2 * var(--layout-gutter)));
   min-width: 0;
-  scroll-snap-align: start;
 }
 
 .reviewCard {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 18rem;
+  min-height: 14.5rem;
   padding: clamp(1.2rem, 2.4vw, 1.55rem);
   border: 1px solid rgb(243 241 234 / 13%);
   border-radius: 0.9rem;
-  background: linear-gradient(145deg, rgb(18 43 67 / 89%), rgb(8 28 48 / 92%));
+  background: linear-gradient(145deg, rgb(18 43 67 / 87%), rgb(8 28 48 / 90%));
   box-shadow: 0 0.6rem 1.8rem rgb(0 0 0 / 12%), inset 0 1px rgb(255 255 255 / 3%);
-  backdrop-filter: blur(14px) saturate(1.08);
+  backdrop-filter: blur(18px) saturate(1.15);
   transition:
     border-color var(--duration-fast) var(--ease-standard),
     transform var(--duration-fast) var(--ease-standard),
@@ -300,13 +321,13 @@
 .buttons button {
   display: grid;
   place-items: center;
-  width: 2.55rem;
-  height: 2.55rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border: 1px solid rgb(243 241 234 / 18%);
   border-radius: 50%;
   background: transparent;
   color: var(--color-paper);
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease-standard),
@@ -330,24 +351,28 @@
   clip-path: inset(50%);
 }
 
-@media (max-width: 56.25rem) {
+.allReviewsLink:focus-visible,
+.sourceLink:focus-visible,
+.expandButton:focus-visible,
+.buttons button:focus-visible {
+  outline: 2px solid var(--color-gold-soft);
+  outline-offset: 3px;
+}
+
+@media (max-width: 80rem) {
   .header {
+    grid-template-columns: minmax(0, 1fr);
     align-items: flex-start;
+    gap: 1.7rem;
   }
 
   .aggregate {
-    min-width: 13rem;
-  }
-
-  .trackItem {
-    flex-basis: min(22rem, calc(100vw - 2.25rem));
+    max-width: 20rem;
   }
 }
 
 @media (max-width: 43.75rem) {
   .header {
-    flex-direction: column;
-    align-items: stretch;
     gap: 1.6rem;
   }
 
@@ -359,7 +384,7 @@
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
     column-gap: 0.8rem;
-    min-width: 0;
+    max-width: none;
     padding: 0.9rem 0 0;
     border-top: 1px solid rgb(243 241 234 / 16%);
     border-left: 0;
@@ -389,19 +414,49 @@
 
   .trackFrame {
     margin-top: 2rem;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .track {
+    width: calc(100% - 2 * var(--layout-gutter));
+    margin-inline: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    cursor: auto;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .trackRail {
     gap: 0.75rem;
-    padding-bottom: 0.85rem;
+    padding: 0.4rem 0 1.1rem;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .reviewSet {
+    gap: 0.75rem;
+  }
+
+  .reviewSet[data-review-set='duplicate'] {
+    display: none;
   }
 
   .trackItem {
-    flex-basis: min(21rem, calc(100vw - 2.5rem));
+    flex-basis: min(22rem, calc(100vw - 2 * var(--layout-gutter)));
+    scroll-snap-align: start;
   }
 
   .reviewCard {
-    min-height: 17.5rem;
+    min-height: 15rem;
   }
 
   .controls {
@@ -411,11 +466,11 @@
 
 @media (max-width: 22.5rem) {
   .trackItem {
-    flex-basis: calc(100vw - 2.5rem);
+    flex-basis: calc(100vw - 2 * var(--layout-gutter));
   }
 
   .reviewCard {
-    min-height: 19rem;
+    min-height: 16rem;
   }
 }
 
@@ -429,6 +484,5 @@
 
   .track {
     scroll-behavior: auto;
-    scroll-snap-type: x proximity;
   }
 }

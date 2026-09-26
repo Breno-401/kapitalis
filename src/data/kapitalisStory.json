@@ -17,8 +17,8 @@
     "id": "visibilidade",
     "eyebrow": "03 · VISIBILIDADE",
     "title": "Visibilidade",
-    "body": "Fluxo de caixa, compromissos, indicadores e previsibilidade ajudam a compor a leitura do negócio.",
-    "items": ["Fluxo de caixa", "Compromissos", "Indicadores", "Previsibilidade"]
+    "body": "Fluxo de caixa, compromissos e previsibilidade ajudam a compor a leitura do negócio.",
+    "items": ["Fluxo de caixa", "Compromissos", "Previsibilidade"]
   },
   {
     "id": "decisao",

@@ -24,7 +24,7 @@ const chapters: readonly StoryChapter[] = [
     eyebrow: '03 · VISIBILIDADE',
     title: 'Visibilidade',
     body: 'Leituras para acompanhar o período.',
-    items: ['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade'],
+    items: ['Fluxo de caixa', 'Compromissos', 'Previsibilidade'],
   },
   {
     id: 'decisao',
@@ -41,6 +41,7 @@ describe('Kapitalis system story', () => {
     expect(
       currentStory.map(({ eyebrow, title, items }) => [eyebrow, title, items]),
     ).toEqual(chapters.map(({ eyebrow, title, items }) => [eyebrow, title, items]))
+    expect(currentStory[2]?.body.toLocaleLowerCase()).not.toContain('indicadores')
   })
 
   it('story_chapters_render_in_order_with_one_active_step', () => {

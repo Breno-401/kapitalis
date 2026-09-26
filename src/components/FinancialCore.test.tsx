@@ -143,4 +143,13 @@ describe('Kapitalis financial core visual', () => {
     expect(core?.querySelectorAll('[data-insight-flow]')).toHaveLength(3)
     expect(core?.querySelectorAll('[data-insight-point]')).toHaveLength(3)
   })
+
+  it('visibility_does_not_render_the_orphaned_indicator_scaffold', () => {
+    const { container } = render(<FinancialCore state="visibilidade" />)
+    const core = container.querySelector('[data-financial-core]')
+
+    expect(
+      core?.querySelector('path[d="M174 386h68l32-35h92l32 35h68"]'),
+    ).toBeNull()
+  })
 })

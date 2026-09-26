@@ -14,13 +14,20 @@ function initials(author: string) {
     .toLocaleUpperCase('pt-BR')
 }
 
-export function ReviewCard({ review }: { review: GoogleReview }) {
+export function ReviewCard({
+  review,
+  idPrefix = '',
+}: {
+  review: GoogleReview
+  idPrefix?: string
+}) {
   const [isExpanded, setIsExpanded] = useState(false)
   const isLong = review.text.length > previewLimit
   const displayedText =
     isLong && !isExpanded
       ? `${review.text.slice(0, previewLimit).trimEnd()}…`
       : review.text
+  const reviewTextId = `${idPrefix}review-text-${review.id}`
 
   return (
     <article
@@ -38,7 +45,7 @@ export function ReviewCard({ review }: { review: GoogleReview }) {
       </div>
 
       <blockquote className={styles.quote}>
-        <p id={`review-text-${review.id}`}>{displayedText}</p>
+        <p id={reviewTextId}>{displayedText}</p>
       </blockquote>
 
       {isLong ? (
@@ -46,7 +53,7 @@ export function ReviewCard({ review }: { review: GoogleReview }) {
           className={styles.expandButton}
           type="button"
           aria-expanded={isExpanded}
-          aria-controls={`review-text-${review.id}`}
+          aria-controls={reviewTextId}
           onClick={() => setIsExpanded((expanded) => !expanded)}
         >
           {isExpanded

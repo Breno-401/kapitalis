@@ -218,10 +218,6 @@
   stroke-dasharray: 1 5;
 }
 
-.core[data-state='visibilidade'] .signalVisible {
-  opacity: 0.24;
-}
-
 .core[data-state='visibilidade'] .node .nodeLabel {
   opacity: 0.12;
 }
