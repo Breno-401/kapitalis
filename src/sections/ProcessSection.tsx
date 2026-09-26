@@ -1,3 +1,4 @@
+import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import styles from './ProcessSection.module.css'
 
 const steps = [
@@ -24,6 +25,41 @@ const steps = [
 ] as const
 
 export function ProcessSection() {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const sectionId = useId()
+  const activeStep = steps[activeIndex]!
+  const activeTabId = `${sectionId}-tab-${activeIndex}`
+  const panelId = `${sectionId}-panel`
+  const nextStep = steps[activeIndex + 1]
+
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex = index
+
+    switch (event.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        nextIndex = (index + 1) % steps.length
+        break
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        nextIndex = (index - 1 + steps.length) % steps.length
+        break
+      case 'Home':
+        nextIndex = 0
+        break
+      case 'End':
+        nextIndex = steps.length - 1
+        break
+      default:
+        return
+    }
+
+    event.preventDefault()
+    setActiveIndex(nextIndex)
+    tabRefs.current[nextIndex]?.focus()
+  }
+
   return (
     <section
       className={styles.section}
@@ -40,17 +76,73 @@ export function ProcessSection() {
           </p>
         </div>
 
-        <ol className={styles.steps} aria-label="Etapas conceituais do processo">
-          {steps.map(({ title, description }, index) => (
-            <li className={styles.step} key={title}>
-              <span className={styles.stepNumber} aria-hidden="true">
-                {String(index + 1).padStart(2, '0')}
+        <div className={styles.route}>
+          <div
+            className={styles.steps}
+            role="tablist"
+            aria-label="Etapas conceituais do processo"
+            aria-orientation="vertical"
+          >
+            {steps.map(({ title }, index) => (
+              <button
+                aria-controls={panelId}
+                aria-label={title}
+                aria-selected={index === activeIndex}
+                className={styles.step}
+                id={`${sectionId}-tab-${index}`}
+                key={title}
+                onClick={() => setActiveIndex(index)}
+                onKeyDown={(event) => handleTabKeyDown(event, index)}
+                ref={(element) => {
+                  tabRefs.current[index] = element
+                }}
+                role="tab"
+                tabIndex={index === activeIndex ? 0 : -1}
+                type="button"
+              >
+                <span className={styles.stepNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span className={styles.stepTitle}>{title}</span>
+                <span className={styles.stepMark} aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+
+          <article
+            aria-labelledby={`${activeTabId}-heading`}
+            className={styles.panel}
+            id={panelId}
+            key={activeIndex}
+            role="tabpanel"
+            tabIndex={0}
+          >
+            <div className={styles.panelTopline}>
+              <span>ETAPA ATUAL</span>
+              <span aria-hidden="true">
+                {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
               </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </li>
-          ))}
-        </ol>
+            </div>
+            <div className={styles.panelContent} aria-live="polite">
+              <span className={styles.panelNumber} aria-hidden="true">
+                {String(activeIndex + 1).padStart(2, '0')}
+              </span>
+              <h3 id={`${activeTabId}-heading`}>{activeStep.title}</h3>
+              <p>{activeStep.description}</p>
+            </div>
+            <div className={styles.progressTrack}>
+              <progress
+                aria-label="Progresso da sequência"
+                className={styles.progress}
+                max={steps.length}
+                value={activeIndex + 1}
+              />
+              <span>
+                {nextStep ? `A seguir · ${nextStep.title}` : 'Etapa final da sequência'}
+              </span>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
   )

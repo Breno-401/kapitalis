@@ -97,6 +97,7 @@ describe('site navigation', () => {
     const navigation = screen.getByRole('navigation', {
       name: 'Navegação principal',
     })
+    const header = screen.getByRole('banner')
     expect(
       within(navigation).getByRole('link', { name: 'Contexto' }).getAttribute('href'),
     ).toBe('#contexto')
@@ -104,10 +105,10 @@ describe('site navigation', () => {
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
     ).toBe('#sistema')
     expect(
-      screen.getAllByRole('link', { name: 'Conversar no WhatsApp' }),
+      within(header).getAllByRole('link', { name: 'Conversar no WhatsApp' }),
     ).toHaveLength(2)
     expect(
-      screen
+      within(header)
         .getAllByRole('link', { name: 'Conversar no WhatsApp' })
         .every((link) => link.getAttribute('href') === site.whatsappUrl),
     ).toBe(true)

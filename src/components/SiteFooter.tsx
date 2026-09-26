@@ -9,8 +9,8 @@ const footerNavigation = [
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#processo', label: 'Processo' },
-  { href: '#conteudo', label: 'Ferramentas e conteúdo' },
-  { href: '#contato', label: 'Contato' },
+  { href: '#conteudo', label: 'Ferramentas' },
+  { href: '#avaliacoes', label: 'Avaliações no Google' },
 ]
 
 export function SiteFooter() {
@@ -22,6 +22,9 @@ export function SiteFooter() {
             <BrandMark className={styles.brandMark} />
             <span>{site.name}</span>
           </a>
+          <p className={styles.tagline}>
+            Contabilidade e BPO Financeiro para acompanhar a rotina da empresa.
+          </p>
           <p className={styles.locality}>{site.locality}</p>
         </div>
 

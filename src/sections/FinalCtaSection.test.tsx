@@ -4,10 +4,13 @@ import { site } from '../data/site'
 import { FinalCtaSection } from './FinalCtaSection'
 
 describe('final contact section', () => {
-  it('offers a secure link to the published Kapitalis WhatsApp', () => {
+  it('closes the narrative with a clear secure WhatsApp invitation', () => {
     render(<FinalCtaSection />)
 
-    const link = screen.getByRole('link', { name: 'Conversar com a Kapitalis' })
+    expect(
+      screen.getByRole('heading', { name: 'Vamos conversar sobre a rotina da sua empresa.' }),
+    ).toBeTruthy()
+    const link = screen.getByRole('link', { name: 'Conversar no WhatsApp' })
     expect(link.getAttribute('href')).toBe(site.whatsappUrl)
     expect(link.getAttribute('target')).toBe('_blank')
     expect(link.getAttribute('rel')).toBe('noopener noreferrer')

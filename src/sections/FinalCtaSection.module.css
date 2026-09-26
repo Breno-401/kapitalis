@@ -12,13 +12,33 @@
   padding-block: clamp(4.8rem, 8.5vw, 7.6rem);
 }
 
-.eyebrow {
+.topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
   margin-bottom: 1.15rem;
+}
+
+.eyebrow {
   color: var(--color-gold-soft);
   font-size: 0.69rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+
+.systemTrace {
+  width: min(22rem, 38vw);
+  overflow: visible;
+  stroke: rgb(232 213 143 / 32%);
+  stroke-width: 1;
+}
+
+.systemTrace circle {
+  fill: var(--color-gold-soft);
+  stroke: var(--color-navy);
+  stroke-width: 1.5;
 }
 
 .content {
@@ -102,6 +122,14 @@
 }
 
 @media (max-width: 43.75rem) {
+  .topline {
+    margin-bottom: 1.4rem;
+  }
+
+  .systemTrace {
+    display: none;
+  }
+
   .content {
     align-items: flex-start;
     flex-direction: column;
