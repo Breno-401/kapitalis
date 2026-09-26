@@ -71,12 +71,6 @@
   text-transform: uppercase;
 }
 
-.kicker > span {
-  width: 1.35rem;
-  height: 1px;
-  background: var(--color-gold);
-}
-
 .title {
   display: grid;
   gap: 0.04em;

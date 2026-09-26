@@ -33,6 +33,14 @@ const approvedAnchors = [
   '#contato',
 ]
 
+const expectedNavigation = [
+  'Contexto',
+  'Sistema',
+  'Serviços',
+  'BPO Financeiro',
+  'Contato',
+]
+
 describe('site navigation', () => {
   it('mobile_menu_opens_and_closes_with_escape_and_returns_focus', () => {
     render(<App />)
@@ -43,9 +51,11 @@ describe('site navigation', () => {
     menuButton.focus()
     fireEvent.click(menuButton)
     expect(menuButton.getAttribute('aria-expanded')).toBe('true')
+    expect(menuButton.getAttribute('aria-label')).toBe('Fechar menu')
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(menuButton.getAttribute('aria-expanded')).toBe('false')
+    expect(menuButton.getAttribute('aria-label')).toBe('Abrir menu')
     expect(document.activeElement).toBe(menuButton)
 
     fireEvent.click(menuButton)
@@ -89,11 +99,40 @@ describe('site navigation', () => {
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
     ).toBe('#sistema')
     expect(
+      screen.getAllByRole('link', { name: 'Conversar no WhatsApp' }),
+    ).toHaveLength(2)
+    expect(
       screen
-        .getByRole('link', { name: 'Conversar no WhatsApp' })
-        .getAttribute('href'),
-    ).toBe(site.whatsappUrl)
+        .getAllByRole('link', { name: 'Conversar no WhatsApp' })
+        .every((link) => link.getAttribute('href') === site.whatsappUrl),
+    ).toBe(true)
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
+  })
+
+  it('brand_uses_the_original_symbol_without_distorting_its_aspect_ratio', () => {
+    render(<App />)
+
+    const source = document.querySelector('[data-kapitalis-brandmark]')
+    const mark = source?.closest('svg')
+    expect(source?.getAttribute('href')).toBe('/assets/kapitalis-logo-original.png')
+    expect(mark?.getAttribute('viewBox')).toBe('525 236 486 432')
+    expect(mark?.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet')
+  })
+
+  it('mobile_menu_has_only_the_five_requested_destinations_and_whatsapp_at_the_end', () => {
+    render(<App />)
+
+    const navigation = screen.getByRole('navigation', {
+      name: 'Navegação principal',
+    })
+    const links = within(navigation).getAllByRole('link')
+
+    expect(links.map((link) => link.textContent?.trim())).toEqual([
+      ...expectedNavigation,
+      'Conversar no WhatsApp',
+    ])
+    expect(links.at(-1)?.getAttribute('href')).toBe(site.whatsappUrl)
+    expect(links.at(-1)?.hasAttribute('data-mobile-contact')).toBe(true)
   })
 
   it('active_indicator_tracks_the_current_link_when_the_mobile_menu_opens', () => {

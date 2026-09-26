@@ -7,7 +7,7 @@ const navigation = [
   { href: '#contexto', label: 'Contexto' },
   { href: '#sistema', label: 'Sistema' },
   { href: '#servicos', label: 'Serviços' },
-  { href: '#bpo', label: 'BPO' },
+  { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#contato', label: 'Contato' },
 ] as const
 
@@ -163,10 +163,11 @@ export function SiteHeader() {
           aria-controls="site-navigation"
           onClick={() => setIsMenuOpen((open) => !open)}
         >
-          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-          </svg>
-          <span>Menu</span>
+          <span aria-hidden="true" className={styles.menuGlyph}>
+            <span />
+            <span />
+            <span />
+          </span>
         </button>
 
         <nav
@@ -176,27 +177,42 @@ export function SiteHeader() {
           data-open={isMenuOpen}
           ref={railRef}
         >
-          <span
-            aria-hidden="true"
-            className={styles.activeIndicator}
-            data-nav-indicator
-            data-visible="false"
-            ref={indicatorRef}
-          />
-          <ul className={styles.navigationList}>
-            {navigation.map(({ href, label }) => (
-              <li key={href}>
-                <a
-                  aria-current={activeHref === href ? 'location' : undefined}
-                  className={styles.navigationLink}
-                  href={href}
-                  onClick={closeAfterNavigation}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className={styles.navigationInner}>
+            <span
+              aria-hidden="true"
+              className={styles.activeIndicator}
+              data-nav-indicator
+              data-visible="false"
+              ref={indicatorRef}
+            />
+            <ul className={styles.navigationList}>
+              {navigation.map(({ href, label }) => (
+                <li key={href}>
+                  <a
+                    aria-current={activeHref === href ? 'location' : undefined}
+                    className={styles.navigationLink}
+                    href={href}
+                    onClick={closeAfterNavigation}
+                  >
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a
+              className={styles.menuContactLink}
+              data-mobile-contact
+              href={site.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeAfterNavigation}
+            >
+              Conversar no WhatsApp
+              <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+                <path d="M4.5 10h10m-4-4 4 4-4 4" />
+              </svg>
+            </a>
+          </div>
         </nav>
 
         <a

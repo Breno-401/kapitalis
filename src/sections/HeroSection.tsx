@@ -38,7 +38,6 @@ export function HeroSection() {
               inert={introHidden ? true : undefined}
             >
               <p className={styles.kicker} data-entry="eyebrow">
-                <span aria-hidden="true" />
                 Contabilidade &amp; BPO Financeiro · {site.locality}
               </p>
               <h1 className={styles.title} id="hero-title">

@@ -39,6 +39,14 @@ describe('Kapitalis hero', () => {
     ).toBeTruthy()
   })
 
+  it('hero_eyebrow_has_no_decorative_dash_and_preserves_locality_punctuation', () => {
+    render(<HeroSection />)
+
+    const eyebrow = document.querySelector('[data-entry="eyebrow"]')
+    expect(eyebrow?.querySelector('span')).toBeNull()
+    expect(eyebrow?.textContent).toContain('Vila Velha — ES')
+  })
+
   it('reduced_motion_keeps_hero_content_static_and_available', () => {
     const originalInnerWidth = window.innerWidth
     vi.stubGlobal(

@@ -7,14 +7,12 @@
 }
 
 html {
-  min-width: 20rem;
   scroll-behavior: smooth;
   scroll-padding-top: var(--space-8);
   background: var(--color-paper);
 }
 
 body {
-  min-width: 20rem;
   min-height: 100vh;
   margin: 0;
   background: var(--color-paper);

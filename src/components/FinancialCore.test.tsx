@@ -23,4 +23,73 @@ describe('Kapitalis financial core visual', () => {
       ]),
     )
   })
+
+  it('kapitalis_brand_asset_replaces_the_invented_center_letter', () => {
+    const { container } = render(<FinancialCore state="entradas" />)
+
+    expect(container.querySelector('[data-kapitalis-brandmark]')?.getAttribute('href'))
+      .toBe('/assets/kapitalis-logo-original.png')
+    expect(container.querySelector('.centerMark')).toBeNull()
+    expect(container.querySelector('[data-financial-node="Kapitalis"]'))
+      .toBeTruthy()
+  })
+
+  it('chapters_activate_the_financial_elements_their_copy_describes', () => {
+    const { container, rerender } = render(<FinancialCore state="entradas" />)
+    const core = () => container.querySelector('[data-financial-core]')
+
+    expect(core()?.querySelectorAll('[data-source-active="true"]')).toHaveLength(5)
+    expect(core()?.querySelector('[data-flow="source-to-core"]')?.getAttribute('data-active'))
+      .toBe('true')
+
+    rerender(<FinancialCore state="organizacao" />)
+    expect(core()?.querySelector('[data-ring="organization"]')?.getAttribute('data-active'))
+      .toBe('true')
+    expect(core()?.querySelector('[data-flow="convergence"]')?.getAttribute('data-active'))
+      .toBe('true')
+
+    rerender(<FinancialCore state="visibilidade" />)
+    expect(
+      Array.from(core()?.querySelectorAll('[data-financial-insight]') ?? []).map(
+        (node) => node.getAttribute('data-financial-insight'),
+      ),
+    ).toEqual(['Fluxo de caixa', 'Compromissos', 'Indicadores', 'Previsibilidade'])
+    expect(core()?.querySelectorAll('[data-insight-active="true"]')).toHaveLength(4)
+
+    rerender(<FinancialCore state="decisao" />)
+    expect(core()?.querySelector('[data-output="next-step"]')?.getAttribute('data-active'))
+      .toBe('true')
+  })
+
+  it('decision_signal_stays_clear_of_the_kapitalis_wordmark', () => {
+    const { container } = render(<FinancialCore state="decisao" />)
+    const wordmark = container.querySelector('[data-core-wordmark]')
+    const signal = container.querySelector('[data-financial-signal="decision"]')
+    const wordmarkBaseline = Number(wordmark?.getAttribute('y'))
+    const signalYs = Array.from(
+      signal?.getAttribute('d')?.matchAll(/(?:M|L)\s*-?\d+(?:\.\d+)?\s+(-?\d+(?:\.\d+)?)/g) ?? [],
+    ).map((match) => Number(match[1]))
+
+    expect(wordmarkBaseline).toBe(407)
+    expect(signalYs.length).toBeGreaterThan(1)
+    expect(Math.min(...signalYs)).toBeGreaterThan(wordmarkBaseline + 20)
+  })
+
+  it('visibility_labels_do_not_collide_with_source_node_labels', () => {
+    const { container } = render(<FinancialCore state="visibilidade" />)
+    const insightY = Array.from(
+      container.querySelectorAll('[data-insight-active="true"]'),
+    ).map((label) => Number(label.getAttribute('y')))
+    const fixedLabelY = Array.from(
+      container.querySelectorAll('[data-source-label]'),
+    ).map((label) => Number(label.getAttribute('y')) + 49)
+
+    expect(insightY).toHaveLength(4)
+    expect(fixedLabelY).toHaveLength(5)
+    expect(
+      insightY.every((y) =>
+        fixedLabelY.every((fixedY) => Math.abs(y - fixedY) >= 20),
+      ),
+    ).toBe(true)
+  })
 })
