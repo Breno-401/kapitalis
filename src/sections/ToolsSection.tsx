@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { calculateFactorR } from '../calculators/factorR'
+import { TaxSimulator } from '../calculators/taxSimulator/TaxSimulator'
 import { toolGroups, type BusinessTool, type ToolField } from '../data/tools'
 import styles from './ToolsSection.module.css'
 
@@ -133,7 +134,7 @@ export function ToolsSection() {
           </p>
         </div>
 
-        <div className={styles.workspace}>
+        <div className={styles.workspace} data-simulator={selectedTool.id === 'simulador-tributario-360'}>
           <nav className={styles.catalog} aria-label="Escolha uma ferramenta">
             {toolGroups.map((group) => (
               <section
@@ -171,7 +172,9 @@ export function ToolsSection() {
             ))}
           </nav>
 
-          <section
+          {selectedTool.id === 'simulador-tributario-360' ? (
+            <TaxSimulator headingId={headingId} />
+          ) : <section
             className={styles.toolPanel}
             aria-labelledby={headingId}
           >
@@ -207,7 +210,7 @@ export function ToolsSection() {
             </form>
 
             <ToolResult tool={selectedTool} values={values} />
-          </section>
+          </section>}
         </div>
 
         <div className={styles.nextSection}>
