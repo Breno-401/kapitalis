@@ -24,7 +24,7 @@ function rectangle(left: number, top: number, width: number, height: number) {
 
 const approvedAnchors = [
   '#inicio',
-  '#contexto',
+  '#duvidas-frequentes',
   '#sistema',
   '#servicos',
   '#bpo',
@@ -34,7 +34,7 @@ const approvedAnchors = [
 ]
 
 const expectedNavigation = [
-  'Contexto',
+  'Dúvidas frequentes',
   'Sistema',
   'Serviços',
   'BPO Financeiro',
@@ -139,8 +139,8 @@ describe('site navigation', () => {
     })
     const header = screen.getByRole('banner')
     expect(
-      within(navigation).getByRole('link', { name: 'Contexto' }).getAttribute('href'),
-    ).toBe('#contexto')
+      within(navigation).getByRole('link', { name: 'Dúvidas frequentes' }).getAttribute('href'),
+    ).toBe('#duvidas-frequentes')
     expect(
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
     ).toBe('#sistema')

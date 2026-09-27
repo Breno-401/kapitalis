@@ -5,7 +5,7 @@ import type { SiteTheme } from './theme'
 import styles from './SiteHeader.module.css'
 
 const navigation = [
-  { href: '#contexto', label: 'Contexto' },
+  { href: '#duvidas-frequentes', label: 'Dúvidas frequentes' },
   { href: '#sistema', label: 'Sistema' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },

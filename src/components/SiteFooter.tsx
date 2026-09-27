@@ -4,7 +4,7 @@ import styles from './SiteFooter.module.css'
 
 const footerNavigation = [
   { href: '#inicio', label: 'Início' },
-  { href: '#contexto', label: 'Contexto' },
+  { href: '#duvidas-frequentes', label: 'Dúvidas frequentes' },
   { href: '#sistema', label: 'Sistema Kapitalis' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },

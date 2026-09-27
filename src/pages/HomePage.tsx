@@ -5,7 +5,7 @@ import { googleReviewsSnapshot } from '../data/googleReviews'
 import { BpoSection } from '../sections/BpoSection'
 import { FinalCtaSection } from '../sections/FinalCtaSection'
 import { HeroSection } from '../sections/HeroSection'
-import { ProblemSection } from '../sections/ProblemSection'
+import { FaqSection } from '../sections/FaqSection'
 import { ProcessSection } from '../sections/ProcessSection'
 import { ReviewsSection } from '../sections/ReviewsSection'
 import { ServicesSection } from '../sections/ServicesSection'
@@ -20,11 +20,11 @@ export function HomePage() {
         <HeroSection />
         <ReviewsSection data={googleReviewsSnapshot} />
         <TrustStrip />
-        <ProblemSection />
         <ServicesSection />
         <BpoSection />
         <ToolsSection />
         <ProcessSection />
+        <FaqSection />
         <FinalCtaSection />
       </main>
       <SiteFooter />
