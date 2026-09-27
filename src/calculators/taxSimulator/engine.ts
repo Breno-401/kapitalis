@@ -4,6 +4,8 @@ export type TaxActivity = 'commerce' | 'industry' | 'services-iii' | 'services-u
 export type TaxSimulationInput = {
   monthlyRevenue: string
   rbt12: string
+  annualRevenue?: string
+  profitMargin?: string
   activity: TaxActivity
   ordinarySimplesScenario: boolean
   pastInitialYear: boolean
@@ -18,17 +20,25 @@ type ReadyResult = {
   monthlyCents: number
   annualCents: number
   effectiveRate: number
-  band: number
-  nominalRate: number
-  deductionCents: number
+  breakdown: TaxBreakdown[]
+  band?: number
+  nominalRate?: number
+  deductionCents?: number
+}
+
+export type TaxBreakdown = {
+  key: 'das' | 'irpj' | 'csll' | 'pis' | 'cofins'
+  label: string
+  monthlyCents: number
+  annualCents: number
 }
 
 export type RegimeResult = PendingResult | InvalidResult | ReadyResult
 export type TaxSimulationResult = {
   simples: RegimeResult
-  presumido: PendingResult
-  real: PendingResult
-  lowestEstimatedCost: null
+  presumido: RegimeResult
+  real: RegimeResult
+  lowestEstimatedCost: 'simples' | 'presumido' | 'real' | null
 }
 
 type Band = { maxCents: number; nominalBasisPoints: number; deductionCents: number }
@@ -54,6 +64,84 @@ function toCents(value: string): number | null {
   const [reais, centavos = ''] = normalized.split('.')
   const result = Number(reais) * 100 + Number(centavos.padEnd(2, '0'))
   return Number.isSafeInteger(result) ? result : null
+}
+
+function pending(message: string): PendingResult {
+  return { status: 'pending', reason: message }
+}
+
+function invalid(message: string): InvalidResult {
+  return { status: 'invalid', reason: message }
+}
+
+function legacyEstimate(
+  monthlyRevenue: number,
+  components: { key: TaxBreakdown['key']; label: string; amount: number }[],
+): ReadyResult {
+  const total = components.reduce((sum, component) => sum + component.amount, 0)
+  return {
+    status: 'ready',
+    monthlyCents: Math.round(total * 100),
+    annualCents: Math.round(total * 12 * 100),
+    effectiveRate: total / monthlyRevenue,
+    breakdown: components.map(({ key, label, amount }) => ({
+      key,
+      label,
+      monthlyCents: Math.round(amount * 100),
+      annualCents: Math.round(amount * 12 * 100),
+    })),
+  }
+}
+
+function calculateLegacyPresumido(input: TaxSimulationInput): RegimeResult {
+  const annualRevenueValue = input.annualRevenue?.trim() ?? ''
+  const annualRevenueCents = annualRevenueValue ? toCents(annualRevenueValue) : null
+  if (!annualRevenueValue) return pending('Informe o faturamento anual previsto para estimar o Lucro Presumido.')
+  if (annualRevenueCents === null) return invalid('Revise o faturamento anual previsto.')
+  if (annualRevenueCents === 0) return pending('Informe um faturamento anual maior que zero.')
+  if (!input.activity) return pending('Escolha a atividade principal para estimar o Lucro Presumido.')
+
+  const annualRevenue = annualRevenueCents / 100
+  const monthlyRevenue = annualRevenue / 12
+  const serviceActivity = input.activity === 'services-iii' || input.activity === 'services-unconfirmed'
+  const irpjBase = monthlyRevenue * (serviceActivity ? 0.32 : 0.08)
+  const csllBase = monthlyRevenue * (serviceActivity ? 0.32 : 0.12)
+  const irpj = 0.15 * irpjBase + 0.10 * Math.max(irpjBase - 20000, 0)
+  const csll = 0.09 * csllBase
+  const pis = 0.0065 * monthlyRevenue
+  const cofins = 0.03 * monthlyRevenue
+
+  return legacyEstimate(monthlyRevenue, [
+    { key: 'irpj', label: 'IRPJ', amount: irpj },
+    { key: 'csll', label: 'CSLL', amount: csll },
+    { key: 'pis', label: 'PIS', amount: pis },
+    { key: 'cofins', label: 'COFINS', amount: cofins },
+  ])
+}
+
+function calculateLegacyReal(input: TaxSimulationInput): RegimeResult {
+  const annualRevenueValue = input.annualRevenue?.trim() ?? ''
+  const annualRevenueCents = annualRevenueValue ? toCents(annualRevenueValue) : null
+  if (!annualRevenueValue) return pending('Informe o faturamento anual previsto para estimar o Lucro Real.')
+  if (annualRevenueCents === null) return invalid('Revise o faturamento anual previsto.')
+  if (annualRevenueCents === 0) return pending('Informe um faturamento anual maior que zero.')
+
+  const annualRevenue = annualRevenueCents / 100
+  const monthlyRevenue = annualRevenue / 12
+  const parsedMargin = Number.parseFloat(input.profitMargin ?? '')
+  const margin = (Number.isFinite(parsedMargin) ? parsedMargin : 0) / 100
+  const estimatedProfit = monthlyRevenue * margin
+  const irpj = 0.15 * Math.max(estimatedProfit, 0) + 0.10 * Math.max(estimatedProfit - 20000, 0)
+  const csll = 0.09 * Math.max(estimatedProfit, 0)
+  const pis = 0.0165 * monthlyRevenue
+  const cofins = 0.076 * monthlyRevenue
+
+  return legacyEstimate(monthlyRevenue, [
+    { key: 'irpj', label: 'IRPJ', amount: irpj },
+    { key: 'csll', label: 'CSLL', amount: csll },
+    { key: 'pis', label: 'PIS', amount: pis },
+    { key: 'cofins', label: 'COFINS', amount: cofins },
+  ])
 }
 
 export function calculateTaxSimulation(input: TaxSimulationInput): TaxSimulationResult {
@@ -90,16 +178,28 @@ export function calculateTaxSimulation(input: TaxSimulationInput): TaxSimulation
       monthlyCents: estimatedMonthlyCents,
       annualCents: estimatedMonthlyCents * 12,
       effectiveRate,
+      breakdown: [{
+        key: 'das',
+        label: 'DAS estimado',
+        monthlyCents: estimatedMonthlyCents,
+        annualCents: estimatedMonthlyCents * 12,
+      }],
       band: bandIndex + 1,
       nominalRate: band.nominalBasisPoints / 10000,
       deductionCents: band.deductionCents,
     }
   }
 
+  const presumido = calculateLegacyPresumido(input)
+  const real = calculateLegacyReal(input)
   return {
     simples,
-    presumido: { status: 'pending', reason: 'Faltam receita trimestral por atividade, tributos locais, folha e regras aplicáveis ao período de 2026.' },
-    real: { status: 'pending', reason: 'Faltam lucro fiscal apurado, ajustes, créditos de PIS/Cofins, tributos locais e folha.' },
-    lowestEstimatedCost: null,
+    presumido,
+    real,
+    lowestEstimatedCost: simples.status === 'ready' && presumido.status === 'ready' && real.status === 'ready'
+      ? simples.monthlyCents <= presumido.monthlyCents && simples.monthlyCents <= real.monthlyCents
+        ? 'simples'
+        : presumido.monthlyCents <= real.monthlyCents ? 'presumido' : 'real'
+      : null,
   }
 }

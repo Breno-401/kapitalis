@@ -27,7 +27,7 @@ export function readSharedSimulation(search: string): SharedTaxSimulation {
     },
     regime: regime === 'presumido' || regime === 'real' ? regime : 'simples',
     annualRevenue: params.get('faturamentoAnual') ?? '',
-    profitMargin: params.get('margemLucro') ?? '',
+    profitMargin: params.get('margemLucro') ?? '15',
     revenueBasis: params.get('competencia') === '1' ? 'competencia' : params.get('baseReceita') === 'caixa' ? 'caixa' : 'unset',
   }
 }

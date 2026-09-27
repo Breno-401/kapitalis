@@ -4,6 +4,8 @@ import { calculateTaxSimulation, type TaxSimulationInput } from './engine'
 const base: TaxSimulationInput = {
   monthlyRevenue: '10000',
   rbt12: '120000',
+  annualRevenue: '120000',
+  profitMargin: '15',
   activity: 'services-iii',
   ordinarySimplesScenario: true,
   pastInitialYear: true,
@@ -15,8 +17,54 @@ describe('tax simulator', () => {
   it('uses Annex III nominal rate and deduction instead of the published legacy shortcut', () => {
     const result = calculateTaxSimulation(base)
     expect(result.simples).toMatchObject({ status: 'ready', monthlyCents: 60000, annualCents: 720000, effectiveRate: 0.06, band: 1 })
-    expect(result.presumido.status).toBe('pending')
-    expect(result.real.status).toBe('pending')
+    expect(result.presumido).toMatchObject({ status: 'ready', monthlyCents: 113300, annualCents: 1359600 })
+    expect(result.real).toMatchObject({ status: 'ready', monthlyCents: 128500, annualCents: 1542000 })
+    expect(result.lowestEstimatedCost).toBe('simples')
+  })
+
+  it('uses the audited simplified Lucro Presumido breakdown for services', () => {
+    const result = calculateTaxSimulation(base).presumido
+    expect(result).toMatchObject({
+      status: 'ready',
+      monthlyCents: 113300,
+      annualCents: 1359600,
+      breakdown: [
+        { key: 'irpj', monthlyCents: 48000 },
+        { key: 'csll', monthlyCents: 28800 },
+        { key: 'pis', monthlyCents: 6500 },
+        { key: 'cofins', monthlyCents: 30000 },
+      ],
+    })
+  })
+
+  it('uses the audited simplified Lucro Real margin formula and keeps annual totals reproducible', () => {
+    const result = calculateTaxSimulation({ ...base, annualRevenue: '120000', profitMargin: '15' }).real
+    expect(result).toMatchObject({
+      status: 'ready',
+      monthlyCents: 128500,
+      annualCents: 1542000,
+      effectiveRate: 0.1285,
+      breakdown: [
+        { key: 'irpj', monthlyCents: 22500 },
+        { key: 'csll', monthlyCents: 13500 },
+        { key: 'pis', monthlyCents: 16500 },
+        { key: 'cofins', monthlyCents: 76000 },
+      ],
+    })
+  })
+
+  it('applies the legacy additional IRPJ threshold to the estimated monthly tax base', () => {
+    const result = calculateTaxSimulation({ ...base, annualRevenue: '1200000' }).presumido
+    expect(result.status).toBe('ready')
+    if (result.status !== 'ready') return
+    expect(result.monthlyCents).toBe(1253000)
+    expect(result.breakdown.find(({ key }) => key === 'irpj')?.monthlyCents).toBe(600000)
+  })
+
+  it('leaves a regime pending until its required legacy inputs are available', () => {
+    const result = calculateTaxSimulation({ ...base, annualRevenue: '', activity: '' })
+    expect(result.presumido).toMatchObject({ status: 'pending' })
+    expect(result.real).toMatchObject({ status: 'pending' })
     expect(result.lowestEstimatedCost).toBeNull()
   })
 

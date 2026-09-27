@@ -1,10 +1,3 @@
-.shell {
-  width: 100%;
-  min-width: 0;
-  color: var(--color-navy);
-}
-
-.header { padding-bottom: 0.5rem; }
 .regimePicker legend > span,
 .columnHeading > span {
   color: var(--color-text-secondary);
@@ -12,15 +5,6 @@
   font-weight: 750;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-}
-
-.header h3 {
-  margin-top: 0;
-  font-family: var(--font-interface);
-  font-size: clamp(2rem, 3vw, 3rem);
-  letter-spacing: -0.04em;
-  line-height: 1.05;
-  font-weight: 600;
 }
 
 .regimePicker {
@@ -66,22 +50,20 @@
 .regimeButton small { color: var(--color-text-secondary); font-size: 0.68rem; white-space: nowrap; }
 .regimeButton:hover { border-color: var(--color-gold); background: var(--color-gold-wash); }
 .regimeButton[aria-pressed='true'] { border-color: var(--color-navy); background: var(--color-navy); color: var(--color-paper); }
-.regimeButton[aria-pressed='true'] small { color: color-mix(in srgb, var(--color-paper) 76%, transparent); }
 .regimeButton:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
 
-.columns { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; margin-top: 0.35rem; }
-.inputs,
-.dashboard { min-width: 0; padding: 0.25rem 1.5rem 0.6rem 0; }
-.dashboard { position: sticky; top: 6rem; padding-right: 0; padding-left: 1.5rem; }
+.leftPane { min-width: 0; display: flex; flex-direction: column; padding: 0.25rem 1.5rem 0.6rem 0; }
+.dashboardPane { min-width: 0; padding: 0.25rem 0 0.6rem 1.5rem; }
+.inputForm { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.dashboard { min-width: 0; }
 .columnHeading { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 0.65rem; }
-.inputs .columnHeading { margin-top: 0.95rem; }
+.inputForm .columnHeading { margin-top: 0.95rem; }
 .columnHeading h4 { font-size: 0.94rem; font-weight: 700; }
 
 .field { display: grid; gap: 0.35rem; margin-top: 0.7rem; color: var(--color-navy); font-size: 0.82rem; font-weight: 650; }
 .field > span small { display: block; margin-top: 0.12rem; color: var(--color-text-secondary); font-size: 0.68rem; font-weight: 450; }
 .field select,
-.moneyInput,
-.share input {
+.moneyInput {
   width: 100%;
   min-width: 0;
   min-height: 3.25rem;
@@ -100,7 +82,6 @@
 .moneyInput[data-suffix='true'] > span { order: 2; padding-right: 0.75rem; padding-left: 0; }
 .moneyInput:focus-within,
 .field select:focus-visible,
-.share input:focus-visible,
 .share button:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 2px; }
 .moneyInput input:focus-visible { outline: none; }
 
@@ -114,25 +95,28 @@
 .heroMetric > span { color: var(--color-text-secondary); font-size: 0.78rem; font-weight: 600; }
 .heroMetric > strong { display: block; margin-top: 0.05rem; color: var(--color-navy); font-family: var(--font-interface); font-size: clamp(3rem, 4.3vw, 3.75rem); font-variant-numeric: tabular-nums; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
 .heroMetric p { margin-top: 0.15rem; color: var(--color-text-secondary); font-size: 0.7rem; line-height: 1.35; }
+.estimateNote { display: block; max-width: 34rem; margin-top: 0.25rem; color: var(--color-text-muted); font-size: 0.63rem; font-weight: 450; line-height: 1.35; }
 
 .ringBlock { display: grid; grid-template-columns: minmax(8rem, 0.58fr) minmax(0, 1.42fr); align-items: center; gap: 0.8rem; padding: 0.1rem 0 0.25rem; }
-.ring { position: relative; width: min(100%, 10rem); margin-inline: auto; aspect-ratio: 1; }
+.ring { position: relative; width: min(100%, 9.5rem); margin-inline: auto; aspect-ratio: 1; }
 .ring svg { display: block; width: 100%; }
-.ring circle { fill: none; stroke-width: 12; }
+.ring circle { fill: none; stroke-width: 15; }
 .ringTrack { stroke: var(--color-border-light); }
 .ringTax,
-.ringRemaining { stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dasharray var(--duration-standard) var(--ease-standard), stroke-dashoffset var(--duration-standard) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); cursor: pointer; }
+.ringRemaining { stroke-linecap: butt; transition: stroke-dasharray var(--duration-standard) var(--ease-standard), stroke-dashoffset var(--duration-standard) var(--ease-standard), opacity var(--duration-fast) var(--ease-standard); pointer-events: none; }
+.ring .ringHitArea { fill: none; stroke: transparent; stroke-width: 28; stroke-linecap: butt; pointer-events: stroke; cursor: pointer; }
 .ringTax { stroke: var(--color-gold); }
+.ringTax[data-kind='csll'] { stroke: var(--color-navy-raised); }
+.ringTax[data-kind='pis'] { stroke: var(--color-gold-soft); }
+.ringTax[data-kind='cofins'] { stroke: var(--color-navy); }
 .ringRemaining { stroke: var(--color-navy-raised); }
-.ringTax[data-active='true'],
-.ringRemaining[data-active='true'] { stroke-width: 16; }
 .ring[data-has-active='true'] .ringTax[data-active='false'],
-.ring[data-has-active='true'] .ringRemaining[data-active='false'] { opacity: 0.45; }
+.ring[data-has-active='true'] .ringRemaining[data-active='false'] { opacity: 0.42; }
 .ringCenter { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.12rem; text-align: center; }
 .ring svg circle:focus-visible { outline: none; filter: drop-shadow(0 0 3px var(--color-gold)); }
 .ringCenter span { color: var(--color-text-secondary); font-size: 0.65rem; }
 .ringCenter strong { font-family: var(--font-interface); font-size: 1.6rem; font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -0.04em; }
-.legend { display: grid; gap: 0.35rem; min-width: 0; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 0.2rem 0.35rem; min-width: 0; }
 .legendItem { display: grid; width: 100%; grid-template-columns: 0.55rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; padding: 0.32rem 0.35rem; border: 1px solid transparent; border-radius: var(--radius-small); background: transparent; color: var(--color-text-secondary); font: inherit; font-size: 0.78rem; text-align: left; }
 .legendItem:not(.legendItemDisabled) { cursor: pointer; }
 .legendItem[data-active='true'] { border-color: var(--color-border-light); background: var(--color-gold-wash); color: var(--color-navy); }
@@ -140,9 +124,20 @@
 .legendItem strong { color: var(--color-navy); font-size: 0.78rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .legendItemDisabled { cursor: default; }
 .legendDot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--color-border-light); }
+.legendDot[data-kind='das'],
+.legendDot[data-kind='irpj'] { background: var(--color-gold); }
+.legendDot[data-kind='csll'] { background: var(--color-navy-raised); }
+.legendDot[data-kind='pis'] { background: var(--color-gold-soft); }
+.legendDot[data-kind='cofins'] { background: var(--color-navy); }
 .legendDot[data-kind='tax'] { background: var(--color-gold); }
 .legendDot[data-kind='remaining'] { background: var(--color-navy-raised); }
-.ringTooltip { grid-column: 2 / -1; padding: 0.55rem 0.7rem; border-radius: var(--radius-small); background: var(--color-white); color: var(--color-navy); font-size: 0.7rem; font-weight: 450; line-height: 1.45; }
+.ringTooltip { z-index: 1000; box-sizing: border-box; display: grid; width: min(19rem, calc(100vw - 1rem)); max-width: calc(100vw - 1rem); gap: 0.15rem; padding: 0.7rem 0.8rem; border: 1px solid var(--color-border-light); border-radius: var(--radius-small); background: var(--color-white); color: var(--color-navy); box-shadow: 0 10px 30px rgb(15 31 53 / 16%); font-size: 0.7rem; font-weight: 450; line-height: 1.4; pointer-events: none; animation: ringTooltipEnter 150ms ease-out both; }
+.ringTooltip strong { font-size: 0.67rem; font-weight: 750; text-transform: uppercase; }
+.ringTooltip > span { color: var(--color-text-secondary); }
+.ringTooltip b { font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.ringTooltip .tooltipPercentage { color: var(--color-navy); font-size: 0.68rem; font-weight: 700; }
+.ringTooltip p { margin-top: 0.16rem; color: var(--color-text-secondary); font-size: 0.67rem; }
+@keyframes ringTooltipEnter { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
 .annualSection { padding-top: 0.55rem; border-top: 1px solid var(--color-border-light); }
 .annualHeading { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.15rem; }
@@ -153,78 +148,61 @@
 .annualRevenue { display: flex; align-items: baseline; justify-content: space-between; gap: 0.7rem; padding: 0.35rem 0.25rem; color: var(--color-text-secondary); font-size: 0.72rem; }
 .annualRevenue strong { color: var(--color-navy); font-size: 0.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .annualSection .ringBlock { padding-top: 0.05rem; padding-bottom: 0.2rem; }
-.annualSection .ring { width: min(100%, 7.5rem); }
-.annualSection .ringCenter strong { font-size: 1.4rem; }
+.annualSection .ring { width: min(100%, 8.5rem); }
+.annualSection .ringCenter strong { font-size: 1.5rem; }
 
 .comparison { padding: 0.45rem 0 0.1rem; border-top: 1px solid var(--color-border-light); }
 .comparisonHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.35rem; }
 .comparison h5 { font-size: 0.73rem; font-weight: 750; }
-.comparison ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1rem; margin: 0; padding: 0; list-style: none; }
-.regimeRow { display: inline-flex; align-items: baseline; gap: 0.4rem; padding: 0; }
-.regimeName { font-size: 0.68rem; font-weight: 650; }
-.regimeValue { color: var(--color-text-secondary); font-size: 0.67rem; font-variant-numeric: tabular-nums; text-align: right; }
-.regimeRow[data-ready='true'] .regimeValue { color: var(--color-navy); font-weight: 750; }
-
-.interpretation { display: flex; align-items: baseline; gap: 0.35rem; }
-.interpretation span { color: var(--color-text-secondary); font-size: 0.61rem; }
-.interpretation strong { color: var(--color-navy); font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
-
-.belowCalculator { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: 0.35rem; margin-top: 0.3rem; padding-top: 0.75rem; border-top: 1px solid var(--color-border-light); }
-.share { display: grid; gap: 0.35rem; min-width: 0; }
-.share label { font-size: 0.76rem; font-weight: 750; }
-.share > div { display: flex; gap: 0.4rem; min-width: 0; }
-.share input { min-height: 2.5rem; padding: 0.4rem 0.7rem; font-size: 0.68rem; }
-.share button { flex: 0 0 auto; padding: 0.55rem 0.85rem; border: 0; border-radius: var(--radius-small); background: var(--color-navy); color: var(--color-paper); cursor: pointer; font: inherit; font-size: 0.72rem; font-weight: 700; transition: background-color var(--duration-fast) var(--ease-standard); }
-.share button:hover { background: var(--color-navy-raised); }
-.share > span { color: var(--color-text-muted); font-size: 0.64rem; }
-.share > span:empty { visibility: hidden; }
-
-.expertCta { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; grid-column: 1 / -1; padding-top: 0.3rem; }
-.expertCta span { color: var(--color-text-secondary); font-size: 0.67rem; }
-.expertCta a { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.7rem; padding: 0.6rem 1rem; border: 1px solid rgb(232 213 143 / 48%); border-radius: 999px; background: var(--color-gold); color: var(--color-brand-ink); font-size: 0.76rem; font-weight: 750; text-decoration: none; transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), gap var(--duration-fast) var(--ease-standard); white-space: nowrap; }
-.expertCta a:hover { gap: 0.68rem; border-color: var(--color-gold-soft); background: var(--color-gold-soft); transform: translateY(-1px); }
-.expertCta a:active { transform: translateY(0); }
-.expertCta a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.comparison ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.regimeCard { display: grid; align-content: start; gap: 0.16rem; min-width: 0; padding: 0.48rem; border: 1px solid var(--color-border-light); border-radius: var(--radius-small); background: var(--color-white); }
+.regimeCard[data-highlighted='true'] { border-color: var(--color-gold); background: var(--color-gold-wash); }
+.regimeName { min-height: 1.7em; color: var(--color-text-secondary); font-size: 0.61rem; font-weight: 750; line-height: 1.25; text-transform: uppercase; }
+.comparisonMetric { display: flex; align-items: baseline; gap: 0.2rem; white-space: nowrap; }
+.comparisonMetric strong { color: var(--color-navy); font-size: 0.73rem; font-variant-numeric: tabular-nums; font-weight: 750; }
+.comparisonMetric span { color: var(--color-text-muted); font-size: 0.58rem; }
+.comparisonAnnual { color: var(--color-text-secondary); font-size: 0.61rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.comparisonDelta { color: var(--color-text-secondary); font-size: 0.58rem; font-weight: 650; line-height: 1.25; }
+.regimeCard[data-highlighted='true'] .comparisonDelta { color: var(--color-brand-ink); }
 
 @media (max-width: 54rem) {
-  .columns { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
-  .dashboard { padding-left: 1rem; }
-  .inputs { padding-right: 1rem; }
+  .dashboardPane { padding-left: 1rem; }
+  .leftPane { padding-right: 1rem; }
 }
 
 @media (max-width: 46rem) {
-  .columns { grid-template-columns: minmax(0, 1fr); }
-  .inputs { padding: 0.6rem 0 0.5rem; border-right: 0; border-bottom: 0; }
-  .dashboard { position: static; padding: 0.9rem 0 0.7rem; border-left: 0; }
+  .leftPane { padding: 0.6rem 0 0.5rem; }
+  .dashboardPane { padding: 0.9rem 0 0.7rem; }
   .regimeButton { min-height: 4.4rem; padding-inline: 0.5rem; }
   .regimeButton > span { font-size: 0.64rem; }
+  .legend { grid-template-columns: minmax(0, 1fr); }
+  .comparison ol { gap: 0.25rem; }
+  .regimeCard { padding: 0.35rem; }
+  .regimeName { font-size: 0.56rem; }
+  .comparisonMetric strong { font-size: 0.66rem; }
+  .comparisonAnnual { font-size: 0.55rem; }
+  .comparisonDelta { font-size: 0.53rem; }
 }
 
 @media (max-width: 32rem) {
-  .header { padding-bottom: 0.35rem; }
-  .header h3 { font-size: 1.9rem; }
   .comparisonHeader { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
   .interpretation { flex-wrap: wrap; }
   .regimeOptions { gap: 0.35rem; }
   .regimeButton { min-height: 3.5rem; padding: 0.5rem; }
   .regimeButton > span { font-size: 0.61rem; line-height: 1.2; }
-  .regimeButton small { font-size: 0.53rem; }
   .ringBlock { grid-template-columns: minmax(5.5rem, 0.65fr) minmax(0, 1.35fr); }
   .ring { width: min(100%, 6.5rem); }
-  .annualSection .ring { width: min(100%, 6.5rem); }
+  .annualSection .ring { width: min(100%, 7rem); }
   .annualHeading { align-items: flex-start; }
   .annualHeading > strong { font-size: 1.45rem; }
   .annualHeading p { max-width: 14rem; }
   .annualRevenue { font-size: 0.68rem; }
-  .share > div { display: grid; }
-  .share button { min-height: 2.4rem; }
-  .expertCta { align-items: flex-start; flex-direction: column; gap: 0.5rem; }
+  .expertCta { align-items: flex-end; flex-wrap: wrap; gap: 0.5rem 0.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .regimeButton,
   .ringTax,
   .ringRemaining,
-  .share button,
-  .expertCta a { transition: none; }
+  .ringTooltip { animation: none; }
 }
