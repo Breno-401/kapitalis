@@ -124,9 +124,10 @@ export function ToolsSection() {
     <section
       className={styles.section}
       id="conteudo"
+      data-simulator-active={selectedTool.id === 'simulador-tributario-360'}
       aria-labelledby="tools-title"
     >
-      <div className={`container ${styles.inner}`}>
+      <div className={`container ${styles.inner}`} data-simulator-active={selectedTool.id === 'simulador-tributario-360'}>
         <div className={styles.heading}>
           <h2 id="tools-title">Ferramentas para decisões mais claras.</h2>
           <p className={styles.intro}>

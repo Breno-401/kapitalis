@@ -9,13 +9,13 @@ Referência do motor: apuração mensal de 2026, LC 123/2006, art. 18 e Anexos I
 - Toda receita do mês segue a tributação comum do anexo selecionado, sem substituição tributária, incidência monofásica, exportação, retenção ou outra segregação.
 - RBT12 é a receita bruta acumulada nos 12 meses **anteriores** ao mês da simulação; não é uma projeção anual.
 - RBT12 maior que zero e até R$ 3,6 milhões. Início de atividade, sublimites e possível perda de opção exigem análise específica.
-- DAS exibido = receita mensal × alíquota efetiva, arredondado ao centavo. A projeção anual multiplica o DAS mensal arredondado por 12 e só vale para 12 meses idênticos sob as mesmas premissas.
+- DAS exibido = receita mensal × alíquota efetiva, arredondado ao centavo. O equivalente anual multiplica o DAS mensal arredondado por 12. É apenas uma escala do mês simulado, não uma previsão nem uma apuração anual real.
 
 ## Cenários para a Kapitalis conferir antes de produção
 
 | Cenário | Receita mensal | RBT12 | Anexo | Saída esperada do motor | Ponto de validação |
 | --- | ---: | ---: | --- | --- | --- |
-| Primeiro intervalo de serviços | R$ 10.000,00 | R$ 120.000,00 | III | DAS R$ 600,00; 6,00%; projeção R$ 7.200,00 | Confirmar enquadramento e tratamento da receita. |
+| Primeiro intervalo de serviços | R$ 10.000,00 | R$ 120.000,00 | III | DAS R$ 600,00; 6,00%; equivalente anual R$ 7.200,00 | Confirmar enquadramento e tratamento da receita. |
 | Limite da 1ª faixa | R$ 15.000,00 | R$ 180.000,00 | III | DAS R$ 900,00; faixa 1 | Conferir fronteira inclusiva. |
 | Um centavo acima | R$ 15.000,00 | R$ 180.000,01 | III | DAS R$ 900,00; faixa 2 | Confirmar continuidade da alíquota efetiva; o legado saltava R$ 225/mês. |
 | Comércio na 2ª faixa | R$ 12.345,67 | R$ 360.000,00 | I | DAS R$ 697,53 | Conferir arredondamento ao centavo. |

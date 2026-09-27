@@ -3,8 +3,25 @@
   color: var(--color-navy);
 }
 
+.section[data-simulator-active='true'] {
+  scroll-margin-top: 6rem;
+}
+
 .inner {
   padding-block: clamp(5rem, 9vw, 8rem);
+}
+
+.inner[data-simulator-active='true'] {
+  padding-block: clamp(1.75rem, 3.5vw, 3rem);
+  padding-top: 5rem;
+}
+
+.inner[data-simulator-active='true'] > .heading {
+  display: none;
+}
+
+.inner[data-simulator-active='true'] > .workspace {
+  margin-top: 0;
 }
 
 .heading {

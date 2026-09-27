@@ -6,6 +6,9 @@ export type TaxSimulationInput = {
   rbt12: string
   activity: TaxActivity
   ordinarySimplesScenario: boolean
+  pastInitialYear: boolean
+  accrualBasis: boolean
+  singleAnnexRevenue: boolean
 }
 
 type PendingResult = { status: 'pending'; reason: string }
@@ -70,6 +73,12 @@ export function calculateTaxSimulation(input: TaxSimulationInput): TaxSimulation
     simples = { status: 'pending', reason: 'Confirme o anexo aplicável à atividade antes de estimar o DAS.' }
   } else if (!input.ordinarySimplesScenario) {
     simples = { status: 'pending', reason: 'Confirme que a empresa é optante e elegível ao Simples e que a receita não exige segregação especial.' }
+  } else if (!input.pastInitialYear) {
+    simples = { status: 'pending', reason: 'Nos 12 primeiros meses de atividade, a RBT12 deve ser proporcionalizada; cálculo pendente.' }
+  } else if (!input.accrualBasis) {
+    simples = { status: 'pending', reason: 'O regime de caixa exige receita recebida e receita por competência em bases distintas.' }
+  } else if (!input.singleAnnexRevenue) {
+    simples = { status: 'pending', reason: 'Receitas de mais de um anexo no mês exigem apuração separada por atividade.' }
   } else {
     const bandIndex = tables[input.activity].findIndex(({ maxCents }) => rbt12Cents <= maxCents)
     const band = tables[input.activity][bandIndex]!

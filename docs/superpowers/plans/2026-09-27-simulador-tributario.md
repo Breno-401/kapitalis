@@ -7,7 +7,7 @@ O relatório em `docs/audits/2026-09-27-simulador-tributario-ramp.md` caracteriz
 ## Tarefas
 
 1. Criar motor puro do Simples Nacional para receita mensal comum dos Anexos I, II e III confirmados, usando RBT12 e tabelas vigentes da LC 123/2006. Testar primeiro limites, centavos, entrada inválida, exceções e a diferença para o legado. Presumido e Real devolvem estado pendente até haver bases de cálculo e tributos comparáveis.
-2. Criar experiência de entradas à esquerda e dashboard à direita. Exibir DAS mensal, projeção anual de 12 meses iguais, alíquota efetiva e ring da proporção DAS/receita. Mostrar três regimes em lista compacta, com pendências explícitas. Nunca eleger regime sem três cargas comparáveis.
+2. Criar experiência de entradas à esquerda e dashboard à direita. Exibir DAS mensal, equivalente anual de 12 vezes o mês simulado, alíquota efetiva e ring da proporção DAS/receita. Mostrar três regimes em lista compacta, com pendências explícitas. Nunca eleger regime sem três cargas comparáveis.
 3. Compartilhar por URL com somente os valores financeiros genéricos e escolhas da simulação. Restaurar ao abrir; copiar com retorno discreto. Testar entradas, resultado, pendências, restauração e link.
 4. Verificar testes, lint, typecheck, build, diff e layout nos dez tamanhos pedidos. Comitar etapas semanticamente em português, sem PR nem merge.
 
@@ -16,7 +16,7 @@ O relatório em `docs/audits/2026-09-27-simulador-tributario-ramp.md` caracteriz
 - A opção de Anexo III exige confirmação explícita; “serviços sem enquadramento confirmado” fica pendente.
 - A opção pelo Simples e a elegibilidade da empresa são premissas do cenário. Receita com substituição tributária, incidência monofásica, exportação, retenção ou outra segregação não entra no cálculo padrão. O usuário precisa confirmar essas premissas.
 - RBT12 igual a zero, superior a R$ 3,6 milhões ou exercício de início de atividade ficam pendentes nesta rodada; a faixa com sublimites exige tratamento separado.
-- A projeção anual é `DAS mensal × 12`, explicitamente um cenário de receita mensal constante, não uma apuração anual efetiva.
+- O equivalente anual é `DAS mensal × 12`, apenas uma escala do mês simulado, não uma previsão nem uma apuração anual efetiva.
 - “Menor carga estimada nesta simulação” aparece sem valor até haver estimativas completas e comparáveis para os três regimes.
 
 ## Fontes
