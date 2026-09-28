@@ -1,6 +1,6 @@
 .main {
   min-height: 29rem;
-  background: var(--color-paper);
+  background: var(--surface-page);
 }
 
 .intro {
@@ -17,7 +17,7 @@
 
 .description {
   margin-top: var(--space-4);
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 37.5rem) {

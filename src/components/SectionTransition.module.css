@@ -1,0 +1,42 @@
+.transition {
+  position: relative;
+  z-index: 2;
+  width: min(calc(100% - 2 * var(--layout-gutter)), var(--container-max));
+  height: 1px;
+  margin-inline: auto;
+  pointer-events: none;
+}
+
+.transition::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--border) 12%, var(--accent-strong) 50%, var(--border) 88%, transparent);
+  content: '';
+  opacity: 0.72;
+  transform: scaleX(0.94);
+  transform-origin: center;
+  transition: opacity var(--duration-crossfade) var(--ease-standard), transform var(--duration-crossfade) var(--ease-standard);
+}
+
+.transition::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.34rem;
+  height: 0.34rem;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  box-shadow: 0 0 0 0.22rem var(--accent-muted);
+  content: '';
+  opacity: 0.75;
+  transform: translate(-50%, -50%) scale(0.86);
+  transition: opacity var(--duration-crossfade) var(--ease-standard), transform var(--duration-crossfade) var(--ease-standard);
+}
+
+.transition[data-visible='true']::before { opacity: 1; transform: scaleX(1); }
+.transition[data-visible='true']::after { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .transition::before,
+  .transition::after { transition: none; }
+}

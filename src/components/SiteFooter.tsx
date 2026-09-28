@@ -1,10 +1,11 @@
+import { OPEN_PRIVACY_DETAILS_EVENT } from './PrivacyNotice'
 import { BrandMark } from './BrandMark'
 import { site } from '../data/site'
 import styles from './SiteFooter.module.css'
 
 const footerNavigation = [
   { href: '#inicio', label: 'Início' },
-  { href: '#duvidas-frequentes', label: 'Dúvidas frequentes' },
+  { href: '#duvidas-frequentes', label: 'FAQ' },
   { href: '#sistema', label: 'Sistema Kapitalis' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
@@ -19,7 +20,11 @@ export function SiteFooter() {
       <div className={`container ${styles.content}`}>
         <div className={styles.brandBlock}>
           <a className={styles.brand} href="#inicio">
-            <BrandMark className={styles.brandMark} />
+            <BrandMark
+              className={styles.brandMark}
+              height="64"
+              width="64"
+            />
             <span>{site.name}</span>
           </a>
           <p className={styles.tagline}>
@@ -36,6 +41,14 @@ export function SiteFooter() {
                 <a href={href}>{label}</a>
               </li>
             ))}
+            <li>
+              <a
+                href="#privacidade"
+                onClick={() => window.dispatchEvent(new Event(OPEN_PRIVACY_DETAILS_EVENT))}
+              >
+                Privacidade
+              </a>
+            </li>
           </ul>
         </nav>
 

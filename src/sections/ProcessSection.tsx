@@ -63,6 +63,7 @@ export function ProcessSection() {
   return (
     <section
       className={styles.section}
+      data-theme-surface="dark"
       id="processo"
       aria-labelledby="process-title"
     >

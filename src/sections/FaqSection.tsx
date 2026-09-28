@@ -21,40 +21,56 @@ const questions = [
 ] as const
 
 export function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const id = useId()
+  const panelId = `${id}-answer-panel`
+  const selectedQuestion = questions[selectedIndex]!
+  const selectedButtonId = `${id}-question-${selectedIndex}`
 
   return (
     <section className={styles.section} id="duvidas-frequentes" aria-labelledby={`${id}-title`}>
       <div className={`container ${styles.inner}`}>
         <p className={styles.eyebrow}>Respostas sobre a rotina</p>
         <h2 id={`${id}-title`}>Dúvidas frequentes</h2>
-        <div className={styles.accordion}>
-          {questions.map(({ question, answer }, index) => {
-            const expanded = openIndex === index
-            const buttonId = `${id}-question-${index}`
-            const panelId = `${id}-answer-${index}`
-            return (
-              <article className={styles.item} key={question}>
-                <h3>
-                  <button
-                    aria-controls={panelId}
-                    aria-expanded={expanded}
-                    className={styles.question}
-                    id={buttonId}
-                    onClick={() => setOpenIndex((current) => current === index ? null : index)}
-                    type="button"
-                  >
-                    <span>{question}</span>
-                    <span className={styles.mark} aria-hidden="true" data-open={expanded} />
-                  </button>
-                </h3>
-                <div aria-labelledby={buttonId} className={styles.answer} hidden={!expanded} id={panelId}>
-                  <p>{answer}</p>
-                </div>
-              </article>
-            )
-          })}
+        <div className={styles.layout}>
+          <div className={styles.questions} role="group" aria-label="Perguntas frequentes">
+            {questions.map(({ question }, index) => {
+              const expanded = selectedIndex === index
+              const buttonId = `${id}-question-${index}`
+              return (
+                <article className={styles.item} key={question}>
+                  <h3>
+                    <button
+                      aria-controls={panelId}
+                      aria-expanded={expanded}
+                      className={styles.question}
+                      data-active={expanded}
+                      id={buttonId}
+                      onClick={() => setSelectedIndex(index)}
+                      type="button"
+                    >
+                      <span>{question}</span>
+                      <span className={styles.mark} aria-hidden="true" data-open={expanded} />
+                    </button>
+                  </h3>
+                </article>
+              )
+            })}
+          </div>
+          <div
+            aria-atomic="true"
+            aria-labelledby={selectedButtonId}
+            aria-live="polite"
+            className={styles.answerPanel}
+            id={panelId}
+            role="region"
+          >
+            <div className={styles.answerContent} key={selectedIndex}>
+              <p className={styles.answerLabel}>Resposta</p>
+              <h3 className={styles.answerTitle}>{selectedQuestion.question}</h3>
+              <p className={styles.answerText}>{selectedQuestion.answer}</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

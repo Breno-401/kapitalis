@@ -34,7 +34,7 @@ const approvedAnchors = [
 ]
 
 const expectedNavigation = [
-  'Dúvidas frequentes',
+  'FAQ',
   'Sistema',
   'Serviços',
   'BPO Financeiro',
@@ -139,7 +139,7 @@ describe('site navigation', () => {
     })
     const header = screen.getByRole('banner')
     expect(
-      within(navigation).getByRole('link', { name: 'Dúvidas frequentes' }).getAttribute('href'),
+      within(navigation).getByRole('link', { name: 'FAQ' }).getAttribute('href'),
     ).toBe('#duvidas-frequentes')
     expect(
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),

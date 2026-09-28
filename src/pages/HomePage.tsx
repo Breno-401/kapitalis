@@ -1,5 +1,7 @@
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
+import { PrivacyNotice } from '../components/PrivacyNotice'
+import { SectionTransition } from '../components/SectionTransition'
 import { WhatsAppFloating } from '../components/WhatsAppFloating'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { BpoSection } from '../sections/BpoSection'
@@ -18,16 +20,25 @@ export function HomePage() {
       <SiteHeader />
       <main id="conteudo-principal" tabIndex={-1}>
         <HeroSection />
+        <SectionTransition />
         <ReviewsSection data={googleReviewsSnapshot} />
+        <SectionTransition />
         <TrustStrip />
+        <SectionTransition />
         <ServicesSection />
+        <SectionTransition />
         <BpoSection />
+        <SectionTransition />
         <ToolsSection />
+        <SectionTransition />
         <ProcessSection />
+        <SectionTransition />
         <FaqSection />
+        <SectionTransition />
         <FinalCtaSection />
       </main>
       <SiteFooter />
+      <PrivacyNotice />
       <WhatsAppFloating />
     </>
   )

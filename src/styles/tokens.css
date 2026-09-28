@@ -13,14 +13,35 @@
   --color-gold-wash: rgb(212 175 55 / 16%);
   --color-paper: #f3f1ea;
   --color-white: #ffffff;
-  --color-text-secondary: #435263;
-  --color-text-muted: #87919b;
-  --color-border-light: #d9dcd8;
+  --color-text-secondary: #bcc8d3;
+  --color-text-muted: #9cabb9;
+  --color-border-light: rgb(243 241 234 / 17%);
   --color-border-dark: rgb(243 241 234 / 16%);
   --color-positive: #7fa18a;
   --color-attention: #c69b55;
   --color-critical: #b77773;
   --color-brand-ink: #051529;
+
+  --surface-page: #051529;
+  --surface-raised: #0d2239;
+  --surface-interactive: #183650;
+  --surface-dark: #03101e;
+  --text-primary: #f3f1ea;
+  --text-secondary: #bcc8d3;
+  --text-muted: #9cabb9;
+  --text-on-accent: #051529;
+  --border: rgb(243 241 234 / 17%);
+  --accent: #e8d58f;
+  --accent-strong: #d4af37;
+  --accent-muted: rgb(212 175 55 / 16%);
+  --accent-hover: #e8d58f;
+  --focus-ring: #e8d58f;
+  --input-surface: #0d2239;
+  --tooltip-surface: #0d2239;
+  --shadow: 0 0.9rem 2.4rem rgb(0 0 0 / 26%);
+  --status-positive: #a7c8a0;
+  --chart-secondary: #8098b0;
+  --chart-tertiary: #c4a957;
 
   --nav-surface: rgb(5 21 41 / 88%);
   --nav-border: rgb(243 241 234 / 13%);
@@ -79,8 +100,31 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
+  --surface-page: #f3f1ea;
+  --surface-raised: #ffffff;
+  --surface-interactive: #eee8dc;
+  --surface-dark: #e9e3d6;
+  --text-primary: #051529;
+  --text-secondary: #435263;
+  --text-muted: #687889;
+  --text-on-accent: #051529;
+  --border: #d9dcd8;
+  --accent: #8b6914;
+  --accent-strong: #d4af37;
+  --accent-muted: rgb(139 105 20 / 14%);
+  --accent-hover: #78590e;
+  --focus-ring: #8b6914;
+  --input-surface: #ffffff;
+  --tooltip-surface: #ffffff;
+  --shadow: 0 0.9rem 2.4rem rgb(5 21 41 / 12%);
+  --status-positive: #45634e;
+  --chart-secondary: #183650;
+  --chart-tertiary: #a98a2c;
   --color-gold-soft: #8b6914;
   --color-gold-wash: rgb(139 105 20 / 16%);
+  --color-text-secondary: #435263;
+  --color-text-muted: #687889;
+  --color-border-light: #d9dcd8;
   --nav-surface: rgb(243 241 234 / 94%);
   --nav-border: rgb(5 21 41 / 13%);
   --nav-shadow: 0 0.9rem 2.4rem rgb(5 21 41 / 12%);
@@ -92,6 +136,19 @@
 }
 
 :root[data-theme='light'] [data-theme-surface='dark'] {
+  --surface-page: #f5f1e7;
+  --surface-raised: #ffffff;
+  --surface-interactive: #eee8dc;
+  --text-primary: #051529;
+  --text-secondary: #435263;
+  --text-muted: #687889;
+  --border: rgb(5 21 41 / 16%);
+  --accent: #8b6914;
+  --accent-muted: rgb(139 105 20 / 16%);
+  --input-surface: #ffffff;
+  --tooltip-surface: #ffffff;
+  --shadow: 0 0.9rem 2.4rem rgb(5 21 41 / 12%);
+  --focus-ring: #8b6914;
   --color-navy: #f5f1e7;
   --color-navy-deep: #e9e3d6;
   --color-navy-original-deep: #faf7ef;

@@ -1,11 +1,11 @@
 .footer {
   padding-block: var(--space-12) var(--space-4);
-  background: var(--color-navy-deep);
-  color: var(--color-paper);
+  background: var(--surface-page);
+  color: var(--text-primary);
 }
 
 .footer :focus-visible {
-  outline-color: var(--color-gold-soft);
+  outline-color: var(--focus-ring);
 }
 
 .content {
@@ -38,12 +38,16 @@
 .brandMark {
   flex: 0 0 auto;
   width: 4rem;
-  height: auto;
+  height: 4rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .tagline {
   max-width: 30ch;
-  color: var(--color-on-dark-muted);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.65;
 }
@@ -53,7 +57,7 @@
   align-items: center;
   gap: 0.55rem;
   padding-top: 0.25rem;
-  color: var(--color-on-dark-strong);
+  color: var(--text-secondary);
   font-size: 0.78rem;
 }
 
@@ -61,13 +65,13 @@
   width: 0.42rem;
   height: 0.42rem;
   border-radius: 50%;
-  background: var(--color-gold);
+  background: var(--accent-strong);
   content: '';
 }
 
 .groupTitle {
   margin-bottom: var(--space-4);
-  color: var(--color-gold-soft);
+  color: var(--accent);
   font-family: var(--font-interface);
   font-size: 0.72rem;
   font-weight: 700;
@@ -85,7 +89,7 @@
 }
 
 .linkList a {
-  color: var(--color-on-dark-strong);
+  color: var(--text-secondary);
   font-size: 0.88rem;
   text-decoration: none;
   text-underline-offset: 0.28em;
@@ -93,7 +97,7 @@
 }
 
 .linkList a:hover {
-  color: var(--color-gold-soft);
+  color: var(--accent);
   text-decoration: underline;
 }
 
@@ -113,8 +117,8 @@
   justify-content: space-between;
   gap: 1rem;
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-dark);
-  color: var(--color-on-dark-muted);
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
   font-size: 0.78rem;
 }
 
@@ -126,7 +130,7 @@
   .brandBlock {
     grid-column: 1 / -1;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--color-border-dark);
+    border-bottom: 1px solid var(--border);
   }
 }
 
