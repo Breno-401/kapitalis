@@ -239,6 +239,13 @@
   object-position: center top;
 }
 
+@media (min-width: 56.25rem) and (max-height: 55rem) {
+  .heroPortrait {
+    /* Preserve the 1.08:1 frame and reserve 8rem above for navbar clearance. */
+    width: min(55vw, 55rem, calc(108svh - 8.64rem));
+  }
+}
+
 .corePosition > * {
   width: 100%;
 }
