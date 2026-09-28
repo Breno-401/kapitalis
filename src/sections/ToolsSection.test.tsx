@@ -86,6 +86,23 @@ describe('Simulador Tributário 360º', () => {
     expect(screen.queryByRole('tooltip')).toBeNull()
   })
 
+  it('prioriza foco de teclado sobre hover residual e sincroniza o tooltip', () => {
+    const { container } = render(<ToolsSection />)
+    fillSimpleScenario()
+    const ring = container.querySelector('[data-period="monthly"]')
+    const taxHitArea = ring?.querySelector('circle[data-hit-area="das"]')
+    const remainingLegend = ring?.querySelector<HTMLButtonElement>('button[data-segment="remaining"]')
+    expect(taxHitArea).toBeTruthy()
+    expect(remainingLegend).toBeTruthy()
+
+    fireEvent.pointerEnter(taxHitArea!, { clientX: 280, clientY: 280 })
+    expect(screen.getByRole('tooltip').textContent).toMatch(/Impostos estimados/)
+
+    fireEvent.focus(remainingLegend!)
+    expect(remainingLegend!.getAttribute('data-active')).toBe('true')
+    expect(screen.getByRole('tooltip').textContent).toMatch(/Receita após impostos/)
+  })
+
   it('mantém a confirmação de cópia separada do label estável', async () => {
     const writeText = vi.fn().mockResolvedValue(undefined)
     Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } })

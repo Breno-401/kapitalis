@@ -236,6 +236,7 @@ function ResultRing({
     'data-kind': segment.key,
     'data-active': activeSegment === segment.key,
     onFocus: (event: React.FocusEvent<SVGCircleElement>) => {
+      setHoveredSegment(null)
       setFocusedSegment(segment.key)
       updateTooltipPosition(event.currentTarget, 0, 0)
     },
@@ -335,6 +336,7 @@ function ResultRing({
             }}
             onSelect={() => setSelectedSegment(segment.key)}
             onFocus={(target) => {
+              setHoveredSegment(null)
               setFocusedSegment(segment.key)
               updateTooltipPosition(target, 0, 0)
             }}
