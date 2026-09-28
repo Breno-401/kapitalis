@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { site } from '../data/site'
 import { getInitialTheme, THEME_STORAGE_KEY } from './theme'
 import type { SiteTheme } from './theme'
+import { BrandMark } from './BrandMark'
 import styles from './SiteHeader.module.css'
 
 const navigation = [
@@ -302,14 +303,10 @@ export function SiteHeader() {
       </a>
       <div className={styles.inner}>
         <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
-          <img
-            alt=""
-            aria-hidden="true"
+          <BrandMark
             className={styles.brandMark}
-            decoding="async"
-            height={64}
-            src="/assets/kapitalis-logo-original.png"
-            width={96}
+            height="2.8rem"
+            width="2.8rem"
           />
           <span className={styles.brandName}>{site.shortName}</span>
         </a>

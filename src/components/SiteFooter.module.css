@@ -40,9 +40,7 @@
   width: 4rem;
   height: 4rem;
   aspect-ratio: 1;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
 }
 
 .tagline {

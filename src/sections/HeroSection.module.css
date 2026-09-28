@@ -134,11 +134,15 @@
   color: var(--color-brand-ink);
   transition:
     background-color var(--duration-fast) var(--ease-standard),
-    filter var(--duration-fast) var(--ease-standard);
+    filter var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
 }
 
 .primaryAction:hover {
   background: var(--color-gold-soft);
+  box-shadow: 0 0.45rem 1.15rem rgb(0 0 0 / 18%);
+  transform: translateY(-1px);
 }
 
 .primaryAction svg {
@@ -157,6 +161,7 @@
 
 .primaryAction:active {
   filter: brightness(0.96);
+  transform: translateY(0);
 }
 
 .secondaryAction {

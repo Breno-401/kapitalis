@@ -12,7 +12,6 @@ import { ProcessSection } from '../sections/ProcessSection'
 import { ReviewsSection } from '../sections/ReviewsSection'
 import { ServicesSection } from '../sections/ServicesSection'
 import { ToolsSection } from '../sections/ToolsSection'
-import { TrustStrip } from '../sections/TrustStrip'
 
 export function HomePage() {
   return (
@@ -22,8 +21,6 @@ export function HomePage() {
         <HeroSection />
         <SectionTransition />
         <ReviewsSection data={googleReviewsSnapshot} />
-        <SectionTransition />
-        <TrustStrip />
         <SectionTransition />
         <ServicesSection />
         <SectionTransition />

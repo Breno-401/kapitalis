@@ -282,7 +282,7 @@
   }
 
   .trackItem {
-    flex-basis: min(23.5rem, calc(100vw - 4.5rem));
+    flex-basis: min(23.5rem, calc(100vw - 8rem));
   }
 
   .reviewCard {

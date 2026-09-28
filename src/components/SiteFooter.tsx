@@ -19,13 +19,13 @@ export function SiteFooter() {
     <footer className={styles.footer} data-theme-surface="dark" id="contato">
       <div className={`container ${styles.content}`}>
         <div className={styles.brandBlock}>
-          <a className={styles.brand} href="#inicio">
+          <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
             <BrandMark
               className={styles.brandMark}
               height="64"
               width="64"
             />
-            <span>{site.name}</span>
+            <span>{site.shortName}</span>
           </a>
           <p className={styles.tagline}>
             Contabilidade e BPO Financeiro para acompanhar a rotina da empresa.

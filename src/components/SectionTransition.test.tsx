@@ -9,5 +9,6 @@ describe('transição entre seções', () => {
 
     expect(transition?.getAttribute('aria-hidden')).toBe('true')
     expect(transition?.getAttribute('data-visible')).toBe('true')
+    expect(transition?.querySelectorAll('[data-transition-pulse]')).toHaveLength(2)
   })
 })

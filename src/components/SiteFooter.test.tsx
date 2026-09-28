@@ -22,9 +22,12 @@ describe('site footer', () => {
 
   it('usa a marca SVG com proporção preservada no rodapé', () => {
     render(<SiteFooter />)
+    const footer = screen.getByRole('contentinfo')
     const logo = document.querySelector<SVGSVGElement>('footer svg')
-    expect(logo?.getAttribute('viewBox')).toBe('525 236 486 432')
+    expect(logo?.getAttribute('viewBox')).toBe('360 40 800 790')
     expect(logo?.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet')
     expect(logo?.querySelector('image')?.getAttribute('href')).toBe('/assets/kapitalis-logo-original.png')
+    expect(within(footer).getByRole('link', { name: 'Kapitalis, início' })).toBeTruthy()
+    expect(within(footer).getByText('Kapitalis')).toBeTruthy()
   })
 })

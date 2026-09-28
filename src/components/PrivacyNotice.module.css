@@ -4,11 +4,11 @@
   right: max(1rem, env(safe-area-inset-right));
   bottom: max(1rem, env(safe-area-inset-bottom));
   display: flex;
-  width: min(37rem, calc(100vw - 2rem));
+  width: min(42rem, calc(100vw - 2rem));
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.85rem 1rem;
+  gap: 1.15rem;
+  padding: 0.95rem 1.15rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-medium);
   background: var(--surface-raised);
@@ -17,8 +17,8 @@
 }
 
 .noticeCopy { display: grid; gap: 0.2rem; min-width: 0; }
-.noticeCopy strong { font-size: 0.76rem; }
-.noticeCopy p { color: var(--text-secondary); font-size: 0.68rem; line-height: 1.45; }
+.noticeCopy strong { font-size: 0.8rem; }
+.noticeCopy p { color: var(--text-secondary); font-size: 0.74rem; line-height: 1.5; }
 .noticeActions { display: flex; flex: 0 0 auto; align-items: center; gap: 0.55rem; }
 .noticeActions button,
 .close {
@@ -34,7 +34,7 @@
   color: var(--text-primary);
   cursor: pointer;
   font: inherit;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   white-space: nowrap;
   transition: color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);

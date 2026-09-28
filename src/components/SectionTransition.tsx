@@ -31,6 +31,9 @@ export function SectionTransition() {
       data-section-transition
       data-visible="false"
       ref={markerRef}
-    />
+    >
+      <span data-transition-pulse="left" />
+      <span data-transition-pulse="right" />
+    </div>
   )
 }

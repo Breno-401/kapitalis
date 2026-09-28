@@ -14,6 +14,8 @@ describe('aviso de privacidade', () => {
     expect(screen.getByRole('button', { name: 'Entendi' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Saiba mais' })).toBeTruthy()
     expect(screen.queryByRole('button', { name: /aceitar|recusar|preferências/i })).toBeNull()
+    expect(screen.getByText(/só entram na URL se você escolher compartilhar/i))
+      .toBeTruthy()
   })
 
   it('expõe os detalhes e os fecha pelo teclado', () => {
