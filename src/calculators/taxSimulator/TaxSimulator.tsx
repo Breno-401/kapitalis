@@ -286,7 +286,7 @@ function ResultRing({
                 cy="95"
                 key={segment.key}
                 r="74"
-                strokeWidth="15"
+                strokeWidth={activeSegment === segment.key ? 22.5 : 15}
                 transform="rotate(-90 95 95)"
                 strokeDasharray={`${segment.arcLength} ${circumference - segment.arcLength}`}
                 strokeDashoffset={-segment.offset}

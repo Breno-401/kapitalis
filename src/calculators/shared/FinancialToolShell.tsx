@@ -10,6 +10,7 @@ export function FinancialToolShell({
   leftClassName,
   rightClassName,
   footerClassName,
+  stableHeight = false,
 }: {
   title?: string
   headingId: string
@@ -19,12 +20,13 @@ export function FinancialToolShell({
   leftClassName?: string
   rightClassName?: string
   footerClassName?: string
+  stableHeight?: boolean
 }) {
   return (
     <section className={styles.shell} aria-label={ariaLabel} aria-labelledby={ariaLabel ? undefined : headingId}>
       {title && <div className={styles.header}><h2 id={headingId}>{title}</h2></div>}
-      <div className={styles.columns}>
-        <div className={`${styles.inputs} ${leftClassName ?? ''}`}>{left}</div>
+      <div className={styles.columns} data-stable-height={stableHeight || undefined}>
+        <div className={`${styles.inputs} ${leftClassName ?? ''}`} data-financial-inputs>{left}</div>
         <div className={`${styles.dashboard} ${rightClassName ?? ''}`}>{right}</div>
       </div>
       <div className={`${styles.footer} ${footerClassName ?? ''}`} data-financial-footer>

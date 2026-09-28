@@ -21,11 +21,6 @@ export function ToolsSection() {
           <ComplementarySimulator headingId={complementaryHeadingId} />
         </section>
 
-        <div className={styles.nextSection}>
-          <span className={styles.nextNode} aria-hidden="true" />
-          <span className={styles.nextLabel}>Na sequência</span>
-          <a href="#processo">Conhecer as etapas do processo</a>
-        </div>
       </div>
     </section>
   )

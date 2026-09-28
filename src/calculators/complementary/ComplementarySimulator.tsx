@@ -242,5 +242,5 @@ export function ComplementarySimulator({ headingId }: { headingId: string }) {
     </div>
   )
 
-  return <FinancialToolShell ariaLabel="Área de simulação complementar" headingId={headingId} left={left} right={right} leftClassName={styles.left} rightClassName={styles.right} />
+  return <FinancialToolShell ariaLabel="Área de simulação complementar" headingId={headingId} left={left} right={right} leftClassName={styles.left} rightClassName={styles.right} stableHeight />
 }

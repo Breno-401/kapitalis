@@ -1,7 +1,7 @@
 .shell {
   width: 100%;
   min-width: 0;
-  color: var(--color-navy);
+  color: var(--text-primary);
 }
 
 .header { padding-bottom: 0.5rem; }
@@ -21,6 +21,8 @@
   margin-top: 0.2rem;
 }
 
+.columns[data-stable-height='true'] { min-height: 38rem; }
+
 .inputs,
 .dashboard { min-width: 0; }
 .inputs {
@@ -36,16 +38,18 @@
   padding: 0.25rem 0 0.6rem 1.5rem;
 }
 
+.columns[data-stable-height='true'] .dashboard { position: relative; top: auto; align-self: stretch; }
+
 .footer {
   display: flex;
   justify-content: flex-end;
   margin-top: 0.25rem;
   padding-top: 0.5rem;
-  border-top: 1px solid var(--color-border-light);
+  border-top: 1px solid var(--border);
 }
 
 .expertCta { display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; }
-.expertCta span { color: var(--color-text-secondary); font-size: 0.67rem; }
+.expertCta span { color: var(--text-secondary); font-size: 0.67rem; }
 .expertCta a {
   box-sizing: border-box;
   display: inline-flex;
@@ -54,18 +58,18 @@
   gap: 0.5rem;
   min-height: 2.7rem;
   padding: 0.6rem 1rem;
-  border: 1px solid rgb(232 213 143 / 48%);
+  border: 1px solid var(--accent-muted);
   border-radius: 999px;
-  background: var(--color-gold);
-  color: var(--color-brand-ink);
+  background: var(--accent-strong);
+  color: var(--text-on-accent);
   font-size: 0.76rem;
   font-weight: 750;
   text-decoration: none;
   transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
   white-space: nowrap;
 }
-.expertCta a:hover { border-color: var(--color-gold-soft); background: var(--color-gold-soft); }
-.expertCta a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.expertCta a:hover { border-color: var(--accent-hover); background: var(--accent-hover); }
+.expertCta a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
 @media (max-width: 54rem) {
   .columns { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
@@ -75,6 +79,7 @@
 
 @media (max-width: 46rem) {
   .columns { grid-template-columns: minmax(0, 1fr); }
+  .columns[data-stable-height='true'] { min-height: 0; }
   .inputs { padding: 0.6rem 0 0.5rem; }
   .dashboard { position: static; padding: 0.9rem 0 0.7rem; }
   .expertCta { align-items: flex-end; flex-wrap: wrap; gap: 0.5rem 0.75rem; }

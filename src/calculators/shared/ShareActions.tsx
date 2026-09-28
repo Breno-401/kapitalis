@@ -78,7 +78,7 @@ export function ShareActions({ url, title, text }: { url: string; title: string;
   }
 
   return (
-    <div className={styles.share} aria-label="Deseja compartilhar esta simulação?">
+    <div className={styles.share} aria-label="Deseja compartilhar esta simulação?" data-share-actions>
       <p>Deseja compartilhar esta simulação?</p>
       <div className={styles.controls} ref={controlsRef}>
         <button className={`${styles.action} ${styles.shareButton}`} type="button" onClick={share} aria-expanded={shareOpen}>

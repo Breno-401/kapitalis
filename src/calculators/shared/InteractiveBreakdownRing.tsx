@@ -85,10 +85,12 @@ export function InteractiveBreakdownRing({ segments, centerLabel = 'Distribui√ß√
                 <circle
                   className={styles.segment}
                   cx="90" cy="90" r={radius}
+                  strokeWidth={active === arc.key ? 24 : 16}
                   strokeDasharray={`${arc.length} ${circumference - arc.length}`}
                   strokeDashoffset={-arc.offset}
                   transform="rotate(-90 90 90)"
                   data-segment={arc.key}
+                  data-active={active === arc.key}
                   data-index={index}
                   data-breakdown-index={index}
                   role="button"

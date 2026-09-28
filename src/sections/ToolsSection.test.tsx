@@ -60,9 +60,11 @@ describe('Simulador Tributário 360º', () => {
     fireEvent.pointerEnter(hitArea!, { clientX: 280, clientY: 280 })
     expect(ring?.querySelector('button[data-segment="das"]')?.getAttribute('data-active')).toBe('true')
     expect(screen.getByRole('tooltip').textContent).toMatch(/Tributos do Simples Nacional/)
-    expect(ring?.querySelector('circle[data-segment="das"]')?.getAttribute('stroke-width')).toBe('15')
+    expect(ring?.querySelector('circle[data-segment="das"]')?.getAttribute('stroke-width')).toBe('22.5')
+    expect(ring?.querySelector('circle[data-segment="remaining"]')?.getAttribute('stroke-width')).toBe('15')
 
     fireEvent.pointerLeave(ring!)
+    expect(ring?.querySelector('circle[data-segment="das"]')?.getAttribute('stroke-width')).toBe('15')
     const remaining = ring?.querySelector<HTMLButtonElement>('button[data-segment="remaining"]')
     fireEvent.click(remaining!)
     expect(remaining?.getAttribute('aria-pressed')).toBe('true')
@@ -160,6 +162,7 @@ describe('Ferramentas Complementares', () => {
     expect(directSegment).toBeTruthy()
     fireEvent.pointerEnter(directSegment!, { clientX: 180, clientY: 180 })
     expect(ring?.querySelector('[data-segment-group="prolabore"]')?.getAttribute('data-active')).toBe('true')
+    expect(ring?.querySelector('circle[data-segment="prolabore"]')?.getAttribute('stroke-width')).toBe('24')
     expect(screen.getByRole('tooltip').textContent).toMatch(/Pró-labore total dos sócios/)
 
     const legend = ring?.querySelector<HTMLButtonElement>('button[data-segment="distributable"]')
@@ -195,6 +198,29 @@ describe('Ferramentas Complementares', () => {
     fireEvent.change(scope.getByLabelText('Quantidade de Horas'), { target: { value: '10' } })
     expect(scope.getByRole('status').textContent).toContain('R$ 2.380,00')
     expect(scope.getByText(/Estimativa simplificada usando a fórmula legada/)).toBeTruthy()
+  })
+
+  it('mantém as ações de compartilhamento no mesmo shell nos cinco modos', () => {
+    render(<ToolsSection />)
+    const scope = complementary()
+    const shell = screen.getByRole('region', { name: 'Área de simulação complementar' })
+    const stableColumns = shell.querySelector('[data-stable-height="true"]')
+
+    expect(stableColumns).toBeTruthy()
+    expect(shell.querySelector('[data-financial-inputs] [data-share-actions]')).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'Conhecer as etapas do processo' })).toBeNull()
+
+    for (const tool of ['Pró-labore', 'Custo CLT', 'Rescisão', 'Hora Extra', 'Fator R']) {
+      fireEvent.click(scope.getByRole('button', { name: tool }))
+      expect(shell.querySelector('[data-stable-height="true"]')).toBe(stableColumns)
+      expect(shell.querySelector('[data-financial-inputs] [data-share-actions]')).toBeTruthy()
+      expect(shell.querySelector('[data-financial-footer]')).toBeTruthy()
+    }
+  })
+
+  it('não repete o link para as etapas logo antes da seção de processo', () => {
+    render(<ToolsSection />)
+    expect(screen.queryByRole('link', { name: 'Conhecer as etapas do processo' })).toBeNull()
   })
 
   it('mostra Fator R, compara com o parâmetro legado e preserva a atividade escolhida', () => {
