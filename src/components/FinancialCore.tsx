@@ -1,4 +1,5 @@
 import type { StoryChapterId } from '../story/types'
+import { site } from '../data/site'
 import { BrandMark } from './BrandMark'
 import styles from './FinancialCore.module.css'
 
@@ -50,8 +51,7 @@ export function FinancialCore({
   revealed = false,
 }: FinancialCoreProps) {
   return (
-    <figure
-      aria-hidden="true"
+    <div
       className={styles.core}
       data-financial-core
       data-state={state}
@@ -59,6 +59,7 @@ export function FinancialCore({
     >
       <svg
         className={styles.artwork}
+        aria-hidden="true"
         viewBox="0 0 640 640"
         focusable="false"
         xmlns="http://www.w3.org/2000/svg"
@@ -73,15 +74,39 @@ export function FinancialCore({
           data-active={state === 'organizacao'}
         />
 
-        {sources.map(({ id, x, y }) => (
-          <g className={styles.connection} key={id}>
+        {sources.map(({ id, x, y }, order) => (
+          <g
+            className={styles.connection}
+            data-source-order={order}
+            key={id}
+          >
             <path
               d={`M ${x} ${y} L 320 320`}
               data-flow="source-to-core"
+              data-source={id}
               data-active={state === 'entradas' || state === 'organizacao'}
+              data-decision-flow={state === 'decisao' && (id === 'notas' || id === 'folha')}
+              pathLength="1"
             />
           </g>
         ))}
+
+        <g className={styles.organizationFlows}>
+          <path
+            className={styles.organizationFlow}
+            d="M 268 320 L 218 320"
+            data-flow="organization"
+            data-active={state === 'organizacao'}
+            pathLength="1"
+          />
+          <path
+            className={styles.organizationFlow}
+            d="M 372 320 L 422 320"
+            data-flow="organization"
+            data-active={state === 'organizacao'}
+            pathLength="1"
+          />
+        </g>
 
         <path
           className={`${styles.signalPath} ${styles.signalOrganized}`}
@@ -98,7 +123,7 @@ export function FinancialCore({
           className={`${styles.signalPath} ${styles.signalDecisionLink}`}
           data-financial-signal="decision-link"
           data-active={state === 'decisao'}
-          d="M 320 438 L 320 466"
+          d="M 320 438 L 320 546"
         />
         <g className={styles.insightFlows}>
           {insights.map(({ label, order, path }) => (
@@ -113,8 +138,25 @@ export function FinancialCore({
                 data-active={state === 'visibilidade'}
                 data-insight-flow={label}
                 d={path}
+                id={`kapitalis-insight-flow-${order}`}
                 pathLength="1"
               />
+              {state === 'visibilidade' ? (
+                <circle
+                  className={styles.visibilityPulse}
+                  data-insight-pulse={label}
+                  r="3.2"
+                >
+                  <animateMotion
+                    begin={`${order * 0.28}s`}
+                    dur="1.25s"
+                    fill="freeze"
+                    repeatCount="1"
+                  >
+                    <mpath href={`#kapitalis-insight-flow-${order}`} />
+                  </animateMotion>
+                </circle>
+              ) : null}
             </g>
           ))}
         </g>
@@ -124,6 +166,8 @@ export function FinancialCore({
             className={styles.node}
             data-financial-node={label}
             data-source-active={state === 'entradas'}
+            data-decision-source={state === 'decisao' && (id === 'notas' || id === 'folha')}
+            data-source={id}
             key={id}
             transform={`translate(${x} ${y})`}
           >
@@ -140,6 +184,29 @@ export function FinancialCore({
             </text>
           </g>
         ))}
+
+        <g className={styles.organizationNodes} aria-label="Rotinas de organização">
+          <g
+            className={styles.organizationNode}
+            data-organization-node
+            data-active={state === 'organizacao'}
+            transform="translate(200 320)"
+          >
+            <circle className={styles.organizationNodeRing} r="16" />
+            <circle className={styles.organizationNodeDot} r="3" />
+            <text className={styles.organizationNodeLabel} textAnchor="middle" y="38">Conciliação</text>
+          </g>
+          <g
+            className={styles.organizationNode}
+            data-organization-node
+            data-active={state === 'organizacao'}
+            transform="translate(440 320)"
+          >
+            <circle className={styles.organizationNodeRing} r="16" />
+            <circle className={styles.organizationNodeDot} r="3" />
+            <text className={styles.organizationNodeLabel} textAnchor="middle" y="38">Fechamento</text>
+          </g>
+        </g>
 
         <g className={styles.center} data-financial-node="Kapitalis">
           <circle className={styles.centerHalo} cx="320" cy="320" r="82" />
@@ -189,10 +256,21 @@ export function FinancialCore({
         </g>
 
         <g className={styles.decisionOutput} data-output="next-step" data-active={state === 'decisao'}>
-          <rect x="250" y="466" width="140" height="34" rx="17" />
-          <text textAnchor="middle" x="320" y="487">PRÓXIMO PASSO</text>
+          <rect x="250" y="546" width="140" height="34" rx="17" />
+          <text textAnchor="middle" x="320" y="567">PRÓXIMO PASSO</text>
         </g>
       </svg>
-    </figure>
+      <a
+        className={styles.nextStepLink}
+        data-next-step-link
+        href={site.whatsappUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+        tabIndex={state === 'decisao' ? 0 : -1}
+        aria-hidden={state !== 'decisao'}
+      >
+        Próximo passo
+      </a>
+    </div>
   )
 }

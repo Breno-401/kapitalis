@@ -39,6 +39,60 @@
   width: min(100%, 35rem);
 }
 
+.mediaFrame {
+  position: relative;
+  width: min(100%, 35rem);
+  aspect-ratio: 16 / 10;
+  margin: clamp(1.5rem, 3vh, 2rem) 0 0;
+  overflow: hidden;
+  background: var(--surface-raised);
+  clip-path: inset(0 100% 0 0 round 0.75rem);
+  opacity: 0;
+  filter: blur(2px);
+  transform: translateY(10px);
+  transition:
+    clip-path 740ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 440ms var(--ease-standard),
+    filter 640ms var(--ease-standard),
+    transform 640ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mediaFrame[data-revealed='true'] {
+  clip-path: inset(0 0 0 0 round 0.75rem);
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+.mediaPicture,
+.mediaImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mediaImage {
+  object-fit: cover;
+}
+
+.mediaFrame[data-fit='contain'] .mediaImage {
+  padding: 0.5rem;
+  background: var(--surface-raised);
+  object-fit: contain;
+}
+
+.mediaCaption {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.75rem;
+  left: 0.85rem;
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 72%);
+}
+
 .chapterEyebrow {
   margin-bottom: var(--space-4);
   color: var(--color-gold-soft);
@@ -133,6 +187,12 @@
     gap: 0.65rem 1rem;
     margin-top: var(--space-6);
   }
+
+  .mediaFrame {
+    width: 100%;
+    margin-top: var(--space-6);
+    aspect-ratio: 16 / 10;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -149,5 +209,14 @@
 
   .chapter[data-story-id='decisao'] {
     min-height: auto;
+  }
+
+  .mediaFrame,
+  .mediaFrame[data-revealed='true'] {
+    clip-path: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
   }
 }

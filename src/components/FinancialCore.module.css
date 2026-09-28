@@ -1,4 +1,5 @@
 .core {
+  position: relative;
   width: min(56vw, 47rem);
   margin: 0;
   pointer-events: none;
@@ -8,13 +9,14 @@
 }
 
 .artwork {
+  display: block;
   width: 100%;
   overflow: visible;
 }
 
 .orbit {
   fill: none;
-  stroke: rgb(232 213 143 / 26%);
+  stroke: var(--system-orbit);
   stroke-width: 1;
   transition:
     opacity 520ms var(--ease-standard),
@@ -23,29 +25,55 @@
 }
 
 .outerOrbit {
-  stroke-dasharray: 1 8;
+  stroke-dasharray: 1 7;
   stroke-linecap: round;
-  opacity: 0.62;
+  opacity: 0.82;
 }
 
 .innerOrbit {
-  stroke: rgb(232 213 143 / 17%);
+  stroke: var(--system-orbit);
+  opacity: 0.7;
 }
 
 .connection path {
   fill: none;
-  stroke: rgb(232 213 143 / 31%);
-  stroke-dasharray: 3 9;
+  stroke: var(--system-line);
+  stroke-dasharray: 0.018 0.028;
   stroke-linecap: round;
   stroke-width: 1.2;
+  opacity: 0.68;
   transition:
     opacity 520ms var(--ease-standard),
     stroke 520ms var(--ease-standard);
 }
 
+.connection[data-source-order='0'] { --source-delay: 0ms; }
+.connection[data-source-order='1'] { --source-delay: 150ms; }
+.connection[data-source-order='2'] { --source-delay: 300ms; }
+.connection[data-source-order='3'] { --source-delay: 450ms; }
+.connection[data-source-order='4'] { --source-delay: 600ms; }
+
+.organizationFlow {
+  fill: none;
+  stroke: var(--system-activity);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-width: 1.6;
+  opacity: 0;
+}
+
+.organizationFlow[data-active='true'] {
+  animation: draw-source 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.organizationFlow:nth-child(2)[data-active='true'] {
+  animation-delay: 180ms;
+}
+
 .signalPath {
   fill: none;
-  stroke: var(--color-gold-soft);
+  stroke: var(--system-activity);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.7;
@@ -55,12 +83,17 @@
 
 .insightFlow {
   fill: none;
-  stroke: rgb(232 213 143 / 46%);
+  stroke: var(--system-line-active);
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   stroke-linecap: round;
   stroke-width: 1.35;
   opacity: 0;
+}
+
+.visibilityPulse {
+  fill: var(--system-node-accent);
+  filter: drop-shadow(0 0 4px rgb(232 213 143 / 52%));
 }
 
 .insight[data-insight-order='0'] {
@@ -76,8 +109,8 @@
 }
 
 .nodeRing {
-  fill: var(--color-navy);
-  stroke: rgb(232 213 143 / 48%);
+  fill: var(--system-node-surface);
+  stroke: var(--system-node-border);
   stroke-width: 1.2;
   transition:
     fill 360ms var(--ease-standard),
@@ -86,30 +119,59 @@
 }
 
 .nodeDot {
-  fill: var(--color-gold-soft);
+  fill: var(--system-node-accent);
   opacity: 0.8;
+}
+
+.organizationNodeRing {
+  fill: var(--system-node-surface);
+  stroke: var(--system-node-border-muted);
+  stroke-width: 1.2;
+  transition: stroke 360ms var(--ease-standard), transform 360ms var(--ease-standard);
+}
+
+.organizationNodeDot { fill: var(--system-node-accent); }
+
+.organizationNodeLabel {
+  fill: var(--system-label);
+  font-family: var(--font-interface);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.035em;
+  opacity: var(--system-organization-label-opacity);
+  transition: opacity 360ms var(--ease-standard), fill 360ms var(--ease-standard);
+}
+
+.organizationNode[data-active='true'] .organizationNodeRing {
+  stroke: var(--color-gold-soft);
+  transform: scale(1.12);
+}
+
+.organizationNode[data-active='true'] .organizationNodeLabel {
+  fill: var(--system-label-active);
+  opacity: 1;
 }
 
 .nodeLabel,
 .centerLabel {
-  fill: var(--color-on-dark-strong);
+  fill: var(--system-label);
   font-family: var(--font-interface);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.065em;
-  opacity: 0.76;
+  opacity: var(--system-node-label-opacity);
   transition: opacity 360ms var(--ease-standard);
 }
 
 .centerHalo {
-  fill: var(--color-gold);
-  opacity: 0.045;
+  fill: var(--system-center-halo);
+  opacity: var(--system-halo-muted-opacity);
   transition: opacity 520ms var(--ease-standard);
 }
 
 .centerRing {
   fill: none;
-  stroke: rgb(232 213 143 / 62%);
+  stroke: var(--system-center-ring);
   stroke-width: 1;
   transition:
     stroke 360ms var(--ease-standard),
@@ -117,18 +179,17 @@
 }
 
 .centerDisc {
-  fill: var(--color-navy);
-  stroke: var(--color-on-dark-border-strong);
+  fill: var(--system-center-disc);
+  stroke: var(--system-node-border);
   stroke-width: 1;
 }
 
 .centerLogo {
-  overflow: hidden;
-  clip-path: circle(47% at 50% 50%);
+  overflow: visible;
 }
 
 .centerLabel {
-  fill: var(--color-gold-soft);
+  fill: var(--system-node-accent);
   font-family: var(--font-display);
   font-size: 15px;
   font-weight: 400;
@@ -136,7 +197,7 @@
 }
 
 .visibilityPoint {
-  fill: var(--color-gold-soft);
+  fill: var(--system-node-accent);
   opacity: 0.15;
   transform-box: fill-box;
   transform-origin: center;
@@ -146,7 +207,7 @@
 }
 
 .insightLabel {
-  fill: var(--color-gold-soft);
+  fill: var(--system-label-active);
   font-family: var(--font-interface);
   font-size: 10px;
   font-weight: 650;
@@ -173,9 +234,23 @@
 }
 
 .connection path[data-active='true'] {
-  stroke: rgb(232 213 143 / 50%);
-  stroke-dasharray: 2 7;
-  animation: converge calc(var(--duration-flow) - 0.2s) linear infinite;
+  stroke: var(--system-line-active);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.84;
+  animation: draw-source 760ms cubic-bezier(0.16, 1, 0.3, 1) var(--source-delay, 0ms) both;
+}
+
+.connection path[data-decision-flow='true'] {
+  opacity: 0.2;
+}
+
+.core[data-state='decisao'] .connection path[data-decision-flow='true'] {
+  stroke: var(--system-activity);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.92;
+  animation: draw-source 880ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .signalPath[data-active='true'] {
@@ -183,8 +258,9 @@
 }
 
 .signalOrganized[data-active='true'] {
-  stroke-dasharray: 5 8;
-  animation: converge var(--duration-flow) linear infinite;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-source 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .innerOrbit[data-active='true'] {
@@ -196,35 +272,48 @@
 }
 
 .core[data-state='entradas'] .node .nodeRing {
-  stroke: rgb(232 213 143 / 72%);
+  stroke: var(--system-orbit-active);
 }
 
 .core[data-state='entradas'] .node[data-source-active='true'] .nodeLabel {
-  fill: var(--color-paper);
+  fill: var(--system-label-active);
   opacity: 1;
 }
 
 .core[data-state='organizacao'] .innerOrbit {
-  stroke: rgb(232 213 143 / 64%);
+  stroke: var(--system-orbit-active);
   stroke-dasharray: 4 6;
 }
 
 .core[data-state='organizacao'] .connection path {
-  stroke: rgb(232 213 143 / 49%);
+  stroke: var(--system-line-active);
+}
+
+.core[data-state='organizacao'] .organizationNode[data-active='true'] {
+  animation: node-arrive 480ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.core[data-state='organizacao'] .organizationNode[data-active='true']:last-child {
+  animation-delay: 180ms;
 }
 
 .core[data-state='visibilidade'] .outerOrbit {
-  stroke: rgb(232 213 143 / 67%);
+  stroke: var(--system-orbit-active);
   stroke-dasharray: 1 5;
+  opacity: 0.9;
 }
 
 .core[data-state='visibilidade'] .node .nodeLabel {
-  opacity: 0.12;
+  opacity: var(--system-visibility-label-opacity);
 }
 
 .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
   animation: reveal-insight 660ms var(--ease-standard) var(--insight-delay, 0ms)
     both;
+}
+
+.core[data-state='entradas'] .centerHalo {
+  animation: core-response 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .core[data-state='visibilidade'] .visibilityPoint[data-active='true'] {
@@ -234,7 +323,7 @@
 }
 
 .core[data-state='visibilidade'] .insightLabel[data-insight-active='true'] {
-  opacity: 0.96;
+  opacity: var(--system-visibility-flow-opacity);
   transition-delay: calc(var(--insight-delay, 0ms) + 880ms);
 }
 
@@ -244,11 +333,11 @@
 }
 
 .core[data-state='decisao'] .centerHalo {
-  opacity: 0.13;
+  opacity: var(--system-halo-state-opacity);
 }
 
 .core[data-state='decisao'] .centerRing {
-  stroke: var(--color-gold);
+  stroke: var(--system-node-accent);
   stroke-width: 2;
 }
 
@@ -258,32 +347,99 @@
 
 .core[data-state='decisao'] .outerOrbit,
 .core[data-state='decisao'] .innerOrbit,
-.core[data-state='decisao'] .connection,
 .core[data-state='decisao'] .node:not(.center),
 .core[data-state='decisao'] .insights {
-  opacity: 0.16;
+  opacity: var(--system-inactive-state-opacity);
+}
+
+.core[data-state='decisao'] .connection path {
+  opacity: var(--system-inactive-link-opacity);
+}
+
+.core[data-state='decisao'] .node[data-decision-source='true'] {
+  opacity: 1;
+}
+
+.core[data-state='decisao'] .node[data-decision-source='true'] .nodeRing {
+  stroke: var(--system-activity);
+  transform: scale(1.08);
+}
+
+.core[data-state='decisao'] .node[data-decision-source='true'] .nodeLabel {
+  fill: var(--system-label-active);
+  opacity: 1;
 }
 
 .decisionOutput[data-active='true'] {
   opacity: 1;
 }
 
-@keyframes converge {
-  to {
-    stroke-dashoffset: -27;
-  }
+.nextStepLink {
+  position: absolute;
+  top: 85.3%;
+  left: 39.06%;
+  display: grid;
+  width: 21.88%;
+  height: 5.32%;
+  min-height: 2.125rem;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-brand-ink);
+  font-family: var(--font-interface);
+  font-size: clamp(0.48rem, 0.75vw, 0.65rem);
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 360ms var(--ease-standard), box-shadow 180ms var(--ease-standard);
+}
+
+.nextStepLink[aria-hidden='false'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nextStepLink:hover { box-shadow: 0 0 0 2px var(--color-brand-ink); }
+
+.nextStepLink:focus-visible {
+  outline: 2px solid var(--color-gold-soft);
+  outline-offset: 3px;
+}
+
+@keyframes draw-source {
+  from { stroke-dashoffset: 1; opacity: 0.08; }
+  to { stroke-dashoffset: 0; opacity: 0.92; }
+}
+
+@keyframes node-arrive {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
+@keyframes core-response {
+  0% { opacity: var(--system-halo-rest); }
+  40% { opacity: var(--system-halo-peak); }
+  100% { opacity: var(--system-halo-rest); }
 }
 
 @keyframes reveal-insight {
   to {
     stroke-dashoffset: 0;
-    opacity: 0.48;
+    opacity: var(--system-visibility-flow-opacity);
   }
 }
 
 @media (max-width: 43.75rem) {
   .core {
     width: min(78vw, 25rem);
+  }
+
+  .nextStepLink {
+    font-size: 0.46rem;
+    letter-spacing: 0.035em;
   }
 
   .core[data-revealed='false'] .nodeLabel {
@@ -314,14 +470,22 @@
   }
 
   .connection path[data-active='true'],
+  .core[data-state='decisao'] .connection path[data-decision-flow='true'],
   .signalOrganized[data-active='true'] {
     animation: none;
+    stroke-dashoffset: 0;
+    opacity: 0.92;
   }
+
+  .organizationFlow[data-active='true'] { animation: none; stroke-dashoffset: 0; opacity: 0.92; }
+  .core[data-state='entradas'] .centerHalo { animation: none; opacity: var(--system-halo-state-opacity); }
+  .core[data-state='organizacao'] .organizationNode[data-active='true'] { animation: none; }
+  .visibilityPulse { display: none; }
 
   .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
     animation: none;
     stroke-dashoffset: 0;
-    opacity: 0.48;
+    opacity: var(--system-visibility-flow-opacity);
   }
 
   .core[data-state='visibilidade'] .visibilityPoint,

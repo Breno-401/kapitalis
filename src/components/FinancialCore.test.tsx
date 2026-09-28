@@ -29,6 +29,8 @@ describe('Kapitalis financial core visual', () => {
 
     expect(container.querySelector('[data-kapitalis-brandmark]')?.getAttribute('href'))
       .toBe('/assets/kapitalis-logo-original.png')
+    expect(container.querySelector('[data-kapitalis-brandmark]')?.closest('svg')?.getAttribute('viewBox'))
+      .toBe('360 40 800 790')
     expect(container.querySelector('.centerMark')).toBeNull()
     expect(container.querySelector('[data-financial-node="Kapitalis"]'))
       .toBeTruthy()
@@ -61,6 +63,41 @@ describe('Kapitalis financial core visual', () => {
       .toBe('true')
   })
 
+  it('organization_connects_the_core_to_conciliation_and_closing_nodes', () => {
+    const { container } = render(<FinancialCore state="organizacao" />)
+    const core = container.querySelector('[data-financial-core]')
+    const nodes = Array.from(core?.querySelectorAll('[data-organization-node]') ?? [])
+
+    expect(nodes.map((node) => node.textContent?.trim())).toEqual([
+      'Conciliação',
+      'Fechamento',
+    ])
+    expect(nodes.every((node) => node.getAttribute('data-active') === 'true'))
+      .toBe(true)
+    expect(core?.querySelectorAll('[data-flow="organization"]')).toHaveLength(2)
+    expect(core?.querySelectorAll('[data-flow="organization"][data-active="true"]'))
+      .toHaveLength(2)
+  })
+
+  it('decision_highlights_folha_and_notas_and_links_the_core_to_a_real_whatsapp_cta', () => {
+    const { container } = render(<FinancialCore state="decisao" />)
+    const core = container.querySelector('[data-financial-core]')
+    const emphasizedSources = Array.from(
+      core?.querySelectorAll('[data-decision-source="true"]') ?? [],
+    ).map((source) => source.getAttribute('data-source'))
+
+    expect(emphasizedSources).toEqual(['notas', 'folha'])
+    expect(core?.querySelectorAll('[data-decision-flow="true"]')).toHaveLength(2)
+    expect(core?.querySelector('[data-financial-signal="decision-link"]')
+      ?.getAttribute('d')).toBe('M 320 438 L 320 546')
+
+    const nextStep = container.querySelector<HTMLAnchorElement>('[data-next-step-link]')
+    expect(nextStep?.getAttribute('href')).toBe('https://wa.me/5527998829289')
+    expect(nextStep?.getAttribute('target')).toBe('_blank')
+    expect(nextStep?.getAttribute('rel')).toBe('noopener noreferrer')
+    expect(nextStep?.textContent).toMatch(/Próximo passo/i)
+  })
+
   it('decision_signal_stays_clear_of_the_kapitalis_wordmark', () => {
     const { container } = render(<FinancialCore state="decisao" />)
     const wordmark = container.querySelector('[data-core-wordmark]')
@@ -79,13 +116,13 @@ describe('Kapitalis financial core visual', () => {
     const { container } = render(<FinancialCore state="decisao" />)
     const output = container.querySelector('[data-output="next-step"]')
 
-    expect(output?.querySelector('rect')?.getAttribute('y')).toBe('466')
-    expect(output?.querySelector('text')?.getAttribute('y')).toBe('487')
+    expect(output?.querySelector('rect')?.getAttribute('y')).toBe('546')
+    expect(output?.querySelector('text')?.getAttribute('y')).toBe('567')
     expect(
       container
         .querySelector('[data-financial-signal="decision-link"]')
         ?.getAttribute('d'),
-    ).toBe('M 320 438 L 320 466')
+    ).toBe('M 320 438 L 320 546')
   })
 
   it('visibility_labels_do_not_collide_with_source_node_labels', () => {

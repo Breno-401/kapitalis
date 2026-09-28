@@ -10,6 +10,7 @@ export type StoryChapter = {
   title: string
   body: string
   items: readonly string[]
+  media?: StoryMedia
 }
 
 export type StoryMedia =
@@ -22,4 +23,6 @@ export type StoryMedia =
       src: string
       alt: string
       objectPosition?: string
+      fit?: 'cover' | 'contain'
+      caption?: string
     }
