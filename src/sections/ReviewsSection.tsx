@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
+import { GoogleMark } from '../components/GoogleMark'
 import { ReviewCard } from './ReviewCard'
 import styles from './ReviewsSection.module.css'
 
@@ -15,6 +16,26 @@ type DragState = {
   startOffset: number
   axis?: 'horizontal' | 'vertical'
   moved: boolean
+}
+
+function GoogleProfileArrow() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+      <path d="M4.25 10h11.5m-5-5 5 5-5 5" />
+    </svg>
+  )
+}
+
+function ReviewStars({ rating }: { rating: number }) {
+  return (
+    <span className={styles.proofStars} role="img" aria-label={`${rating} de 5 estrelas`}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <svg aria-hidden="true" key={index} viewBox="0 0 24 24" focusable="false">
+          <path d="m12 2.7 2.83 5.74 6.34.92-4.59 4.47 1.08 6.31L12 17.16l-5.66 2.98 1.08-6.31L2.83 9.36l6.34-.92L12 2.7Z" />
+        </svg>
+      ))}
+    </span>
+  )
 }
 
 function isTrackInViewport(track: HTMLElement) {
@@ -45,6 +66,15 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   const pauseReasonsRef = useRef(new Set<string>())
   const dragRef = useRef<DragState | null>(null)
   const suppressClickUntilRef = useRef(0)
+
+  const formattedRating = data.averageRating.toLocaleString('pt-BR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  })
+  const reviewVolume =
+    data.totalReviews > 50
+      ? 'Mais de 50 avaliações no Google'
+      : `${data.totalReviews} avaliações no Google`
 
   useEffect(() => {
     const section = sectionRef.current
@@ -279,7 +309,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
         }
       }}
     >
-      <div className={`container ${styles.header}`}>
+      <div className={`container ${styles.header}`} data-review-header>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>Vozes de quem já conhece a Kapitalis</p>
           <h2 id="reviews-title">A confiança aparece em cada avaliação.</h2>
@@ -287,6 +317,29 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             Relatos públicos de pessoas que já confiaram sua rotina à equipe.
           </p>
         </div>
+        <a
+          className={styles.proofCard}
+          href={data.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Google, nota ${formattedRating} de 5 estrelas. ${reviewVolume}. Ver avaliações no Google`}
+          data-review-proof
+          data-google-profile-link="summary"
+        >
+          <span className={styles.proofMetric}>
+            <span className={styles.proofBrand}>
+              <span aria-hidden="true"><GoogleMark /></span>
+              <span>Google</span>
+            </span>
+            <strong>{formattedRating}</strong>
+            <ReviewStars rating={data.averageRating} />
+          </span>
+          <span className={styles.proofDetails}>
+            <span className={styles.reviewVolume}>{reviewVolume}</span>
+            <span className={styles.proofAction}>Ver avaliações no Google</span>
+          </span>
+          <span className={styles.proofArrow}><GoogleProfileArrow /></span>
+        </a>
       </div>
 
       <div className={styles.trackFrame} data-review-frame>
@@ -339,6 +392,19 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className={`container ${styles.closingCta}`} data-review-closing-cta>
+        <a
+          className={styles.closingLink}
+          href={data.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-google-profile-link="closing"
+        >
+          <span>Ver mais avaliações no Google</span>
+          <GoogleProfileArrow />
+        </a>
       </div>
     </section>
   )

@@ -4,12 +4,28 @@ import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
 
 describe('Google Reviews section', () => {
-  it('renders nine real reviews without an aggregate block or external navigation', () => {
-    render(<ReviewsSection data={googleReviewsSnapshot} />)
+  it('renders the verified Google proof block and links both CTAs to the Kapitalis profile', () => {
+    const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
 
-    expect(screen.queryByText('5,0')).toBeNull()
+    expect(screen.getByText('5,0')).toBeTruthy()
+    expect(screen.getByRole('img', { name: '5 de 5 estrelas' })).toBeTruthy()
+    expect(screen.getByText('Mais de 50 avaliações no Google')).toBeTruthy()
+    expect(
+      screen.getByRole('link', {
+        name: 'Google, nota 5,0 de 5 estrelas. Mais de 50 avaliações no Google. Ver avaliações no Google',
+      }),
+    ).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Ver mais avaliações no Google' })).toBeTruthy()
+
+    const profileLinks = container.querySelectorAll<HTMLAnchorElement>('[data-google-profile-link]')
+    expect(profileLinks).toHaveLength(2)
+    for (const link of profileLinks) {
+      expect(link.href).toBe(googleReviewsSnapshot.sourceUrl)
+      expect(link.target).toBe('_blank')
+      expect(link.rel).toContain('noopener')
+      expect(link.rel).toContain('noreferrer')
+    }
     expect(screen.queryByText('52 avaliações no Google')).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Ver avaliações no Google' })).toBeNull()
     expect(screen.getAllByRole('article')).toHaveLength(9)
     expect(
       within(screen.getByRole('article', { name: 'Avaliação de Jimmy Campos' })).getByText(
@@ -24,6 +40,20 @@ describe('Google Reviews section', () => {
     for (const review of screen.getAllByRole('article')) {
       expect(within(review).queryAllByRole('link')).toHaveLength(0)
     }
+  })
+
+  it('keeps the aggregate proof beside the heading and the closing CTA after the review rail', () => {
+    const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+
+    const section = container.querySelector<HTMLElement>('#avaliacoes')!
+    const header = section.querySelector<HTMLElement>('[data-review-header]')!
+    const proof = section.querySelector<HTMLElement>('[data-review-proof]')!
+    const trackFrame = section.querySelector<HTMLElement>('[data-review-frame]')!
+    const closingCta = section.querySelector<HTMLElement>('[data-review-closing-cta]')!
+
+    expect(section.dataset.themeSurface).toBe('dark')
+    expect(header.contains(proof)).toBe(true)
+    expect(trackFrame.compareDocumentPosition(closingCta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('omits the carousel hint and arrow controls while keeping the Google mark', () => {
