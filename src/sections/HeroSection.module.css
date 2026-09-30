@@ -244,6 +244,13 @@
   object-position: center top;
 }
 
+@media (min-width: 56.25rem) and (max-height: 57rem) {
+  .heroPortrait {
+    /* Keep the portrait's 1.08:1 frame below the fixed navbar on short desktops. */
+    width: min(55vw, 55rem, calc(108svh - 8.64rem));
+  }
+}
+
 .corePosition > * {
   width: 100%;
 }
