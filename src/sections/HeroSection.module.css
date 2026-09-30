@@ -662,13 +662,17 @@
 }
 
 @media (min-width: 96.25rem) and (max-width: 103.75rem) and (min-height: 53.75rem) and (max-height: 58.75rem) {
+  .experienceGrid {
+    grid-template-columns: minmax(0, 48fr) minmax(0, 52fr);
+  }
+
   .corePosition {
-    left: 49%;
-    width: min(37.5vw, 38rem, 64svh);
+    left: 54%;
+    width: min(42vw, 42rem, 75svh);
   }
 
   .systemLabel h2 {
-    font-size: 2rem;
+    font-size: 2.125rem;
   }
 }
 

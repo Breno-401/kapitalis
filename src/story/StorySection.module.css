@@ -199,12 +199,30 @@
 }
 
 @media (min-width: 96.25rem) and (max-width: 103.75rem) and (min-height: 53.75rem) and (max-height: 58.75rem) {
+  .chapter {
+    padding-block: clamp(2.5rem, 5vh, 4rem);
+  }
+
   .chapterText {
-    width: min(100%, 32rem);
+    width: min(100%, 30rem);
   }
 
   .chapter h3 {
-    font-size: clamp(3rem, 5vw, 5rem);
+    font-size: clamp(3rem, 4.25vw, 4.375rem);
+  }
+
+  .chapterBody {
+    margin-top: var(--space-4);
+    line-height: 1.58;
+  }
+
+  .chapterItems {
+    gap: 0.5rem 1.05rem;
+    margin-top: var(--space-6);
+  }
+
+  .mediaFrame {
+    width: min(100%, 32rem);
   }
 }
 
