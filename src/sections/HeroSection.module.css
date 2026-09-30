@@ -3,6 +3,19 @@
   isolation: isolate;
   background: var(--color-navy);
   color: var(--color-paper);
+  --hero-atmosphere-glow: rgb(17 70 138 / 24%);
+  --hero-atmosphere-center: rgb(27 77 137 / 12%);
+  --hero-atmosphere-ribbon: rgb(5 67 145 / 21%);
+  --hero-atmosphere-ribbon-soft: rgb(20 79 145 / 12%);
+  --hero-atmosphere-ribbon-deep: rgb(2 42 94 / 28%);
+}
+
+:root[data-theme='light'] .experience {
+  --hero-atmosphere-glow: rgb(67 107 157 / 12%);
+  --hero-atmosphere-center: rgb(93 126 170 / 7%);
+  --hero-atmosphere-ribbon: rgb(61 99 148 / 9%);
+  --hero-atmosphere-ribbon-soft: rgb(91 125 167 / 6%);
+  --hero-atmosphere-ribbon-deep: rgb(54 87 132 / 8%);
 }
 
 .experienceGrid {
@@ -33,6 +46,31 @@
   background:
     radial-gradient(ellipse at 50% 67%, rgb(212 175 55 / 7%), transparent 39%),
     var(--color-navy);
+  pointer-events: none;
+}
+
+.atmosphere {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  transform: translate3d(
+    var(--hero-atmosphere-x, 0px),
+    var(--hero-atmosphere-y, 0px),
+    0
+  );
+  pointer-events: none;
+}
+
+.atmosphereLayer {
+  position: absolute;
+  inset: -6%;
+  background:
+    radial-gradient(ellipse at 72% 43%, var(--hero-atmosphere-glow), transparent 34%),
+    radial-gradient(ellipse at 49% 57%, var(--hero-atmosphere-center), transparent 42%),
+    linear-gradient(132deg, transparent 0 37%, var(--hero-atmosphere-ribbon-deep) 41%, var(--hero-atmosphere-ribbon) 45%, transparent 53%),
+    linear-gradient(132deg, transparent 0 62%, var(--hero-atmosphere-ribbon-soft) 66%, var(--hero-atmosphere-ribbon-deep) 69%, transparent 76%);
+  transform: translate3d(0, 0, 0) scale(1.02);
   pointer-events: none;
 }
 
@@ -598,6 +636,10 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .atmosphereLayer {
+    animation: hero-atmosphere-drift 26s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  }
+
   .heroCopy [data-entry='eyebrow'] {
     animation: hero-enter 760ms var(--ease-standard) 120ms both;
   }
@@ -629,6 +671,22 @@
 
   .scrollCue[data-entry='scroll-cue'] {
     animation: hero-enter 760ms var(--ease-standard) 1040ms both;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .atmosphere {
+    will-change: transform;
+  }
+}
+
+@keyframes hero-atmosphere-drift {
+  from {
+    transform: translate3d(-0.45%, 0.3%, 0) scale(1.01);
+  }
+
+  to {
+    transform: translate3d(0.45%, -0.3%, 0) scale(1.035);
   }
 }
 
@@ -671,6 +729,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .atmosphere {
+    transform: none;
+  }
+
+  .atmosphereLayer {
+    animation: none;
+  }
+
   .heroCopy,
   .heroPortrait img,
   .corePosition,

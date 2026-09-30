@@ -5,6 +5,7 @@ import kapitalisStoryData from '../data/kapitalisStory.json'
 import { StorySection } from '../story/StorySection'
 import type { StoryChapter } from '../story/types'
 import { useActiveStoryChapter } from '../story/useActiveStoryChapter'
+import { useHeroAtmospherePointer } from './useHeroAtmospherePointer'
 import styles from './HeroSection.module.css'
 import { useHeroScrollProgress } from './useHeroScrollProgress'
 
@@ -19,6 +20,7 @@ export function HeroSection() {
     experienceRef,
     trackRef,
   )
+  useHeroAtmospherePointer(experienceRef)
 
   return (
     <section
@@ -32,6 +34,13 @@ export function HeroSection() {
       <div className={styles.experienceGrid}>
         <div className={styles.visualRail}>
           <div className={styles.stage}>
+            <div
+              aria-hidden="true"
+              className={styles.atmosphere}
+              data-hero-atmosphere
+            >
+              <span className={styles.atmosphereLayer} />
+            </div>
             <div
               aria-hidden={introHidden}
               className={styles.heroCopy}
