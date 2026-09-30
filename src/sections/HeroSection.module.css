@@ -287,15 +287,12 @@
 .heroPortrait::after {
   position: absolute;
   z-index: 1;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: clamp(1.5rem, 4vh, 2.25rem);
+  inset: 0;
   background: linear-gradient(
     0deg,
-    rgb(0 0 0 / 16%),
-    rgb(0 0 0 / 8%) 35%,
-    transparent
+    var(--color-navy) 0%,
+    color-mix(in srgb, var(--color-navy) 72%, transparent) 4%,
+    transparent 18%
   );
   content: '';
   pointer-events: none;
@@ -551,6 +548,15 @@
     overflow: hidden;
   }
 
+  .heroPortrait::after {
+    background: linear-gradient(
+      0deg,
+      var(--color-navy) 0%,
+      color-mix(in srgb, var(--color-navy) 62%, transparent) 10%,
+      transparent 32%
+    );
+  }
+
   .systemLabel {
     position: relative;
     top: auto;
@@ -652,6 +658,17 @@
 
   .actions {
     flex-direction: column;
+  }
+}
+
+@media (min-width: 96.25rem) and (max-width: 103.75rem) and (min-height: 53.75rem) and (max-height: 58.75rem) {
+  .corePosition {
+    left: 49%;
+    width: min(37.5vw, 38rem, 64svh);
+  }
+
+  .systemLabel h2 {
+    font-size: 2rem;
   }
 }
 

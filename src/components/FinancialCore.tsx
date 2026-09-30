@@ -162,7 +162,7 @@ export function FinancialCore({
           className={`${styles.signalPath} ${styles.signalDecisionRoute}`}
           data-financial-signal="decision-route"
           data-active={state === 'decisao'}
-          d="M 320 432 C 312 476 328 536 320 584"
+          d="M 320 411 C 311 455 329 530 320 584"
           id="kapitalis-decision-route"
           pathLength="1"
         />
@@ -263,10 +263,10 @@ export function FinancialCore({
           <circle className={styles.centerDisc} cx="320" cy="320" r="52" />
           <BrandMark
             className={styles.centerLogo}
-            x="284"
-            y="284"
-            width="72"
-            height="72"
+            x="282"
+            y="282"
+            width="76"
+            height="76"
           />
           <text className={styles.centerLabel} data-core-wordmark textAnchor="middle" x="320" y="407">
             Kapitalis

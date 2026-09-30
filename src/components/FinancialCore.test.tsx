@@ -203,7 +203,7 @@ describe('Kapitalis financial core visual', () => {
     const route = signal?.getAttribute('d') ?? ''
 
     expect(wordmarkBaseline).toBe(407)
-    expect(route.startsWith('M 320 432 C ')).toBe(true)
+    expect(route.startsWith('M 320 411 C ')).toBe(true)
     expect(route.endsWith('320 584')).toBe(true)
   })
 

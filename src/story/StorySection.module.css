@@ -198,6 +198,16 @@
   }
 }
 
+@media (min-width: 96.25rem) and (max-width: 103.75rem) and (min-height: 53.75rem) and (max-height: 58.75rem) {
+  .chapterText {
+    width: min(100%, 32rem);
+  }
+
+  .chapter h3 {
+    font-size: clamp(3rem, 5vw, 5rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .trackLead {
     display: none;
