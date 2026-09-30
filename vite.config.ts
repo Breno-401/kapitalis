@@ -6,5 +6,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // The default 12-fork pool exhausts this Windows host's memory.
+    maxWorkers: 1,
   },
 })
