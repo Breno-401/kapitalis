@@ -261,19 +261,6 @@
   transform: translate3d(0, var(--hero-photo-y, 0px), 0);
   pointer-events: none;
   will-change: opacity, transform;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
-}
-
-.heroPortrait::after {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 74%, transparent) 14%, transparent 42%, transparent 82%, color-mix(in srgb, var(--color-navy) 16%, transparent) 100%),
-    linear-gradient(0deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 72%, transparent) 4%, transparent 18%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-navy) 18%, transparent), transparent 17%);
-  content: '';
-  pointer-events: none;
 }
 
 .heroPortrait img {
@@ -526,12 +513,6 @@
     overflow: hidden;
   }
 
-  .heroPortrait::after {
-    background:
-      linear-gradient(90deg, var(--color-navy) 0%, transparent 16%, transparent 84%, var(--color-navy) 100%),
-      linear-gradient(0deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 62%, transparent) 10%, transparent 32%);
-  }
-
   .systemLabel {
     position: relative;
     top: auto;
@@ -666,10 +647,6 @@
     animation: hero-enter 760ms var(--ease-standard) 840ms both;
   }
 
-  .heroPortrait img {
-    animation: portrait-reveal 1200ms var(--ease-standard) 560ms both;
-  }
-
   .scrollCue[data-entry='scroll-cue'] {
     animation: hero-enter 760ms var(--ease-standard) 1040ms both;
   }
@@ -714,18 +691,6 @@
     clip-path: inset(0 0 0 0);
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes portrait-reveal {
-  from {
-    clip-path: inset(0 0 0 100%);
-    filter: blur(10px);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-    filter: blur(0);
   }
 }
 
