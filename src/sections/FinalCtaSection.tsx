@@ -34,6 +34,7 @@ export function FinalCtaSection() {
             </p>
           </div>
           <a
+            aria-label="Conversar no WhatsApp (abre em nova aba)"
             className={styles.action}
             href={site.whatsappUrl}
             target="_blank"

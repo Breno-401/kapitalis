@@ -170,6 +170,7 @@
   padding-inline: 1.35rem;
   background: var(--color-gold);
   color: var(--color-brand-ink);
+  cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-standard),
     filter var(--duration-fast) var(--ease-standard),

@@ -11,8 +11,8 @@ export const services = [
       'Fluxo de caixa',
       'Relatórios',
     ],
-    cta: 'Explorar a Mesa Financeira',
-    href: '#bpo',
+    cta: 'Conversar pelo WhatsApp',
+    whatsappMessage: 'Olá! Gostaria de conversar sobre BPO Financeiro.',
   },
   {
     id: 'contabilidade',
@@ -26,8 +26,8 @@ export const services = [
       'Departamento pessoal e folha',
       'IRPF e MEI',
     ],
-    cta: 'Ver ferramentas da Kapitalis',
-    href: '#conteudo',
+    cta: 'Conversar pelo WhatsApp',
+    whatsappMessage: 'Olá! Gostaria de conversar sobre Contabilidade.',
   },
   {
     id: 'tributario-empresarial',
@@ -40,7 +40,7 @@ export const services = [
       'Consultoria empresarial',
       'Indicadores e precificação',
     ],
-    cta: 'Ver ferramentas da Kapitalis',
-    href: '#conteudo',
+    cta: 'Conversar pelo WhatsApp',
+    whatsappMessage: 'Olá! Gostaria de conversar sobre Tributário e empresarial.',
   },
 ] as const

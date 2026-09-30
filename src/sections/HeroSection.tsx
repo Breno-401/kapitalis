@@ -68,6 +68,7 @@ export function HeroSection() {
                   href={site.whatsappUrl}
                   rel="noopener noreferrer"
                   target="_blank"
+                  aria-label="Conversar com a Kapitalis (abre em nova aba)"
                 >
                   Conversar com a Kapitalis
                   <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">

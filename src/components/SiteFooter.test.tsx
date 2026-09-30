@@ -15,9 +15,10 @@ describe('site footer', () => {
     expect(within(navigation).getByRole('link', { name: 'BPO Financeiro' }).getAttribute('href')).toBe('#bpo')
     expect(within(footer).getByText(site.locality)).toBeTruthy()
     expect(within(footer).getByRole('link', { name: site.phoneDisplay }).getAttribute('href')).toBe(`tel:${site.phoneE164}`)
-    expect(within(footer).getByRole('link', { name: 'WhatsApp' }).getAttribute('href')).toBe(site.whatsappUrl)
-    expect(within(footer).getByRole('link', { name: 'Instagram' })).toBeTruthy()
-    expect(within(footer).getByRole('link', { name: 'Facebook' })).toBeTruthy()
+    expect(within(footer).getByRole('link', { name: 'WhatsApp (abre em nova aba)' }).getAttribute('href')).toBe(site.whatsappUrl)
+    expect(within(footer).getByRole('link', { name: 'Instagram (abre em nova aba)' })).toBeTruthy()
+    expect(within(footer).getByRole('link', { name: 'Facebook (abre em nova aba)' })).toBeTruthy()
+    expect(within(footer).getByRole('link', { name: 'Avaliações no Google (abre em nova aba)' })).toBeTruthy()
   })
 
   it('usa a marca SVG com proporção preservada no rodapé', () => {

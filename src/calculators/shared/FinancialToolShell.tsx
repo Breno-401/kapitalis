@@ -40,7 +40,7 @@ export function SpecialistCTA() {
   return (
     <div className={styles.expertCta}>
       <span>Precisa avaliar seu caso com mais detalhe?</span>
-      <a href="https://wa.me/5527998829289" target="_blank" rel="noopener noreferrer">
+      <a aria-label="Falar com um especialista (abre em nova aba)" href="https://wa.me/5527998829289" target="_blank" rel="noopener noreferrer">
         Falar com um especialista →
       </a>
     </div>

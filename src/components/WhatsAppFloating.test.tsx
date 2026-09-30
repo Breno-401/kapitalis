@@ -9,7 +9,7 @@ describe('floating WhatsApp contact', () => {
     render(<WhatsAppFloating />)
 
     const link = screen.getByRole('link', {
-      name: 'Falar com a Kapitalis pelo WhatsApp',
+      name: 'Falar com a Kapitalis pelo WhatsApp (abre em nova aba)',
     })
     expect(link.getAttribute('href')).toBe(site.whatsappUrl)
     expect(link.getAttribute('target')).toBe('_blank')
@@ -22,7 +22,7 @@ describe('floating WhatsApp contact', () => {
     render(<App />)
 
     const floatingLink = screen.getByRole('link', {
-      name: 'Falar com a Kapitalis pelo WhatsApp',
+      name: 'Falar com a Kapitalis pelo WhatsApp (abre em nova aba)',
     })
     const menuButton = screen.getByRole('button', { name: 'Abrir menu' })
 

@@ -8,7 +8,7 @@ describe('transição entre seções', () => {
     const transition = container.querySelector('[data-section-transition]')
 
     expect(transition?.getAttribute('aria-hidden')).toBe('true')
-    expect(transition?.getAttribute('data-visible')).toBe('true')
-    expect(transition?.querySelectorAll('[data-transition-pulse]')).toHaveLength(2)
+    expect(transition?.querySelectorAll('[data-transition-pulse]')).toHaveLength(0)
+    expect(transition?.children).toHaveLength(0)
   })
 })

@@ -63,6 +63,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="WhatsApp (abre em nova aba)"
                 href={site.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -72,6 +73,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Avaliações no Google (abre em nova aba)"
                 href={site.googleReviewsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -81,6 +83,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Instagram (abre em nova aba)"
                 href={site.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -90,6 +93,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Facebook (abre em nova aba)"
                 href={site.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"

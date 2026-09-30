@@ -341,6 +341,7 @@ export function SiteHeader() {
               ))}
             </ul>
             <a
+              aria-label="Conversar no WhatsApp (abre em nova aba)"
               className={styles.menuContactLink}
               data-mobile-contact
               href={site.whatsappUrl}
@@ -366,6 +367,7 @@ export function SiteHeader() {
         </nav>
 
         <a
+          aria-label="Conversar no WhatsApp (abre em nova aba)"
           className={styles.contactLink}
           href={site.whatsappUrl}
           target="_blank"

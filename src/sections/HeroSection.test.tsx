@@ -7,7 +7,7 @@ describe('Kapitalis hero', () => {
     render(<HeroSection />)
 
     const primaryAction = screen.getByRole('link', {
-      name: 'Conversar com a Kapitalis',
+      name: 'Conversar com a Kapitalis (abre em nova aba)',
     })
     expect(primaryAction.getAttribute('href')).toBe('https://wa.me/5527998829289')
     expect(primaryAction.getAttribute('target')).toBe('_blank')

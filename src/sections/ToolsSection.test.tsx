@@ -123,7 +123,7 @@ describe('Simulador Tributário 360º', () => {
     const scope = tax()
     const form = scope.getByLabelText(/Deseja compartilhar esta simulação/)
     expect(form.tagName).toBe('DIV')
-    expect(scope.getByRole('link', { name: 'Falar com um especialista →' }).getAttribute('href')).toBe('https://wa.me/5527998829289')
+    expect(scope.getByRole('link', { name: 'Falar com um especialista (abre em nova aba)' }).getAttribute('href')).toBe('https://wa.me/5527998829289')
     expect(screen.getByRole('region', { name: 'Área de simulação complementar' })).toBeTruthy()
   })
 
@@ -134,7 +134,7 @@ describe('Simulador Tributário 360º', () => {
     const button = scope.getByRole('button', { name: 'Compartilhar' })
     fireEvent.click(button)
     expect(button.getAttribute('aria-expanded')).toBe('true')
-    expect(scope.getByRole('link', { name: 'Compartilhar no WhatsApp' }).getAttribute('href')).toContain('wa.me')
+    expect(scope.getByRole('link', { name: 'Compartilhar no WhatsApp (abre em nova aba)' }).getAttribute('href')).toContain('wa.me')
   })
 })
 

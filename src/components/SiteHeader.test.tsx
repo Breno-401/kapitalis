@@ -145,11 +145,11 @@ describe('site navigation', () => {
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
     ).toBe('#sistema')
     expect(
-      within(header).getAllByRole('link', { name: 'Conversar no WhatsApp' }),
+      within(header).getAllByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' }),
     ).toHaveLength(2)
     expect(
       within(header)
-        .getAllByRole('link', { name: 'Conversar no WhatsApp' })
+        .getAllByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' })
         .every((link) => link.getAttribute('href') === site.whatsappUrl),
     ).toBe(true)
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()

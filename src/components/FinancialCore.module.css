@@ -35,6 +35,17 @@
   opacity: 0.7;
 }
 
+.processOrbit {
+  stroke: var(--system-orbit);
+  stroke-dasharray: 1 8;
+  opacity: 0.5;
+}
+
+.orbit[data-active='true'] {
+  stroke: var(--system-orbit-active);
+  opacity: 0.88;
+}
+
 .connection path {
   fill: none;
   stroke: var(--system-line);
@@ -225,20 +236,18 @@
   fill: var(--color-gold);
 }
 
-.decisionOutput text {
-  fill: var(--color-brand-ink);
-  font-family: var(--font-interface);
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.11em;
-}
-
 .connection path[data-active='true'] {
   stroke: var(--system-line-active);
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
   opacity: 0.84;
   animation: draw-source 760ms cubic-bezier(0.16, 1, 0.3, 1) var(--source-delay, 0ms) both;
+}
+
+.core[data-state='entradas'] .connection path[data-active='true'] {
+  stroke-dasharray: 0.035 0.045;
+  stroke-dashoffset: 0;
+  animation: input-flow 14s linear var(--source-delay, 0ms) infinite;
 }
 
 .connection path[data-decision-flow='true'] {
@@ -255,12 +264,6 @@
 
 .signalPath[data-active='true'] {
   opacity: 0.92;
-}
-
-.signalOrganized[data-active='true'] {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: draw-source 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .innerOrbit[data-active='true'] {
@@ -308,8 +311,9 @@
 }
 
 .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
-  animation: reveal-insight 660ms var(--ease-standard) var(--insight-delay, 0ms)
-    both;
+  stroke-dasharray: 0.035 0.035;
+  stroke-dashoffset: 0;
+  animation: circulate-insight 12s linear var(--insight-delay, 0ms) infinite;
 }
 
 .core[data-state='entradas'] .centerHalo {
@@ -345,15 +349,23 @@
   opacity: 1;
 }
 
-.core[data-state='decisao'] .outerOrbit,
-.core[data-state='decisao'] .innerOrbit,
-.core[data-state='decisao'] .node:not(.center),
-.core[data-state='decisao'] .insights {
-  opacity: var(--system-inactive-state-opacity);
+.core[data-state='decisao'] .orbit {
+  stroke: var(--system-orbit-active);
+  stroke-dasharray: 1 7;
+  opacity: 0.76;
 }
 
 .core[data-state='decisao'] .connection path {
-  opacity: var(--system-inactive-link-opacity);
+  opacity: 0.46;
+}
+
+.core[data-state='decisao'] .node:not(.center) {
+  opacity: 0.86;
+}
+
+.core[data-state='decisao'] .signalDecisionLink {
+  stroke: var(--system-activity);
+  stroke-width: 2.8;
 }
 
 .core[data-state='decisao'] .node[data-decision-source='true'] {
@@ -376,7 +388,7 @@
 
 .nextStepLink {
   position: absolute;
-  top: 85.3%;
+  top: 92.19%;
   left: 39.06%;
   display: grid;
   width: 21.88%;
@@ -392,9 +404,13 @@
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
+  background: var(--color-gold);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 360ms var(--ease-standard), box-shadow 180ms var(--ease-standard);
+  transition:
+    opacity 360ms var(--ease-standard),
+    box-shadow 180ms var(--ease-standard),
+    filter 180ms var(--ease-standard);
 }
 
 .nextStepLink[aria-hidden='false'] {
@@ -402,7 +418,12 @@
   pointer-events: auto;
 }
 
-.nextStepLink:hover { box-shadow: 0 0 0 2px var(--color-brand-ink); }
+.nextStepLink:hover {
+  box-shadow: 0 0 0 2px var(--color-gold-soft), 0 0 1rem rgb(232 213 143 / 38%);
+  filter: brightness(1.06);
+}
+
+.nextStepLink:active { filter: brightness(0.94); }
 
 .nextStepLink:focus-visible {
   outline: 2px solid var(--color-gold-soft);
@@ -412,6 +433,11 @@
 @keyframes draw-source {
   from { stroke-dashoffset: 1; opacity: 0.08; }
   to { stroke-dashoffset: 0; opacity: 0.92; }
+}
+
+@keyframes input-flow {
+  from { stroke-dashoffset: 0; opacity: 0.84; }
+  to { stroke-dashoffset: -0.08; opacity: 0.84; }
 }
 
 @keyframes node-arrive {
@@ -425,11 +451,9 @@
   100% { opacity: var(--system-halo-rest); }
 }
 
-@keyframes reveal-insight {
-  to {
-    stroke-dashoffset: 0;
-    opacity: var(--system-visibility-flow-opacity);
-  }
+@keyframes circulate-insight {
+  from { stroke-dashoffset: 0; opacity: var(--system-visibility-flow-opacity); }
+  to { stroke-dashoffset: -0.07; opacity: var(--system-visibility-flow-opacity); }
 }
 
 @media (max-width: 43.75rem) {
@@ -453,6 +477,11 @@
   .insightFlow {
     display: none;
   }
+
+  .core[data-state='visibilidade'] .nodeLabel,
+  .core[data-state='visibilidade'] .organizationNodes {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -470,8 +499,7 @@
   }
 
   .connection path[data-active='true'],
-  .core[data-state='decisao'] .connection path[data-decision-flow='true'],
-  .signalOrganized[data-active='true'] {
+  .core[data-state='decisao'] .connection path[data-decision-flow='true'] {
     animation: none;
     stroke-dashoffset: 0;
     opacity: 0.92;
@@ -487,6 +515,8 @@
     stroke-dashoffset: 0;
     opacity: var(--system-visibility-flow-opacity);
   }
+
+  .nextStepLink { transition: none; }
 
   .core[data-state='visibilidade'] .visibilityPoint,
   .core[data-state='visibilidade'] .insightLabel {

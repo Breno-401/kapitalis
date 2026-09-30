@@ -12,10 +12,11 @@ describe('Google Reviews section', () => {
     expect(screen.getByText('Mais de 50 avaliações no Google')).toBeTruthy()
     expect(
       screen.getByRole('link', {
-        name: 'Google, nota 5,0 de 5 estrelas. Mais de 50 avaliações no Google. Ver avaliações no Google',
+        name: 'Google, nota 5,0 de 5 estrelas. Mais de 50 avaliações no Google. Ver avaliações no Google (abre em nova aba)',
       }),
     ).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Ver mais avaliações no Google' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Ver todas no Google (abre em nova aba)' })).toBeTruthy()
+    expect(screen.getByText('Ver todas no Google')).toBeTruthy()
 
     const profileLinks = container.querySelectorAll<HTMLAnchorElement>('[data-google-profile-link]')
     expect(profileLinks).toHaveLength(2)

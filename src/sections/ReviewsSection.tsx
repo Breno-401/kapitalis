@@ -322,7 +322,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           href={data.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Google, nota ${formattedRating} de 5 estrelas. ${reviewVolume}. Ver avaliações no Google`}
+          aria-label={`Google, nota ${formattedRating} de 5 estrelas. ${reviewVolume}. Ver avaliações no Google (abre em nova aba)`}
           data-review-proof
           data-google-profile-link="summary"
         >
@@ -400,10 +400,13 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           href={data.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Ver todas no Google (abre em nova aba)"
           data-google-profile-link="closing"
         >
-          <span>Ver mais avaliações no Google</span>
-          <GoogleProfileArrow />
+          <span>Ver todas no Google</span>
+          <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
+            <path d="M11 4h5v5M16 4 8 12M13 12v4H4V7h4" />
+          </svg>
         </a>
       </div>
     </section>

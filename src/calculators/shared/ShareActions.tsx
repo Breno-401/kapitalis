@@ -87,7 +87,7 @@ export function ShareActions({ url, title, text }: { url: string; title: string;
         <CopyButton copied={copied} onClick={copyLink} />
         {shareOpen && (
           <div className={styles.popover} role="group" aria-label="Opções de compartilhamento">
-            <a className={styles.action} href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+            <a aria-label="Compartilhar no WhatsApp (abre em nova aba)" className={styles.action} href={whatsappUrl} target="_blank" rel="noopener noreferrer">
               Compartilhar no WhatsApp
             </a>
             <CopyButton copied={copied} onClick={copyLink} />

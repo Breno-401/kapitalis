@@ -85,7 +85,7 @@ export function WhatsAppFloating() {
       href={site.whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Falar com a Kapitalis pelo WhatsApp"
+      aria-label="Falar com a Kapitalis pelo WhatsApp (abre em nova aba)"
       aria-hidden={isHidden}
       tabIndex={isHidden ? -1 : 0}
       data-hidden={isHidden}

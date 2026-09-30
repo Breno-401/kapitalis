@@ -1,6 +1,7 @@
-import { useId, useState, type FocusEvent, type MouseEvent } from 'react'
+import { useId, useState, type FocusEvent } from 'react'
 import { SectionHeading } from '../components/SectionHeading'
 import { services } from '../data/services'
+import { site } from '../data/site'
 import styles from './ServicesSection.module.css'
 
 type Service = (typeof services)[number]
@@ -64,10 +65,18 @@ function ServiceFlipCard({ service, index }: { service: Service; index: number }
     setTapSelected((current) => !current)
   }
 
-  function handleClose(event: MouseEvent<HTMLButtonElement>) {
-    setTapSelected(false)
-    if (event.detail > 0) event.currentTarget.blur()
+  function handleTouchClose(event: React.PointerEvent<HTMLElement>) {
+    if (
+      event.pointerType === 'touch' &&
+      tapSelected &&
+      event.target instanceof Element &&
+      !event.target.closest('a, button')
+    ) {
+      setTapSelected(false)
+    }
   }
+
+  const whatsappHref = `${site.whatsappUrl}?text=${encodeURIComponent(service.whatsappMessage)}`
 
   return (
     <article
@@ -76,6 +85,7 @@ function ServiceFlipCard({ service, index }: { service: Service; index: number }
       data-open={isOpen}
       onBlurCapture={handleBlur}
       onFocusCapture={handleFocus}
+      onPointerDown={handleTouchClose}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={() => setPointerActive(false)}
     >
@@ -114,17 +124,6 @@ function ServiceFlipCard({ service, index }: { service: Service; index: number }
         >
           <div className={styles.backHeader}>
             <span className={styles.backLabel}>{service.label}</span>
-            <button
-              aria-label={`Voltar para ${service.title}`}
-              className={styles.closeButton}
-              onClick={handleClose}
-              tabIndex={isOpen ? 0 : -1}
-              type="button"
-            >
-              <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-                <path d="M15.5 10h-11m4 4-4-4 4-4" />
-              </svg>
-            </button>
           </div>
 
           <div className={styles.backContent}>
@@ -137,10 +136,17 @@ function ServiceFlipCard({ service, index }: { service: Service; index: number }
             </ul>
           </div>
 
-          <a className={styles.serviceLink} href={service.href} tabIndex={isOpen ? 0 : -1}>
+          <a
+            aria-label={`${service.title}: ${service.cta}. Abre em nova aba.`}
+            className={styles.serviceLink}
+            href={whatsappHref}
+            rel="noopener noreferrer"
+            tabIndex={isOpen ? 0 : -1}
+            target="_blank"
+          >
             {service.cta}
             <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-              <path d="M4.5 10h10m-4-4 4 4-4 4" />
+              <path d="M11 4h5v5m-.5-4.5L9 11m3 1v4H4V7h4" />
             </svg>
           </a>
         </div>

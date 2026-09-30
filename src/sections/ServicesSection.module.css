@@ -212,39 +212,6 @@
   border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
 }
 
-.closeButton {
-  display: inline-grid;
-  flex: 0 0 2.25rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  transition:
-    color 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.closeButton:hover {
-  border-color: var(--accent, var(--color-gold));
-  background: var(--surface-interactive, color-mix(in srgb, var(--accent, var(--color-gold)) 10%, transparent));
-  color: var(--accent, var(--color-gold));
-}
-
-.closeButton svg {
-  width: 1rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.5;
-}
-
-.closeButton:focus-visible,
 .serviceLink:focus-visible {
   outline: 2px solid var(--accent, var(--color-gold-soft));
   outline-offset: 3px;
@@ -305,19 +272,31 @@
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  gap: 0.65rem;
-  min-height: 2.5rem;
+  gap: 0.6rem;
+  min-height: 2.75rem;
   margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--color-gold)) 58%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 8%, transparent);
   color: var(--text-primary);
+  box-sizing: border-box;
   font-size: 0.78rem;
   font-weight: 650;
-  text-decoration-color: color-mix(in srgb, currentColor 48%, transparent);
-  text-underline-offset: 0.3em;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 120ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .serviceLink:hover {
   color: var(--accent, var(--color-gold-soft));
-  text-decoration-color: currentColor;
+  border-color: var(--accent, var(--color-gold-soft));
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 14%, transparent);
 }
 
 .serviceLink svg {
@@ -332,12 +311,12 @@
 }
 
 .serviceLink:hover svg {
-  transform: translateX(2px);
+  transform: translate(1px, -1px);
 }
 
-.closeButton:active,
 .serviceLink:active {
-  opacity: 0.82;
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 20%, transparent);
+  transform: scale(0.98);
 }
 
 @media (max-width: 68rem) {
@@ -421,7 +400,6 @@
   .frontFace,
   .backFace,
   .frontHint svg,
-  .closeButton,
   .serviceLink svg {
     transition: none;
   }

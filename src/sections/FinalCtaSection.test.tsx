@@ -10,7 +10,7 @@ describe('final contact section', () => {
     expect(
       screen.getByRole('heading', { name: 'Vamos conversar sobre a rotina da sua empresa.' }),
     ).toBeTruthy()
-    const link = screen.getByRole('link', { name: 'Conversar no WhatsApp' })
+    const link = screen.getByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' })
     expect(link.getAttribute('href')).toBe(site.whatsappUrl)
     expect(link.getAttribute('target')).toBe('_blank')
     expect(link.getAttribute('rel')).toBe('noopener noreferrer')
