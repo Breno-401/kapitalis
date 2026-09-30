@@ -12,6 +12,7 @@
   background: #25d366;
   box-shadow: 0 0.55rem 1.6rem rgb(0 0 0 / 22%);
   color: #ffffff;
+  animation: gentle-pulse 2.2s ease-in-out infinite;
   text-decoration: none;
   transition:
     transform 180ms var(--ease-standard),
@@ -22,6 +23,7 @@
 
 .button:hover,
 .button:focus-visible {
+  animation: none;
   box-shadow: 0 0.8rem 1.9rem rgb(0 0 0 / 27%);
   transform: translateY(-2px) scale(1.04);
 }
@@ -58,11 +60,25 @@
 
 @media (prefers-reduced-motion: reduce) {
   .button {
+    animation: none;
     transition: none;
   }
 
   .button:hover,
   .button:focus-visible {
     transform: none;
+  }
+}
+
+@keyframes gentle-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 rgb(37 211 102 / 40%);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgb(37 211 102 / 0%);
   }
 }

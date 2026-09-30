@@ -159,16 +159,20 @@ export function FinancialCore({
         </g>
 
         <path
-          className={`${styles.signalPath} ${styles.signalDecision}`}
-          data-financial-signal="decision"
-          d="M 244 456 L 396 456"
-        />
-        <path
-          className={`${styles.signalPath} ${styles.signalDecisionLink}`}
-          data-financial-signal="decision-link"
+          className={`${styles.signalPath} ${styles.signalDecisionRoute}`}
+          data-financial-signal="decision-route"
           data-active={state === 'decisao'}
-          d="M 320 438 L 320 578 M 312 566 L 320 578 L 328 566"
+          d="M 320 432 C 312 476 328 536 320 584"
+          id="kapitalis-decision-route"
+          pathLength="1"
         />
+        {state === 'decisao' ? (
+          <circle className={styles.flowPulse} data-decision-pulse r="3">
+            <animateMotion dur="8s" calcMode="linear" repeatCount="indefinite">
+              <mpath href="#kapitalis-decision-route" />
+            </animateMotion>
+          </circle>
+        ) : null}
         <g className={styles.insightFlows}>
           {insights.map(({ label, order, path }) => (
             <g

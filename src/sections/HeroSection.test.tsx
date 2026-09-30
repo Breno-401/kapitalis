@@ -29,9 +29,12 @@ describe('Kapitalis hero', () => {
     expect(
       screen.queryByRole('region', { name: 'Mesa de Controle Financeira' }),
     ).toBeNull()
-    expect(
-      screen.getByRole('link', { name: 'Rolar para o Sistema Kapitalis' }),
-    ).toBeTruthy()
+    const scrollCue = screen.getByRole('link', {
+      name: 'Rolar para o Sistema Kapitalis',
+    })
+    expect(scrollCue.getAttribute('href')).toBe('#sistema')
+    expect(scrollCue.textContent?.trim()).toBe('SCROLL')
+    expect(scrollCue.querySelectorAll('[data-scroll-indicator]')).toHaveLength(1)
 
     const heading = screen.getByRole('heading', { level: 1 })
     const firstChapter = screen.getByText('01 · ENTRADAS')

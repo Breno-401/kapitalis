@@ -350,10 +350,6 @@
   stroke-width: 2;
 }
 
-.core[data-state='decisao'] .signalDecision {
-  opacity: 1;
-}
-
 .core[data-state='decisao'] .orbit {
   stroke: var(--system-orbit-active);
   stroke-dasharray: 1 7;
@@ -375,9 +371,13 @@
   opacity: 0.86;
 }
 
-.core[data-state='decisao'] .signalDecisionLink {
-  stroke: var(--system-activity);
-  stroke-width: 2.8;
+.signalDecisionRoute {
+  stroke-dasharray: 0.008 0.032;
+  stroke-width: 1.7;
+}
+
+.core[data-state='decisao'] .signalDecisionRoute[data-active='true'] {
+  opacity: 0.92;
 }
 
 .core[data-state='decisao'] .node[data-decision-source='true'] {

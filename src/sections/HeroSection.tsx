@@ -117,12 +117,13 @@ export function HeroSection() {
               className={styles.scrollCue}
               data-entry="scroll-cue"
               href="#sistema"
+              aria-label="Rolar para o Sistema Kapitalis"
               tabIndex={introHidden ? -1 : undefined}
             >
-              <span>Rolar para o Sistema Kapitalis</span>
-              <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-                <path d="M10 2v14m-5-5 5 5 5-5" />
-              </svg>
+              <span aria-hidden="true">SCROLL</span>
+              <span className={styles.scrollTrack} aria-hidden="true">
+                <span className={styles.scrollIndicator} data-scroll-indicator />
+              </span>
             </a>
           </div>
         </div>

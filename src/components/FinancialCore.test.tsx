@@ -179,8 +179,11 @@ describe('Kapitalis financial core visual', () => {
     expect(core?.querySelectorAll('[data-flow="source-to-core"][data-active="true"]'))
       .toHaveLength(5)
     expect(core?.querySelectorAll('[data-orbit-ring][data-active="true"]')).toHaveLength(3)
-    expect(core?.querySelector('[data-financial-signal="decision-link"]')
-      ?.getAttribute('d')).toBe('M 320 438 L 320 578 M 312 566 L 320 578 L 328 566')
+    expect(core?.querySelectorAll('[data-financial-signal="decision-route"]'))
+      .toHaveLength(1)
+    expect(core?.querySelectorAll('[data-decision-pulse]')).toHaveLength(1)
+    expect(core?.querySelector('[data-decision-pulse] animateMotion mpath')
+      ?.getAttribute('href')).toBe('#kapitalis-decision-route')
 
     const nextStep = container.querySelector<HTMLAnchorElement>('[data-next-step-link]')
     expect(nextStep?.getAttribute('href')).toBe('https://wa.me/5527998829289')
@@ -192,31 +195,27 @@ describe('Kapitalis financial core visual', () => {
     expect(core?.querySelector('[data-output="next-step"] text')).toBeNull()
   })
 
-  it('decision_signal_stays_clear_of_the_kapitalis_wordmark', () => {
+  it('decision_route_starts_below_the_kapitalis_wordmark', () => {
     const { container } = render(<FinancialCore state="decisao" />)
     const wordmark = container.querySelector('[data-core-wordmark]')
-    const signal = container.querySelector('[data-financial-signal="decision"]')
+    const signal = container.querySelector('[data-financial-signal="decision-route"]')
     const wordmarkBaseline = Number(wordmark?.getAttribute('y'))
-    const signalYs = Array.from(
-      signal?.getAttribute('d')?.matchAll(/(?:M|L)\s*-?\d+(?:\.\d+)?\s+(-?\d+(?:\.\d+)?)/g) ?? [],
-    ).map((match) => Number(match[1]))
+    const route = signal?.getAttribute('d') ?? ''
 
     expect(wordmarkBaseline).toBe(407)
-    expect(signalYs.length).toBeGreaterThan(1)
-    expect(Math.min(...signalYs)).toBeGreaterThan(wordmarkBaseline + 20)
+    expect(route.startsWith('M 320 432 C ')).toBe(true)
+    expect(route.endsWith('320 584')).toBe(true)
   })
 
-  it('decision_output_sits_below_the_wordmark_and_connects_to_the_signal', () => {
+  it('decision_output_sits_below_the_wordmark_and_receives_the_route', () => {
     const { container } = render(<FinancialCore state="decisao" />)
     const output = container.querySelector('[data-output="next-step"]')
+    const route = container.querySelector('[data-financial-signal="decision-route"]')
 
     expect(output?.querySelector('rect')?.getAttribute('y')).toBe('590')
     expect(output?.querySelector('text')).toBeNull()
-    expect(
-      container
-        .querySelector('[data-financial-signal="decision-link"]')
-        ?.getAttribute('d'),
-    ).toBe('M 320 438 L 320 578 M 312 566 L 320 578 L 328 566')
+    expect(route?.getAttribute('pathLength')).toBe('1')
+    expect(route?.getAttribute('d')?.endsWith('320 584')).toBe(true)
   })
 
   it('visibility_labels_do_not_collide_with_source_node_labels', () => {
