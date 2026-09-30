@@ -6,12 +6,12 @@ import { BrandMark } from './BrandMark'
 import styles from './SiteHeader.module.css'
 
 const navigation = [
-  { href: '#duvidas-frequentes', label: 'FAQ' },
   { href: '#sistema', label: 'Sistema' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#conteudo', label: 'Ferramentas' },
   { href: '#contato', label: 'Contato' },
+  { href: '#duvidas-frequentes', label: 'FAQ' },
 ] as const
 
 type NavigationItem = (typeof navigation)[number]

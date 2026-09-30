@@ -3,15 +3,21 @@ import { describe, expect, it } from 'vitest'
 import { HomePage } from './HomePage'
 
 describe('ordem da landing Kapitalis', () => {
-  it('apresenta o Sistema, conteúdo principal, reviews e FAQ perto do fechamento', () => {
+  it('coloca Reviews logo depois do Sistema e mantém FAQ perto do fechamento', () => {
     const { container } = render(<HomePage />)
+    const topLevelSections = Array.from(container.querySelectorAll('main > section'))
+    expect(topLevelSections.slice(0, 2).map((section) => section.id)).toEqual([
+      'inicio',
+      'avaliacoes',
+    ])
+
     const selectors = [
       '#sistema',
+      '#avaliacoes',
       '#servicos',
       '#bpo',
       '#conteudo',
       '#processo',
-      '#avaliacoes',
       '#duvidas-frequentes',
       'section[aria-labelledby="final-cta-title"]',
       '#contato',

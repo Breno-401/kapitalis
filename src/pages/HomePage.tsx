@@ -20,6 +20,8 @@ export function HomePage() {
       <main id="conteudo-principal" tabIndex={-1}>
         <HeroSection />
         <SectionTransition />
+        <ReviewsSection data={googleReviewsSnapshot} />
+        <SectionTransition />
         <ServicesSection />
         <SectionTransition />
         <BpoSection />
@@ -27,8 +29,6 @@ export function HomePage() {
         <ToolsSection />
         <SectionTransition />
         <ProcessSection />
-        <SectionTransition />
-        <ReviewsSection data={googleReviewsSnapshot} />
         <SectionTransition />
         <FaqSection />
         <SectionTransition />

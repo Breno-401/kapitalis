@@ -34,12 +34,12 @@ const approvedAnchors = [
 ]
 
 const expectedNavigation = [
-  'FAQ',
   'Sistema',
   'Serviços',
   'BPO Financeiro',
   'Ferramentas',
   'Contato',
+  'FAQ',
 ]
 
 function mockMediaQueries(matches: Record<string, boolean>) {
