@@ -400,12 +400,13 @@
 
 .nextStepLink {
   position: absolute;
-  top: 92.19%;
-  left: 39.06%;
+  top: 92.1875%;
+  left: 50%;
   display: grid;
-  width: 21.88%;
-  height: 5.32%;
-  min-height: 2.125rem;
+  box-sizing: border-box;
+  width: 21.875%;
+  height: 5.3125%;
+  padding: 0 0.4em;
   place-items: center;
   border-radius: 999px;
   color: var(--color-brand-ink);
@@ -413,12 +414,15 @@
   font-size: clamp(0.48rem, 0.75vw, 0.65rem);
   font-weight: 750;
   letter-spacing: 0.08em;
+  line-height: 1;
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
+  white-space: nowrap;
   background: var(--color-gold);
   opacity: 0;
   pointer-events: none;
+  transform: translateX(-50%);
   transition:
     opacity 360ms var(--ease-standard),
     box-shadow 180ms var(--ease-standard),

@@ -162,7 +162,7 @@ export function FinancialCore({
           className={`${styles.signalPath} ${styles.signalDecisionRoute}`}
           data-financial-signal="decision-route"
           data-active={state === 'decisao'}
-          d="M 320 411 C 311 455 329 530 320 584"
+          d="M 320 381 C 311 448 329 526 320 590"
           id="kapitalis-decision-route"
           pathLength="1"
         />
