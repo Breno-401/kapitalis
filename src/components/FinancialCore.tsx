@@ -90,23 +90,38 @@ export function FinancialCore({
           data-active={state === 'organizacao' || state === 'decisao'}
         />
 
-        {sources.map(({ id, x, y }, order) => (
-          <g
-            className={styles.connection}
-            data-source-order={order}
-            key={id}
-          >
-            <path
-              d={`M ${x} ${y} L 320 320`}
-              data-flow="source-to-core"
-              data-source={id}
-              data-direction="inward"
-              data-active={state === 'entradas' || state === 'organizacao' || state === 'decisao'}
-              data-decision-flow={state === 'decisao' && (id === 'notas' || id === 'folha')}
-              pathLength="1"
-            />
-          </g>
-        ))}
+        {sources.map(({ id, x, y }, order) => {
+          const decisionSource = id === 'notas' || id === 'folha'
+          const pulseActive = state === 'entradas' ||
+            (state === 'decisao' && decisionSource)
+
+          return (
+            <g className={styles.connection} data-source-order={order} key={id}>
+              <path
+                d={`M ${x} ${y} L 320 320`}
+                data-flow="source-to-core"
+                data-source={id}
+                data-direction="inward"
+                data-active={state === 'entradas' || state === 'organizacao' || state === 'decisao'}
+                data-decision-flow={state === 'decisao' && decisionSource}
+                id={`kapitalis-source-flow-${id}`}
+                pathLength="1"
+              />
+              {pulseActive ? (
+                <circle className={styles.flowPulse} data-source-pulse={id} r="3">
+                  <animateMotion
+                    begin={`${order * 0.72}s`}
+                    dur={state === 'decisao' ? '7s' : '9s'}
+                    calcMode="linear"
+                    repeatCount="indefinite"
+                  >
+                    <mpath href={`#kapitalis-source-flow-${id}`} />
+                  </animateMotion>
+                </circle>
+              ) : null}
+            </g>
+          )
+        })}
 
         <g className={styles.organizationFlows}>
           <path
@@ -115,6 +130,7 @@ export function FinancialCore({
             data-flow="organization"
             data-direction="inward"
             data-active={state === 'organizacao'}
+            id="kapitalis-organization-flow-inward"
             pathLength="1"
           />
           <path
@@ -123,8 +139,23 @@ export function FinancialCore({
             data-flow="organization"
             data-direction="outward"
             data-active={state === 'organizacao'}
+            id="kapitalis-organization-flow-outward"
             pathLength="1"
           />
+          {state === 'organizacao' ? (
+            <>
+              <circle className={styles.flowPulse} data-organization-pulse="inward" r="2.8">
+                <animateMotion dur="6s" calcMode="linear" repeatCount="indefinite">
+                  <mpath href="#kapitalis-organization-flow-inward" />
+                </animateMotion>
+              </circle>
+              <circle className={styles.flowPulse} data-organization-pulse="outward" r="2.8">
+                <animateMotion begin="0.9s" dur="6s" calcMode="linear" repeatCount="indefinite">
+                  <mpath href="#kapitalis-organization-flow-outward" />
+                </animateMotion>
+              </circle>
+            </>
+          ) : null}
         </g>
 
         <path
@@ -163,9 +194,9 @@ export function FinancialCore({
                 >
                   <animateMotion
                     begin={`${order * 0.28}s`}
-                    dur="1.25s"
-                    fill="freeze"
-                    repeatCount="1"
+                    dur="18s"
+                    calcMode="linear"
+                    repeatCount="indefinite"
                   >
                     <mpath href={`#kapitalis-insight-flow-${order}`} />
                   </animateMotion>

@@ -53,6 +53,55 @@ describe('Kapitalis financial core visual', () => {
       .toBe(true)
   })
 
+  it('moves pulses along existing paths in each active system chapter', () => {
+    const { container, rerender } = render(<FinancialCore state="entradas" />)
+    const sourcePulses = () =>
+      Array.from(container.querySelectorAll('[data-source-pulse]'))
+
+    expect(sourcePulses()).toHaveLength(5)
+    expect(
+      sourcePulses().every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+    expect(
+      sourcePulses().every((pulse) =>
+        pulse
+          .querySelector('animateMotion mpath')
+          ?.getAttribute('href')
+          ?.startsWith('#kapitalis-source-flow-'),
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="organizacao" />)
+    const organizationPulses = Array.from(
+      container.querySelectorAll('[data-organization-pulse]'),
+    )
+    expect(organizationPulses).toHaveLength(2)
+    expect(
+      organizationPulses.every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="visibilidade" />)
+    const insightPulses = Array.from(
+      container.querySelectorAll('[data-insight-pulse]'),
+    )
+    expect(insightPulses).toHaveLength(3)
+    expect(
+      insightPulses.every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="decisao" />)
+    expect(sourcePulses()).toHaveLength(2)
+  })
+
   it('chapters_activate_the_financial_elements_their_copy_describes', () => {
     const { container, rerender } = render(<FinancialCore state="entradas" />)
     const core = () => container.querySelector('[data-financial-core]')

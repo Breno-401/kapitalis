@@ -64,6 +64,11 @@
 .connection[data-source-order='3'] { --source-delay: 450ms; }
 .connection[data-source-order='4'] { --source-delay: 600ms; }
 
+.flowPulse {
+  fill: var(--system-activity);
+  opacity: 0.9;
+}
+
 .organizationFlow {
   fill: none;
   stroke: var(--system-activity);
@@ -311,9 +316,9 @@
 }
 
 .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
-  stroke-dasharray: 0.035 0.035;
+  stroke-dasharray: 0.015 0.04;
   stroke-dashoffset: 0;
-  animation: circulate-insight 12s linear var(--insight-delay, 0ms) infinite;
+  animation: ring-flow 14s linear var(--insight-delay, 0ms) infinite;
 }
 
 .core[data-state='entradas'] .centerHalo {
@@ -357,6 +362,13 @@
 
 .core[data-state='decisao'] .connection path {
   opacity: 0.46;
+}
+
+.core[data-state='decisao'] .connection path[data-decision-flow='true'] {
+  stroke: var(--system-activity);
+  stroke-dasharray: 0.025 0.035;
+  opacity: 0.94;
+  animation: input-flow 8s linear var(--source-delay, 0ms) infinite;
 }
 
 .core[data-state='decisao'] .node:not(.center) {
@@ -437,7 +449,7 @@
 
 @keyframes input-flow {
   from { stroke-dashoffset: 0; opacity: 0.84; }
-  to { stroke-dashoffset: -0.08; opacity: 0.84; }
+  to { stroke-dashoffset: -0.28; opacity: 0.84; }
 }
 
 @keyframes node-arrive {
@@ -451,9 +463,8 @@
   100% { opacity: var(--system-halo-rest); }
 }
 
-@keyframes circulate-insight {
-  from { stroke-dashoffset: 0; opacity: var(--system-visibility-flow-opacity); }
-  to { stroke-dashoffset: -0.07; opacity: var(--system-visibility-flow-opacity); }
+@keyframes ring-flow {
+  to { stroke-dashoffset: -0.28; }
 }
 
 @media (max-width: 43.75rem) {
@@ -488,7 +499,9 @@
   .core,
   .orbit,
   .connection path,
+  .organizationFlow,
   .signalPath,
+  .flowPulse,
   .insightFlow,
   .nodeRing,
   .nodeLabel,
@@ -508,7 +521,8 @@
   .organizationFlow[data-active='true'] { animation: none; stroke-dashoffset: 0; opacity: 0.92; }
   .core[data-state='entradas'] .centerHalo { animation: none; opacity: var(--system-halo-state-opacity); }
   .core[data-state='organizacao'] .organizationNode[data-active='true'] { animation: none; }
-  .visibilityPulse { display: none; }
+  .visibilityPulse,
+  .flowPulse { display: none; }
 
   .core[data-state='visibilidade'] .insightFlow[data-active='true'] {
     animation: none;
