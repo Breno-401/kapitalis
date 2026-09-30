@@ -1,9 +1,7 @@
 .section {
   position: relative;
   overflow: clip;
-  background:
-    radial-gradient(ellipse at 20% 44%, var(--color-on-dark-glow), transparent 38rem),
-    var(--color-navy);
+  background: var(--color-navy);
   color: var(--color-paper);
 }
 
@@ -11,9 +9,9 @@
   position: relative;
   display: grid;
   grid-template-areas:
-    'portrait content'
+    'content portrait'
     'rule rule';
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   align-items: center;
   column-gap: clamp(2.5rem, 5vw, 6rem);
   padding-block: clamp(3.75rem, 7vw, 6rem) clamp(2.75rem, 5vw, 4rem);
@@ -57,19 +55,19 @@
   grid-area: portrait;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-end;
   min-width: 0;
   align-self: stretch;
 }
 
 .portrait img {
   display: block;
-  width: min(100%, 34rem);
+  width: min(100%, 26rem);
   height: auto;
   object-fit: contain;
   object-position: center bottom;
-  -webkit-mask-image: linear-gradient(to bottom, #000 89%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 89%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
 }
 
 .action {
@@ -161,7 +159,7 @@
   }
 
   .portrait img {
-    width: min(100%, 27rem);
+    width: min(100%, 19rem);
     margin-inline: auto;
   }
 
