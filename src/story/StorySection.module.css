@@ -96,6 +96,29 @@
   text-shadow: 0 1px 8px rgb(0 0 0 / 72%);
 }
 
+.chapter[data-story-id='visibilidade'] .mediaFrame {
+  height: clamp(16rem, 37svh, 24rem);
+  aspect-ratio: auto;
+  background: transparent;
+  clip-path: none;
+}
+
+.chapter[data-story-id='visibilidade'] .mediaPicture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chapter[data-story-id='visibilidade'] .mediaImage {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  padding: 0;
+  background: transparent;
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+}
+
 .chapterEyebrow {
   margin-bottom: var(--space-4);
   color: var(--color-gold-soft);

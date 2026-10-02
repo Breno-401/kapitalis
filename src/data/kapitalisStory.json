@@ -34,7 +34,14 @@
     "eyebrow": "03 · VISIBILIDADE",
     "title": "Visibilidade",
     "body": "Fluxo de caixa, compromissos e previsibilidade ajudam a compor a leitura do negócio.",
-    "items": ["Fluxo de caixa", "Compromissos", "Previsibilidade"]
+    "items": ["Fluxo de caixa", "Compromissos", "Previsibilidade"],
+    "media": {
+      "kind": "image",
+      "src": "/editorial/visibilidade-encontro-cutout.png",
+      "alt": "Dois homens se cumprimentam com um aperto de mão, sem fundo.",
+      "objectPosition": "center center",
+      "fit": "contain"
+    }
   },
   {
     "id": "decisao",

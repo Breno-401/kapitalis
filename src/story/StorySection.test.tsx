@@ -71,23 +71,26 @@ describe('Kapitalis system story', () => {
     ).toEqual(chapters.map(({ title }) => title))
   })
 
-  it('story_assigns_only_the_three_supplied_media_assets_to_their_chapters', () => {
+  it('story_assigns_the_supplied_media_assets_to_their_chapters', () => {
     const { container } = render(
       <StorySection chapters={currentStory} activeChapterId="entradas" />,
     )
 
     const media = Array.from(container.querySelectorAll('[data-story-media]'))
-    expect(media).toHaveLength(3)
+    expect(media).toHaveLength(4)
     expect(
       media.map((frame) => frame.querySelector('img')?.getAttribute('src')),
     ).toEqual([
       '/editorial/escritorio-entradas.png',
       '/editorial/arte-organizacao-servicos.png',
+      '/editorial/visibilidade-encontro-cutout.png',
       '/editorial/atendimento-decisao.png',
     ])
-    expect(
-      container.querySelector('[data-story-id="visibilidade"] [data-story-media]'),
-    ).toBeNull()
+    const portrait = container.querySelector(
+      '[data-story-id="visibilidade"] [data-story-media]',
+    )
+    expect(portrait?.getAttribute('data-fit')).toBe('contain')
+    expect(portrait?.querySelector('figcaption')).toBeNull()
     expect(container.querySelector('[data-story-id="entradas"] [data-story-media]')
       ?.getAttribute('data-revealed')).toBe('true')
     expect(screen.getByText('Estrutura para acompanhar a rotina de perto.'))
