@@ -566,8 +566,10 @@
     position: relative;
     right: auto;
     bottom: auto;
-    left: auto;
+    left: 50%;
     margin-top: 2rem;
+    margin-inline: 0;
+    translate: -50% 0;
     opacity: 1;
   }
 
@@ -619,8 +621,8 @@
     position: relative;
     right: auto;
     bottom: auto;
-    left: auto;
-    margin: 2rem auto 0;
+    left: 50%;
+    margin: 2rem 0 0;
   }
 }
 

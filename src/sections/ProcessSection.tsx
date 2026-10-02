@@ -1,148 +1,117 @@
-import { useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useId, useRef } from 'react'
+import { useProcessScrollProgress } from './useProcessScrollProgress'
 import styles from './ProcessSection.module.css'
 
 const steps = [
   {
     title: 'Entender a operação',
-    description: 'Conhecer o contexto e a rotina atual da empresa.',
+    description: 'Entender como informações, pagamentos, recebimentos e responsabilidades circulam hoje.',
+    result: 'Uma visão clara de como a rotina funciona atualmente.',
+    points: [[18, 22], [112, 18], [64, 70], [146, 98], [26, 132]],
   },
   {
     title: 'Organizar os dados',
-    description: 'Reunir e estruturar as informações disponíveis.',
+    description: 'Reunir as informações necessárias e criar uma base organizada para o acompanhamento.',
+    result: 'Informações financeiras reunidas e estruturadas.',
+    points: [[28, 32], [80, 32], [132, 32], [54, 112], [106, 112]],
   },
   {
     title: 'Assumir as rotinas',
-    description: 'Organizar o calendário financeiro e contábil.',
+    description: 'Acompanhar os processos recorrentes e reduzir a carga operacional da empresa.',
+    result: 'Rotinas acompanhadas com mais consistência.',
+    points: [[24, 80], [52, 80], [80, 80], [108, 80], [136, 80]],
   },
   {
     title: 'Entregar informação',
-    description: 'Consolidar movimentos em uma leitura mais clara.',
+    description: 'Consolidar os movimentos do período em uma leitura mais clara.',
+    result: 'Uma visão organizada do período para apoiar decisões.',
+    points: [[24, 28], [24, 80], [24, 132], [84, 80], [140, 80]],
   },
   {
     title: 'Acompanhar decisões',
-    description: 'Usar essa leitura como apoio para os próximos passos.',
+    description: 'Usar contexto e histórico para acompanhar prioridades e próximos passos.',
+    result: 'Mais contexto para planejar o que vem depois.',
+    points: [[24, 124], [52, 98], [80, 72], [108, 46], [136, 20]],
   },
 ] as const
 
 export function ProcessSection() {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const trackRef = useRef<HTMLElement>(null)
+  const sceneRef = useRef<HTMLDivElement>(null)
   const sectionId = useId()
-  const activeStep = steps[activeIndex]!
-  const activeTabId = `${sectionId}-tab-${activeIndex}`
-  const panelId = `${sectionId}-panel`
-  const nextStep = steps[activeIndex + 1]
-
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let nextIndex = index
-
-    switch (event.key) {
-      case 'ArrowDown':
-      case 'ArrowRight':
-        nextIndex = (index + 1) % steps.length
-        break
-      case 'ArrowUp':
-      case 'ArrowLeft':
-        nextIndex = (index - 1 + steps.length) % steps.length
-        break
-      case 'Home':
-        nextIndex = 0
-        break
-      case 'End':
-        nextIndex = steps.length - 1
-        break
-      default:
-        return
-    }
-
-    event.preventDefault()
-    setActiveIndex(nextIndex)
-    tabRefs.current[nextIndex]?.focus()
-  }
+  const { activeIndex, staticLayout } = useProcessScrollProgress(trackRef, sceneRef, steps.length)
 
   return (
     <section
       className={styles.section}
       data-theme-surface="dark"
+      data-process-track=""
+      data-process-layout={staticLayout ? 'static' : 'sticky'}
+      ref={trackRef}
       id="processo"
       aria-labelledby="process-title"
     >
-      <div className={`container ${styles.inner}`}>
-        <p className={styles.eyebrow}>Etapas conceituais</p>
-        <div className={styles.heading}>
-          <h2 id="process-title">Como uma rotina pode se organizar.</h2>
-          <p>
-            Uma sequência de referência para pensar o caminho entre conhecer a
-            operação e acompanhar decisões.
-          </p>
-        </div>
+      <div className={`container ${styles.scene}`} ref={sceneRef} data-process-scene="">
+        <header>
+          <p className={styles.eyebrow}>Etapas conceituais</p>
+          <div className={styles.heading}>
+            <h2 id="process-title">Como uma rotina pode se organizar.</h2>
+            <p>
+              Uma sequência de referência para pensar o caminho entre conhecer a
+              operação e acompanhar decisões.
+            </p>
+          </div>
+        </header>
 
         <div className={styles.route}>
-          <div
-            className={styles.steps}
-            role="tablist"
-            aria-label="Etapas conceituais do processo"
-            aria-orientation="vertical"
-          >
+          <ol className={styles.timeline} aria-label="Etapas conceituais do processo">
             {steps.map(({ title }, index) => (
-              <button
-                aria-controls={panelId}
-                aria-label={title}
-                aria-selected={index === activeIndex}
+              <li
                 className={styles.step}
-                id={`${sectionId}-tab-${index}`}
+                aria-current={!staticLayout && index === activeIndex ? 'step' : undefined}
+                data-active={index === activeIndex}
                 key={title}
-                onClick={() => setActiveIndex(index)}
-                onKeyDown={(event) => handleTabKeyDown(event, index)}
-                ref={(element) => {
-                  tabRefs.current[index] = element
-                }}
-                role="tab"
-                tabIndex={index === activeIndex ? 0 : -1}
-                type="button"
               >
                 <span className={styles.stepNumber} aria-hidden="true">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className={styles.stepTitle}>{title}</span>
-                <span className={styles.stepMark} aria-hidden="true" />
-              </button>
+                <span>{title}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className={styles.chapters}>
+            {steps.map(({ title, description, result, points }, index) => (
+              <article
+                aria-labelledby={`${sectionId}-${index}-heading`}
+                className={styles.chapter}
+                data-active={index === activeIndex}
+                key={title}
+              >
+                <span className={styles.chapterNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div className={styles.copy}>
+                  <h3 id={`${sectionId}-${index}-heading`}>{title}</h3>
+                  <p className={styles.description}>{description}</p>
+                  <div className={styles.result}>
+                    <p className={styles.resultLabel}>O QUE VOCÊ PASSA A TER</p>
+                    <p>{result}</p>
+                  </div>
+                  <p className={styles.counter} aria-label={`Etapa ${index + 1} de ${steps.length}`}>
+                    {String(index + 1).padStart(2, '0')} / 05
+                  </p>
+                </div>
+                <svg className={styles.microvisual} viewBox="0 0 160 160" aria-hidden="true">
+                  {index === 1 && <path d="M28 32H132M54 112H106" />}
+                  {index === 2 && <path d="M24 80H136" />}
+                  {index === 3 && <path d="M24 28L84 80L24 132M24 80H140" />}
+                  {index === 4 && <path d="M24 124L136 20M112 20H136V44" />}
+                  {points.map(([cx, cy]) => <circle cx={cx} cy={cy} r="3" key={`${cx}-${cy}`} />)}
+                </svg>
+              </article>
             ))}
           </div>
-
-          <article
-            aria-labelledby={`${activeTabId}-heading`}
-            className={styles.panel}
-            id={panelId}
-            key={activeIndex}
-            role="tabpanel"
-            tabIndex={0}
-          >
-            <div className={styles.panelTopline}>
-              <span>ETAPA ATUAL</span>
-              <span aria-hidden="true">
-                {String(activeIndex + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}
-              </span>
-            </div>
-            <div className={styles.panelContent} aria-live="polite">
-              <span className={styles.panelNumber} aria-hidden="true">
-                {String(activeIndex + 1).padStart(2, '0')}
-              </span>
-              <h3 id={`${activeTabId}-heading`}>{activeStep.title}</h3>
-              <p>{activeStep.description}</p>
-            </div>
-            <div className={styles.progressTrack}>
-              <progress
-                aria-label="Progresso da sequência"
-                className={styles.progress}
-                max={steps.length}
-                value={activeIndex + 1}
-              />
-              <span>
-                {nextStep ? `A seguir · ${nextStep.title}` : 'Etapa final da sequência'}
-              </span>
-            </div>
-          </article>
         </div>
       </div>
     </section>
