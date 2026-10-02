@@ -64,15 +64,18 @@
 }
 
 .brandMark {
-  position: relative;
-  top: 4px;
+  display: block;
+  flex: 0 0 auto;
+  width: 2.8rem;
+  height: 2.8rem;
+  object-fit: contain;
 }
 
 .brandName {
   font-family: var(--font-display);
   font-size: 1.12rem;
   letter-spacing: -0.03em;
-  margin-left: -18px;
+  margin-left: 0;
 }
 
 .navigation {
@@ -364,12 +367,13 @@
   }
 
   .brandMark {
-   margin-left: -21px;
+    width: 2.6rem;
+    height: 2.6rem;
   }
 
   .brandName {
     font-size: 1.04rem;
-    margin-left: -18px;
+    margin-left: 0;
   }
 
   .menuButton {

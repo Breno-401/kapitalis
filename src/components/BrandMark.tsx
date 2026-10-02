@@ -13,7 +13,7 @@ export function BrandMark({ className, x, y, width, height }: BrandMarkProps) {
       y={y}
       width={width}
       height={height}
-      viewBox="525 236 486 432"
+      viewBox="360 40 800 790"
       preserveAspectRatio="xMidYMid meet"
       aria-hidden="true"
       focusable="false"

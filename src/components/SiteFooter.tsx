@@ -1,10 +1,11 @@
+import { OPEN_PRIVACY_DETAILS_EVENT } from './PrivacyNotice'
 import { BrandMark } from './BrandMark'
 import { site } from '../data/site'
 import styles from './SiteFooter.module.css'
 
 const footerNavigation = [
   { href: '#inicio', label: 'Início' },
-  { href: '#contexto', label: 'Contexto' },
+  { href: '#duvidas-frequentes', label: 'FAQ' },
   { href: '#sistema', label: 'Sistema Kapitalis' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
@@ -18,9 +19,13 @@ export function SiteFooter() {
     <footer className={styles.footer} data-theme-surface="dark" id="contato">
       <div className={`container ${styles.content}`}>
         <div className={styles.brandBlock}>
-          <a className={styles.brand} href="#inicio">
-            <BrandMark className={styles.brandMark} />
-            <span>{site.name}</span>
+          <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
+            <BrandMark
+              className={styles.brandMark}
+              height="64"
+              width="64"
+            />
+            <span>{site.shortName}</span>
           </a>
           <p className={styles.tagline}>
             Contabilidade e BPO Financeiro para acompanhar a rotina da empresa.
@@ -36,6 +41,14 @@ export function SiteFooter() {
                 <a href={href}>{label}</a>
               </li>
             ))}
+            <li>
+              <a
+                href="#privacidade"
+                onClick={() => window.dispatchEvent(new Event(OPEN_PRIVACY_DETAILS_EVENT))}
+              >
+                Privacidade
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -50,6 +63,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="WhatsApp (abre em nova aba)"
                 href={site.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -59,6 +73,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Avaliações no Google (abre em nova aba)"
                 href={site.googleReviewsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -68,6 +83,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Instagram (abre em nova aba)"
                 href={site.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -77,6 +93,7 @@ export function SiteFooter() {
             </li>
             <li>
               <a
+                aria-label="Facebook (abre em nova aba)"
                 href={site.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"

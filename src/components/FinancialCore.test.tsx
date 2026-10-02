@@ -29,9 +29,77 @@ describe('Kapitalis financial core visual', () => {
 
     expect(container.querySelector('[data-kapitalis-brandmark]')?.getAttribute('href'))
       .toBe('/assets/kapitalis-logo-original.png')
+    expect(container.querySelector('[data-kapitalis-brandmark]')?.closest('svg')?.getAttribute('viewBox'))
+      .toBe('360 40 800 790')
+    expect(container.querySelector('[data-kapitalis-brandmark]')?.closest('svg')?.getAttribute('width'))
+      .toBe('72')
+    expect(container.querySelector('[data-kapitalis-brandmark]')?.closest('svg')?.getAttribute('height'))
+      .toBe('72')
     expect(container.querySelector('.centerMark')).toBeNull()
     expect(container.querySelector('[data-financial-node="Kapitalis"]'))
       .toBeTruthy()
+  })
+
+  it('input_flows_run_from_each_source_toward_the_center', () => {
+    const { container } = render(<FinancialCore state="entradas" />)
+    const flows = Array.from(
+      container.querySelectorAll('[data-flow="source-to-core"]'),
+    )
+
+    expect(flows).toHaveLength(5)
+    expect(flows.every((flow) => flow.getAttribute('data-direction') === 'inward'))
+      .toBe(true)
+    expect(flows.every((flow) => flow.getAttribute('d')?.endsWith('320 320')))
+      .toBe(true)
+  })
+
+  it('moves pulses along existing paths in each active system chapter', () => {
+    const { container, rerender } = render(<FinancialCore state="entradas" />)
+    const sourcePulses = () =>
+      Array.from(container.querySelectorAll('[data-source-pulse]'))
+
+    expect(sourcePulses()).toHaveLength(5)
+    expect(
+      sourcePulses().every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+    expect(
+      sourcePulses().every((pulse) =>
+        pulse
+          .querySelector('animateMotion mpath')
+          ?.getAttribute('href')
+          ?.startsWith('#kapitalis-source-flow-'),
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="organizacao" />)
+    const organizationPulses = Array.from(
+      container.querySelectorAll('[data-organization-pulse]'),
+    )
+    expect(organizationPulses).toHaveLength(2)
+    expect(
+      organizationPulses.every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="visibilidade" />)
+    const insightPulses = Array.from(
+      container.querySelectorAll('[data-insight-pulse]'),
+    )
+    expect(insightPulses).toHaveLength(3)
+    expect(
+      insightPulses.every((pulse) =>
+        pulse.querySelector('animateMotion')?.getAttribute('repeatCount') ===
+          'indefinite',
+      ),
+    ).toBe(true)
+
+    rerender(<FinancialCore state="decisao" />)
+    expect(sourcePulses()).toHaveLength(2)
   })
 
   it('chapters_activate_the_financial_elements_their_copy_describes', () => {
@@ -45,8 +113,8 @@ describe('Kapitalis financial core visual', () => {
     rerender(<FinancialCore state="organizacao" />)
     expect(core()?.querySelector('[data-ring="organization"]')?.getAttribute('data-active'))
       .toBe('true')
-    expect(core()?.querySelector('[data-flow="convergence"]')?.getAttribute('data-active'))
-      .toBe('true')
+    expect(core()?.querySelectorAll('[data-flow="organization"][data-active="true"]'))
+      .toHaveLength(2)
 
     rerender(<FinancialCore state="visibilidade" />)
     expect(
@@ -61,31 +129,93 @@ describe('Kapitalis financial core visual', () => {
       .toBe('true')
   })
 
-  it('decision_signal_stays_clear_of_the_kapitalis_wordmark', () => {
-    const { container } = render(<FinancialCore state="decisao" />)
-    const wordmark = container.querySelector('[data-core-wordmark]')
-    const signal = container.querySelector('[data-financial-signal="decision"]')
-    const wordmarkBaseline = Number(wordmark?.getAttribute('y'))
-    const signalYs = Array.from(
-      signal?.getAttribute('d')?.matchAll(/(?:M|L)\s*-?\d+(?:\.\d+)?\s+(-?\d+(?:\.\d+)?)/g) ?? [],
-    ).map((match) => Number(match[1]))
+  it('organization_connects_the_core_to_conciliation_and_closing_nodes', () => {
+    const { container } = render(<FinancialCore state="organizacao" />)
+    const core = container.querySelector('[data-financial-core]')
+    const nodes = Array.from(core?.querySelectorAll('[data-organization-node]') ?? [])
+    const rings = Array.from(core?.querySelectorAll('[data-orbit-ring]') ?? [])
 
-    expect(wordmarkBaseline).toBe(407)
-    expect(signalYs.length).toBeGreaterThan(1)
-    expect(Math.min(...signalYs)).toBeGreaterThan(wordmarkBaseline + 20)
+    expect(nodes.map((node) => node.textContent?.trim())).toEqual([
+      'Conciliação',
+      'Fechamento',
+    ])
+    expect(nodes.every((node) => node.getAttribute('data-active') === 'true'))
+      .toBe(true)
+    expect(core?.querySelectorAll('[data-flow="organization"]')).toHaveLength(2)
+    expect(core?.querySelectorAll('[data-flow="organization"][data-active="true"]'))
+      .toHaveLength(2)
+    expect(rings.map((ring) => ring.getAttribute('data-orbit-ring'))).toEqual([
+      'outer',
+      'organization',
+      'process',
+    ])
+    expect(rings.every((ring) => ring.getAttribute('data-active') === 'true'))
+      .toBe(true)
+    expect(core?.querySelector('[data-flow="convergence"]')).toBeNull()
   })
 
-  it('decision_output_sits_below_the_wordmark_and_connects_to_the_signal', () => {
+  it('visibility_insights_follow_a_directed_second_ring', () => {
+    const { container } = render(<FinancialCore state="visibilidade" />)
+    const flows = Array.from(
+      container.querySelectorAll('[data-insight-flow]'),
+    )
+
+    expect(flows).toHaveLength(3)
+    expect(flows.every((flow) => flow.getAttribute('data-orbit-flow') === 'clockwise'))
+      .toBe(true)
+    expect(flows.every((flow) => /A\s*174\s+174/.test(flow.getAttribute('d') ?? '')))
+      .toBe(true)
+  })
+
+  it('decision_highlights_folha_and_notas_and_links_the_core_to_a_real_whatsapp_cta', () => {
+    const { container } = render(<FinancialCore state="decisao" />)
+    const core = container.querySelector('[data-financial-core]')
+    const emphasizedSources = Array.from(
+      core?.querySelectorAll('[data-decision-source="true"]') ?? [],
+    ).map((source) => source.getAttribute('data-source'))
+
+    expect(emphasizedSources).toEqual(['notas', 'folha'])
+    expect(core?.querySelectorAll('[data-decision-flow="true"]')).toHaveLength(2)
+    expect(core?.querySelectorAll('[data-flow="source-to-core"][data-active="true"]'))
+      .toHaveLength(5)
+    expect(core?.querySelectorAll('[data-orbit-ring][data-active="true"]')).toHaveLength(3)
+    expect(core?.querySelectorAll('[data-financial-signal="decision-route"]'))
+      .toHaveLength(1)
+    expect(core?.querySelectorAll('[data-decision-pulse]')).toHaveLength(1)
+    expect(core?.querySelector('[data-decision-pulse] animateMotion mpath')
+      ?.getAttribute('href')).toBe('#kapitalis-decision-route')
+
+    const nextStep = container.querySelector<HTMLAnchorElement>('[data-next-step-link]')
+    expect(nextStep?.getAttribute('href')).toBe('https://wa.me/5527998829289')
+    expect(nextStep?.getAttribute('target')).toBe('_blank')
+    expect(nextStep?.getAttribute('rel')).toBe('noopener noreferrer')
+    expect(nextStep?.getAttribute('aria-label'))
+      .toBe('Próximo passo (abre em nova aba)')
+    expect(nextStep?.textContent?.trim()).toBe('Próximo passo')
+    expect(core?.querySelector('[data-output="next-step"] text')).toBeNull()
+  })
+
+  it('decision_route_starts_at_the_core_and_reaches_next_step', () => {
+    const { container } = render(<FinancialCore state="decisao" />)
+    const wordmark = container.querySelector('[data-core-wordmark]')
+    const signal = container.querySelector('[data-financial-signal="decision-route"]')
+    const wordmarkBaseline = Number(wordmark?.getAttribute('y'))
+    const route = signal?.getAttribute('d') ?? ''
+
+    expect(wordmarkBaseline).toBe(407)
+    expect(route.startsWith('M 320 381 C ')).toBe(true)
+    expect(route.endsWith('320 590')).toBe(true)
+  })
+
+  it('decision_output_sits_below_the_wordmark_and_receives_the_route', () => {
     const { container } = render(<FinancialCore state="decisao" />)
     const output = container.querySelector('[data-output="next-step"]')
+    const route = container.querySelector('[data-financial-signal="decision-route"]')
 
-    expect(output?.querySelector('rect')?.getAttribute('y')).toBe('466')
-    expect(output?.querySelector('text')?.getAttribute('y')).toBe('487')
-    expect(
-      container
-        .querySelector('[data-financial-signal="decision-link"]')
-        ?.getAttribute('d'),
-    ).toBe('M 320 438 L 320 466')
+    expect(output?.querySelector('rect')?.getAttribute('y')).toBe('590')
+    expect(output?.querySelector('text')).toBeNull()
+    expect(route?.getAttribute('pathLength')).toBe('1')
+    expect(route?.getAttribute('d')?.endsWith('320 590')).toBe(true)
   })
 
   it('visibility_labels_do_not_collide_with_source_node_labels', () => {

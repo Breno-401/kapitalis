@@ -1,0 +1,210 @@
+.regimePicker legend > span,
+.columnHeading > span {
+  color: var(--text-secondary);
+  font-size: 0.63rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.regimePicker {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.regimePicker legend {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin-bottom: 0.7rem;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.regimePicker legend > span { font-size: 0.7rem; letter-spacing: 0.08em; }
+
+.regimeOptions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+
+.regimeButton {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  min-height: 6rem;
+  padding: 0.7rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--input-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+  transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+
+.regimeButton > span { font-size: 0.84rem; font-weight: 750; }
+.regimeButton small { color: var(--text-secondary); font-size: 0.68rem; white-space: nowrap; }
+.regimeButton:hover { border-color: var(--accent-strong); background: var(--accent-muted); }
+.regimeButton[aria-pressed='true'] { border-color: var(--accent-strong); background: var(--surface-interactive); color: var(--text-primary); }
+.regimeButton:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+
+.leftPane { min-width: 0; display: flex; flex-direction: column; padding: 0.25rem 1.5rem 0.6rem 0; }
+.dashboardPane { min-width: 0; padding: 0.25rem 0 0.6rem 1.5rem; }
+.inputForm { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.dashboard { min-width: 0; }
+.columnHeading { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 0.65rem; }
+.inputForm .columnHeading { margin-top: 0.95rem; }
+.columnHeading h4 { font-size: 0.94rem; font-weight: 700; }
+
+.field { display: grid; gap: 0.35rem; margin-top: 0.7rem; color: var(--text-primary); font-size: 0.82rem; font-weight: 650; }
+.field > span small { display: block; margin-top: 0.12rem; color: var(--text-secondary); font-size: 0.68rem; font-weight: 450; }
+.field select,
+.moneyInput {
+  width: 100%;
+  min-width: 0;
+  min-height: 3.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--input-surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.field select { padding: 0.65rem 1.9rem 0.65rem 0.85rem; font-size: 0.88rem; }
+.moneyInput { display: flex; align-items: center; }
+.moneyInput > span { flex: 0 0 auto; padding-left: 0.85rem; color: var(--text-secondary); font-size: 0.84rem; }
+.moneyInput input { width: 100%; min-width: 0; min-height: 3.1rem; padding: 0.55rem 0.85rem; border: 0; background: transparent; color: var(--text-primary); font: inherit; font-size: 0.94rem; font-variant-numeric: tabular-nums; }
+.moneyInput[data-suffix='true'] > span { order: 2; padding-right: 0.75rem; padding-left: 0; }
+.moneyInput:focus-within,
+.field select:focus-visible,
+.share button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+.moneyInput input:focus-visible { outline: none; }
+
+.field[data-disabled='true'] { color: var(--text-muted); }
+.field[data-disabled='true'] select,
+.field[data-disabled='true'] .moneyInput { background: var(--text-on-accent); color: var(--text-muted); }
+.field[data-disabled='true'] .moneyInput > span,
+.field[data-disabled='true'] .moneyInput input { color: var(--text-muted); }
+
+.heroMetric { display: grid; gap: 0.12rem; padding: 0.05rem 0 0.35rem; }
+.heroMetric > span { color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; }
+.heroMetric > strong { display: block; margin-top: 0.05rem; color: var(--text-primary); font-family: var(--font-interface); font-size: clamp(3rem, 4.3vw, 3.75rem); font-variant-numeric: tabular-nums; font-weight: 500; letter-spacing: -0.04em; line-height: 1; }
+.heroMetric p { margin-top: 0.15rem; color: var(--text-secondary); font-size: 0.7rem; line-height: 1.35; }
+.estimateNote { display: block; max-width: 34rem; margin-top: 0.25rem; color: var(--text-muted); font-size: 0.63rem; font-weight: 450; line-height: 1.35; }
+
+.ringBlock { display: grid; grid-template-columns: minmax(8rem, 0.58fr) minmax(0, 1.42fr); align-items: center; gap: 0.8rem; padding: 0.1rem 0 0.25rem; }
+.ring { position: relative; width: min(100%, 9.5rem); margin-inline: auto; aspect-ratio: 1; }
+.ring svg { display: block; width: 100%; }
+.ring circle { fill: none; stroke-width: 15; }
+.ringTrack { stroke: var(--border); }
+.ringTax,
+.ringRemaining { stroke-linecap: butt; transition: stroke-dasharray 300ms cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1), stroke-width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1), filter 300ms cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+.ring .ringHitArea { fill: none; stroke: transparent; stroke-width: 28; stroke-linecap: butt; pointer-events: stroke; cursor: pointer; }
+.ringTax { stroke: var(--accent-strong); }
+.ringTax[data-kind='csll'] { stroke: var(--chart-secondary); }
+.ringTax[data-kind='pis'] { stroke: var(--accent); }
+.ringTax[data-kind='cofins'] { stroke: var(--chart-secondary); }
+.ringRemaining { stroke: var(--chart-secondary); }
+.ring[data-has-active='true'] .ringTax[data-active='false'],
+.ring[data-has-active='true'] .ringRemaining[data-active='false'] { filter: saturate(0.18); opacity: 0.42; }
+.ring[data-has-active='true'] .ringTax[data-active='true'],
+.ring[data-has-active='true'] .ringRemaining[data-active='true'] { filter: saturate(1.08); }
+.ringCenter { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.12rem; text-align: center; }
+.ring svg circle:focus-visible { outline: none; filter: drop-shadow(0 0 3px var(--accent-strong)); }
+.ringCenter span { color: var(--text-secondary); font-size: 0.65rem; }
+.ringCenter strong { font-family: var(--font-interface); font-size: 1.6rem; font-variant-numeric: tabular-nums; font-weight: 650; letter-spacing: -0.04em; }
+.legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 0.2rem 0.35rem; min-width: 0; }
+.legendItem { display: grid; width: 100%; grid-template-columns: 0.55rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; padding: 0.32rem 0.35rem; border: 1px solid transparent; border-radius: var(--radius-small); background: transparent; color: var(--text-secondary); font: inherit; font-size: 0.78rem; text-align: left; }
+.legendItem:not(.legendItemDisabled) { cursor: pointer; }
+.legendItem[data-active='true'] { border-color: var(--border); background: var(--accent-muted); color: var(--text-primary); }
+.legendItem:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+.legendItem strong { color: var(--text-primary); font-size: 0.78rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.legendItemDisabled { cursor: default; }
+.legendDot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--border); }
+.legendDot[data-kind='das'],
+.legendDot[data-kind='irpj'] { background: var(--accent-strong); }
+.legendDot[data-kind='csll'] { background: var(--chart-secondary); }
+.legendDot[data-kind='pis'] { background: var(--accent); }
+.legendDot[data-kind='cofins'] { background: var(--chart-secondary); }
+.legendDot[data-kind='tax'] { background: var(--accent-strong); }
+.legendDot[data-kind='remaining'] { background: var(--chart-secondary); }
+.ringTooltip { z-index: 1000; box-sizing: border-box; display: grid; width: min(19rem, calc(100vw - 1rem)); max-width: calc(100vw - 1rem); gap: 0.15rem; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--tooltip-surface); color: var(--text-primary); box-shadow: var(--shadow); font-size: 0.7rem; font-weight: 450; line-height: 1.4; pointer-events: none; animation: ringTooltipEnter 150ms ease-out both; }
+.ringTooltip strong { font-size: 0.67rem; font-weight: 750; text-transform: uppercase; }
+.ringTooltip > span { color: var(--text-secondary); }
+.ringTooltip b { font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.ringTooltip .tooltipPercentage { color: var(--text-primary); font-size: 0.68rem; font-weight: 700; }
+.ringTooltip p { margin-top: 0.16rem; color: var(--text-secondary); font-size: 0.67rem; }
+@keyframes ringTooltipEnter { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+.annualSection { padding-top: 0.55rem; border-top: 1px solid var(--border); }
+.annualHeading { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.15rem; }
+.annualHeading > div { min-width: 0; }
+.annualHeading span { color: var(--text-secondary); font-size: 0.72rem; font-weight: 650; }
+.annualHeading p { margin-top: 0.12rem; color: var(--text-muted); font-size: 0.62rem; line-height: 1.35; }
+.annualHeading > strong { color: var(--text-primary); font-family: var(--font-interface); font-size: clamp(1.5rem, 2.4vw, 2rem); font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: -0.04em; white-space: nowrap; }
+.annualRevenue { display: flex; align-items: baseline; justify-content: space-between; gap: 0.7rem; padding: 0.35rem 0.25rem; color: var(--text-secondary); font-size: 0.72rem; }
+.annualRevenue strong { color: var(--text-primary); font-size: 0.75rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.annualSection .ringBlock { padding-top: 0.05rem; padding-bottom: 0.2rem; }
+.annualSection .ring { width: min(100%, 9rem); }
+.annualSection .ringCenter strong { font-size: 1.5rem; }
+
+.comparison { padding: 0.45rem 0 0.1rem; border-top: 1px solid var(--border); }
+.comparisonHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.35rem; }
+.comparison h5 { font-size: 0.73rem; font-weight: 750; }
+.comparison ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.regimeCard { display: grid; align-content: start; gap: 0.16rem; min-width: 0; padding: 0.48rem; border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--input-surface); }
+.regimeCard[data-highlighted='true'] { border-color: var(--accent-strong); background: var(--accent-muted); }
+.regimeName { min-height: 1.7em; color: var(--text-secondary); font-size: 0.61rem; font-weight: 750; line-height: 1.25; text-transform: uppercase; }
+.comparisonMetric { display: flex; align-items: baseline; gap: 0.2rem; white-space: nowrap; }
+.comparisonMetric strong { color: var(--text-primary); font-size: 0.73rem; font-variant-numeric: tabular-nums; font-weight: 750; }
+.comparisonMetric span { color: var(--text-muted); font-size: 0.58rem; }
+.comparisonAnnual { color: var(--text-secondary); font-size: 0.61rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.comparisonDelta { color: var(--text-secondary); font-size: 0.58rem; font-weight: 650; line-height: 1.25; }
+.regimeCard[data-highlighted='true'] .comparisonDelta { color: var(--color-brand-ink); }
+
+@media (max-width: 54rem) {
+  .dashboardPane { padding-left: 1rem; }
+  .leftPane { padding-right: 1rem; }
+}
+
+@media (max-width: 46rem) {
+  .leftPane { padding: 0.6rem 0 0.5rem; }
+  .dashboardPane { padding: 0.9rem 0 0.7rem; }
+  .regimeButton { min-height: 4.4rem; padding-inline: 0.5rem; }
+  .regimeButton > span { font-size: 0.64rem; }
+  .legend { grid-template-columns: minmax(0, 1fr); }
+  .comparison ol { gap: 0.25rem; }
+  .regimeCard { padding: 0.35rem; }
+  .regimeName { font-size: 0.56rem; }
+  .comparisonMetric strong { font-size: 0.66rem; }
+  .comparisonAnnual { font-size: 0.55rem; }
+  .comparisonDelta { font-size: 0.53rem; }
+}
+
+@media (max-width: 32rem) {
+  .comparisonHeader { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
+  .interpretation { flex-wrap: wrap; }
+  .regimeOptions { gap: 0.35rem; }
+  .regimeButton { min-height: 3.5rem; padding: 0.5rem; }
+  .regimeButton > span { font-size: 0.61rem; line-height: 1.2; }
+  .ringBlock { grid-template-columns: minmax(5.5rem, 0.65fr) minmax(0, 1.35fr); }
+  .ring { width: min(100%, 6.5rem); }
+  .annualSection .ring { width: min(100%, 7.5rem); }
+  .annualHeading { align-items: flex-start; }
+  .annualHeading > strong { font-size: 1.45rem; }
+  .annualHeading p { max-width: 14rem; }
+  .annualRevenue { font-size: 0.68rem; }
+  .expertCta { align-items: flex-end; flex-wrap: wrap; gap: 0.5rem 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .regimeButton,
+  .ringTax,
+  .ringRemaining,
+  .ringTooltip { animation: none; }
+}

@@ -24,7 +24,7 @@ function rectangle(left: number, top: number, width: number, height: number) {
 
 const approvedAnchors = [
   '#inicio',
-  '#contexto',
+  '#duvidas-frequentes',
   '#sistema',
   '#servicos',
   '#bpo',
@@ -34,12 +34,12 @@ const approvedAnchors = [
 ]
 
 const expectedNavigation = [
-  'Contexto',
   'Sistema',
   'Serviços',
   'BPO Financeiro',
   'Ferramentas',
   'Contato',
+  'FAQ',
 ]
 
 function mockMediaQueries(matches: Record<string, boolean>) {
@@ -139,17 +139,17 @@ describe('site navigation', () => {
     })
     const header = screen.getByRole('banner')
     expect(
-      within(navigation).getByRole('link', { name: 'Contexto' }).getAttribute('href'),
-    ).toBe('#contexto')
+      within(navigation).getByRole('link', { name: 'FAQ' }).getAttribute('href'),
+    ).toBe('#duvidas-frequentes')
     expect(
       within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
     ).toBe('#sistema')
     expect(
-      within(header).getAllByRole('link', { name: 'Conversar no WhatsApp' }),
+      within(header).getAllByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' }),
     ).toHaveLength(2)
     expect(
       within(header)
-        .getAllByRole('link', { name: 'Conversar no WhatsApp' })
+        .getAllByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' })
         .every((link) => link.getAttribute('href') === site.whatsappUrl),
     ).toBe(true)
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
@@ -220,15 +220,15 @@ describe('site navigation', () => {
     }
   })
 
-  it('navbar_brand_uses_the_previous_approved_original_asset_implementation', () => {
+  it('navbar_brand_uses_the_shared_full_seal_mark', () => {
     render(<App />)
 
-    const mark = document.querySelector<HTMLImageElement>(
-      'header a[aria-label="Kapitalis, início"] img',
+    const brand = document.querySelector<HTMLAnchorElement>(
+      'header a[aria-label="Kapitalis, início"]',
     )
-    expect(mark?.getAttribute('src')).toBe('/assets/kapitalis-logo-original.png')
-    expect(mark?.getAttribute('width')).toBe('96')
-    expect(mark?.getAttribute('height')).toBe('64')
+    expect(brand?.querySelector('svg')?.getAttribute('viewBox')).toBe('360 40 800 790')
+    expect(brand?.querySelector('image')?.getAttribute('href')).toBe('/assets/kapitalis-logo-original.png')
+    expect(brand?.textContent?.trim()).toBe('Kapitalis')
   })
 
   it('mobile_menu_has_only_the_five_requested_destinations_and_whatsapp_at_the_end', () => {

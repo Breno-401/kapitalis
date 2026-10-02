@@ -5,6 +5,7 @@ import kapitalisStoryData from '../data/kapitalisStory.json'
 import { StorySection } from '../story/StorySection'
 import type { StoryChapter } from '../story/types'
 import { useActiveStoryChapter } from '../story/useActiveStoryChapter'
+import { useHeroAtmospherePointer } from './useHeroAtmospherePointer'
 import styles from './HeroSection.module.css'
 import { useHeroScrollProgress } from './useHeroScrollProgress'
 
@@ -19,6 +20,7 @@ export function HeroSection() {
     experienceRef,
     trackRef,
   )
+  useHeroAtmospherePointer(experienceRef)
 
   return (
     <section
@@ -32,6 +34,13 @@ export function HeroSection() {
       <div className={styles.experienceGrid}>
         <div className={styles.visualRail}>
           <div className={styles.stage}>
+            <div
+              aria-hidden="true"
+              className={styles.atmosphere}
+              data-hero-atmosphere
+            >
+              <span className={styles.atmosphereLayer} />
+            </div>
             <div
               aria-hidden={introHidden}
               className={styles.heroCopy}
@@ -59,6 +68,7 @@ export function HeroSection() {
                   href={site.whatsappUrl}
                   rel="noopener noreferrer"
                   target="_blank"
+                  aria-label="Conversar com a Kapitalis (abre em nova aba)"
                 >
                   Conversar com a Kapitalis
                   <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
@@ -107,12 +117,13 @@ export function HeroSection() {
               className={styles.scrollCue}
               data-entry="scroll-cue"
               href="#sistema"
+              aria-label="Rolar para o Sistema Kapitalis"
               tabIndex={introHidden ? -1 : undefined}
             >
-              <span>Rolar para o Sistema Kapitalis</span>
-              <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-                <path d="M10 2v14m-5-5 5 5 5-5" />
-              </svg>
+              <span aria-hidden="true">SCROLL</span>
+              <span className={styles.scrollTrack} aria-hidden="true">
+                <span className={styles.scrollIndicator} data-scroll-indicator />
+              </span>
             </a>
           </div>
         </div>

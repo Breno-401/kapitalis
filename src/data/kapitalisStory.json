@@ -4,14 +4,30 @@
     "eyebrow": "01 · ENTRADAS",
     "title": "Entradas",
     "body": "Vendas, bancos, notas, folha e despesas fazem parte de uma mesma rotina financeira.",
-    "items": ["Vendas", "Bancos", "Notas", "Folha", "Despesas"]
+    "items": ["Vendas", "Bancos", "Notas", "Folha", "Despesas"],
+    "media": {
+      "kind": "image",
+      "src": "/editorial/escritorio-entradas.png",
+      "alt": "Sala de atendimento com mesa em L, cadeira de escritório, poltronas, notebook e planta.",
+      "objectPosition": "center 54%",
+      "fit": "cover",
+      "caption": "Estrutura para acompanhar a rotina de perto."
+    }
   },
   {
     "id": "organizacao",
     "eyebrow": "02 · ORGANIZAÇÃO",
     "title": "Organização",
     "body": "Pagamentos, recebimentos, conciliação, tributos e fechamento compõem o acompanhamento do período.",
-    "items": ["Pagamentos", "Recebimentos", "Conciliação", "Tributos", "Fechamento"]
+    "items": ["Pagamentos", "Recebimentos", "Conciliação", "Tributos", "Fechamento"],
+    "media": {
+      "kind": "image",
+      "src": "/editorial/arte-organizacao-servicos.png",
+      "alt": "Cartaz Como podemos ajudar? com abertura de empresa, regularização da situação fiscal, consultoria e gestão empresarial, análise tributária, imposto de renda e assessoria contábil empresarial completa.",
+      "objectPosition": "center center",
+      "fit": "contain",
+      "caption": "Serviços para a rotina empresarial."
+    }
   },
   {
     "id": "visibilidade",
@@ -25,6 +41,14 @@
     "eyebrow": "04 · DECISÃO",
     "title": "Decisão",
     "body": "Contexto, prioridade e próximo passo podem orientar uma conversa sobre a rotina financeira.",
-    "items": ["Contexto", "Prioridade", "Próximo passo"]
+    "items": ["Contexto", "Prioridade", "Próximo passo"],
+    "media": {
+      "kind": "image",
+      "src": "/editorial/atendimento-decisao.png",
+      "alt": "Atendimento presencial no escritório; uma pessoa está atrás da mesa e duas pessoas estão sentadas de frente.",
+      "objectPosition": "center 35%",
+      "fit": "cover",
+      "caption": "A conversa conecta informação, prioridades e próximos passos."
+    }
   }
 ]

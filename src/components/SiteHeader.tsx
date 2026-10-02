@@ -2,15 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { site } from '../data/site'
 import { getInitialTheme, THEME_STORAGE_KEY } from './theme'
 import type { SiteTheme } from './theme'
+import { BrandMark } from './BrandMark'
 import styles from './SiteHeader.module.css'
 
 const navigation = [
-  { href: '#contexto', label: 'Contexto' },
   { href: '#sistema', label: 'Sistema' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#conteudo', label: 'Ferramentas' },
   { href: '#contato', label: 'Contato' },
+  { href: '#duvidas-frequentes', label: 'FAQ' },
 ] as const
 
 type NavigationItem = (typeof navigation)[number]
@@ -302,14 +303,10 @@ export function SiteHeader() {
       </a>
       <div className={styles.inner}>
         <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
-          <img
-            alt=""
-            aria-hidden="true"
+          <BrandMark
             className={styles.brandMark}
-            decoding="async"
-            height={64}
-            src="/assets/kapitalis-logo-original.png"
-            width={96}
+            height="2.8rem"
+            width="2.8rem"
           />
           <span className={styles.brandName}>{site.shortName}</span>
         </a>
@@ -344,6 +341,7 @@ export function SiteHeader() {
               ))}
             </ul>
             <a
+              aria-label="Conversar no WhatsApp (abre em nova aba)"
               className={styles.menuContactLink}
               data-mobile-contact
               href={site.whatsappUrl}
@@ -369,6 +367,7 @@ export function SiteHeader() {
         </nav>
 
         <a
+          aria-label="Conversar no WhatsApp (abre em nova aba)"
           className={styles.contactLink}
           href={site.whatsappUrl}
           target="_blank"

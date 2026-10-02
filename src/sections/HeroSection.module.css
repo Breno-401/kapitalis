@@ -3,12 +3,29 @@
   isolation: isolate;
   background: var(--color-navy);
   color: var(--color-paper);
+  --hero-atmosphere-glow: rgb(17 70 138 / 24%);
+  --hero-atmosphere-center: rgb(27 77 137 / 12%);
+  --hero-atmosphere-ribbon: rgb(5 67 145 / 21%);
+  --hero-atmosphere-ribbon-soft: rgb(20 79 145 / 12%);
+  --hero-atmosphere-ribbon-deep: rgb(2 42 94 / 28%);
+}
+
+:root[data-theme='light'] .experience {
+  --hero-atmosphere-glow: rgb(67 107 157 / 12%);
+  --hero-atmosphere-center: rgb(93 126 170 / 7%);
+  --hero-atmosphere-ribbon: rgb(61 99 148 / 9%);
+  --hero-atmosphere-ribbon-soft: rgb(91 125 167 / 6%);
+  --hero-atmosphere-ribbon-deep: rgb(54 87 132 / 8%);
 }
 
 .experienceGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: stretch;
+}
+
+.experienceGrid > :last-child {
+  pointer-events: none;
 }
 
 .visualRail {
@@ -33,6 +50,31 @@
   background:
     radial-gradient(ellipse at 50% 67%, rgb(212 175 55 / 7%), transparent 39%),
     var(--color-navy);
+  pointer-events: none;
+}
+
+.atmosphere {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  transform: translate3d(
+    var(--hero-atmosphere-x, 0px),
+    var(--hero-atmosphere-y, 0px),
+    0
+  );
+  pointer-events: none;
+}
+
+.atmosphereLayer {
+  position: absolute;
+  inset: -6%;
+  background:
+    radial-gradient(ellipse at 72% 43%, var(--hero-atmosphere-glow), transparent 34%),
+    radial-gradient(ellipse at 49% 57%, var(--hero-atmosphere-center), transparent 42%),
+    linear-gradient(132deg, transparent 0 37%, var(--hero-atmosphere-ribbon-deep) 41%, var(--hero-atmosphere-ribbon) 45%, transparent 53%),
+    linear-gradient(132deg, transparent 0 62%, var(--hero-atmosphere-ribbon-soft) 66%, var(--hero-atmosphere-ribbon-deep) 69%, transparent 76%);
+  transform: translate3d(0, 0, 0) scale(1.02);
   pointer-events: none;
 }
 
@@ -132,13 +174,18 @@
   padding-inline: 1.35rem;
   background: var(--color-gold);
   color: var(--color-brand-ink);
+  cursor: pointer;
   transition:
-    background-color var(--duration-fast) var(--ease-standard),
-    filter var(--duration-fast) var(--ease-standard);
+    background-color 220ms var(--ease-standard),
+    filter 220ms var(--ease-standard),
+    transform 220ms var(--ease-standard),
+    gap 240ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .primaryAction:hover {
+  gap: 0.9rem;
   background: var(--color-gold-soft);
+  transform: translateY(-1px) scale(1.005);
 }
 
 .primaryAction svg {
@@ -148,26 +195,29 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.6;
-  transition: transform var(--duration-fast) var(--ease-standard);
+  transition: transform 240ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .primaryAction:hover svg {
-  transform: translateX(0.15rem);
+  transform: translateX(2px);
 }
 
 .primaryAction:active {
   filter: brightness(0.96);
+  transform: translateY(0) scale(0.995);
 }
 
 .secondaryAction {
   padding-inline: 0.25rem;
   color: var(--color-paper);
+  cursor: pointer;
   text-decoration: underline;
   text-decoration-color: var(--color-on-dark-decoration);
   text-underline-offset: 0.35em;
   transition:
-    color var(--duration-fast) var(--ease-standard),
-    text-decoration-color var(--duration-fast) var(--ease-standard);
+    color 220ms var(--ease-standard),
+    text-decoration-color 220ms var(--ease-standard),
+    transform 220ms var(--ease-standard);
 }
 
 .secondaryAction:hover,
@@ -176,8 +226,16 @@
   text-decoration-color: currentColor;
 }
 
+.secondaryAction:hover {
+  transform: translateX(2px);
+}
+
 .primaryAction:focus-visible,
-.secondaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: 2px solid var(--color-gold-soft);
+  outline-offset: 0.25rem;
+}
+
 .scrollCue:focus-visible {
   outline-color: var(--color-gold-soft);
 }
@@ -187,7 +245,7 @@
   z-index: 1;
   top: 50%;
   left: 48%;
-  width: min(47vw, 42rem);
+  width: min(clamp(27rem, 43vw, 42rem), 71svh);
   opacity: var(--hero-core-opacity, 0.22);
   filter: blur(var(--hero-core-blur, 1.8px));
   transform: translate3d(
@@ -217,19 +275,6 @@
   transform: translate3d(0, var(--hero-photo-y, 0px), 0);
   pointer-events: none;
   will-change: opacity, transform;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 78%, transparent 100%);
-}
-
-.heroPortrait::after {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 74%, transparent) 14%, transparent 42%, transparent 82%, color-mix(in srgb, var(--color-navy) 16%, transparent) 100%),
-    linear-gradient(0deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 72%, transparent) 4%, transparent 18%),
-    linear-gradient(180deg, color-mix(in srgb, var(--color-navy) 18%, transparent), transparent 17%);
-  content: '';
-  pointer-events: none;
 }
 
 .heroPortrait img {
@@ -237,6 +282,15 @@
   height: 100%;
   object-fit: cover;
   object-position: center top;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+}
+
+@media (min-width: 56.25rem) and (max-height: 57rem) {
+  .heroPortrait {
+    /* Keep the portrait's 1.08:1 frame below the fixed navbar on short desktops. */
+    width: min(55vw, 55rem, calc(108svh - 8.64rem));
+  }
 }
 
 @media (min-width: 56.25rem) and (max-height: 55rem) {
@@ -253,7 +307,7 @@
 .systemLabel {
   position: absolute;
   z-index: 3;
-  top: 19vh;
+  top: clamp(6rem, 13vh, 9rem);
   right: clamp(2rem, 8vw, 8rem);
   color: var(--color-paper);
   opacity: var(--hero-system-opacity, 0);
@@ -272,7 +326,7 @@
 
 .systemLabel h2 {
   margin-top: 0.65rem;
-  font-size: clamp(1.7rem, 2.7vw, 2.35rem);
+  font-size: clamp(1.6rem, 2.15vw, 2.15rem);
   letter-spacing: -0.035em;
 }
 
@@ -282,28 +336,35 @@
   right: 0;
   bottom: 1.8rem;
   left: 0;
-  display: grid;
-  justify-items: center;
-  gap: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   width: max-content;
   margin-inline: auto;
-  color: var(--color-on-dark-muted);
-  font-size: 0.64rem;
-  font-weight: 650;
-  letter-spacing: 0.13em;
+  color: var(--color-on-dark-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
   opacity: var(--hero-cue-opacity, 1);
   pointer-events: auto;
 }
 
-.scrollCue svg {
-  width: 1.1rem;
-  fill: none;
-  stroke: var(--color-gold-soft);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.4;
+.scrollTrack {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 34px;
+  overflow: hidden;
+  background: var(--color-on-dark-border-medium);
+}
+
+.scrollIndicator {
+  position: absolute;
+  inset: 0;
+  background: var(--color-gold-soft);
 }
 
 .experience[data-static-layout='true'] .experienceGrid {
@@ -348,7 +409,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(47vw, 42rem);
+  width: min(clamp(27rem, 43vw, 42rem), 71svh);
   margin: 0;
   opacity: 0.3;
   filter: none;
@@ -482,12 +543,6 @@
     overflow: hidden;
   }
 
-  .heroPortrait::after {
-    background:
-      linear-gradient(90deg, var(--color-navy) 0%, transparent 16%, transparent 84%, var(--color-navy) 100%),
-      linear-gradient(0deg, var(--color-navy) 0%, color-mix(in srgb, var(--color-navy) 62%, transparent) 10%, transparent 32%);
-  }
-
   .systemLabel {
     position: relative;
     top: auto;
@@ -592,7 +647,26 @@
   }
 }
 
+@media (min-width: 96.25rem) and (max-width: 103.75rem) and (min-height: 53.75rem) and (max-height: 58.75rem) {
+  .experienceGrid {
+    grid-template-columns: minmax(0, 48fr) minmax(0, 52fr);
+  }
+
+  .corePosition {
+    left: 54%;
+    width: min(42vw, 42rem, 75svh);
+  }
+
+  .systemLabel h2 {
+    font-size: 2.125rem;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .atmosphereLayer {
+    animation: hero-atmosphere-drift 26s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  }
+
   .heroCopy [data-entry='eyebrow'] {
     animation: hero-enter 760ms var(--ease-standard) 120ms both;
   }
@@ -618,12 +692,28 @@
     animation: hero-enter 760ms var(--ease-standard) 840ms both;
   }
 
-  .heroPortrait img {
-    animation: portrait-reveal 1200ms var(--ease-standard) 560ms both;
-  }
-
   .scrollCue[data-entry='scroll-cue'] {
     animation: hero-enter 760ms var(--ease-standard) 1040ms both;
+  }
+
+  .scrollIndicator {
+    animation: scroll-indicator 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .atmosphere {
+    will-change: transform;
+  }
+}
+
+@keyframes hero-atmosphere-drift {
+  from {
+    transform: translate3d(-0.45%, 0.3%, 0) scale(1.01);
+  }
+
+  to {
+    transform: translate3d(0.45%, -0.3%, 0) scale(1.035);
   }
 }
 
@@ -653,19 +743,21 @@
   }
 }
 
-@keyframes portrait-reveal {
-  from {
-    clip-path: inset(0 0 0 100%);
-    filter: blur(10px);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-    filter: blur(0);
-  }
+@keyframes scroll-indicator {
+  0% { transform: translateY(-100%); }
+  55% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .atmosphere {
+    transform: none;
+  }
+
+  .atmosphereLayer {
+    animation: none;
+  }
+
   .heroCopy,
   .heroPortrait img,
   .corePosition,

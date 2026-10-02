@@ -1,6 +1,6 @@
 .section {
-  background: var(--color-paper);
-  color: var(--color-navy);
+  background: var(--surface-page, var(--color-paper));
+  color: var(--text-primary, var(--color-navy));
 }
 
 .inner {
@@ -9,7 +9,7 @@
 
 .eyebrow {
   margin-bottom: var(--space-4);
-  color: var(--color-text-secondary);
+  color: var(--text-secondary, var(--color-text-secondary));
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -32,268 +32,310 @@
 .heading p {
   max-width: 34ch;
   padding-bottom: 0.25rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary, var(--color-text-secondary));
   font-size: 1rem;
   line-height: 1.7;
 }
 
-.switcher {
+.serviceGrid {
   display: grid;
-  grid-template-columns: minmax(15rem, 0.55fr) minmax(0, 1.45fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
-  gap: clamp(2rem, 5vw, 5rem);
+  gap: clamp(1rem, 2vw, 1.8rem);
   margin-top: clamp(3rem, 6vw, 5rem);
 }
 
-.serviceTabs {
-  display: grid;
-  align-content: start;
-  border-top: 1px solid var(--color-border-light);
+.serviceCard {
+  position: relative;
+  min-width: 0;
+  height: 29rem;
+  perspective: 900px;
 }
 
-.serviceTab {
-  display: grid;
-  grid-template-columns: 2.25rem minmax(0, 1fr) 0.55rem;
-  align-items: center;
-  gap: 0.8rem;
-  min-height: 6.15rem;
-  padding: 0.85rem 0.35rem 0.85rem 0;
+.cardFaces {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid var(--border, var(--color-border-light));
+  border-radius: var(--radius-large);
+  background: var(--surface-raised, var(--color-white));
+  box-shadow: var(--shadow, 0 12px 30px rgb(5 21 41 / 5%));
+  isolation: isolate;
+}
+
+.frontFace,
+.backFace {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  transition:
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 600ms;
+}
+
+.frontFace {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+}
+
+.frontTrigger {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
   border: 0;
-  border-bottom: 1px solid var(--color-border-light);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: inherit;
   cursor: pointer;
   text-align: left;
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    padding var(--duration-fast) var(--ease-standard);
 }
 
-.serviceTab:hover,
-.serviceTab[aria-selected='true'] {
-  padding-left: 0.55rem;
-  color: var(--color-navy);
+.icon {
+  width: 2.7rem;
+  height: 2.7rem;
+  margin-bottom: auto;
+  color: var(--accent, var(--color-gold));
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
 }
 
-.serviceTab:focus-visible {
-  z-index: 1;
-  outline: 2px solid var(--color-navy);
-  outline-offset: 3px;
-}
-
-.tabIndex {
-  align-self: start;
-  padding-top: 0.3rem;
-  color: var(--color-text-muted);
-  font-size: 0.68rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.tabText {
-  display: grid;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
-.tabLabel {
-  color: var(--color-text-secondary);
-  font-size: 0.61rem;
+.frontLabel,
+.backLabel {
+  color: var(--accent, var(--color-gold));
+  font-size: 0.67rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
-.tabTitle {
+.frontTitle {
+  display: block;
+  max-width: 14ch;
+  margin-top: 0.65rem;
   font-family: var(--font-display);
-  font-size: clamp(1.15rem, 1.7vw, 1.55rem);
-  letter-spacing: -0.025em;
-  line-height: 1.2;
+  font-size: clamp(1.75rem, 2.35vw, 2.45rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
   overflow-wrap: anywhere;
 }
 
-.tabMark {
-  width: 0.48rem;
-  height: 0.48rem;
-  border: 1px solid var(--color-text-muted);
-  border-radius: 50%;
-  transition:
-    background-color var(--duration-fast) var(--ease-standard),
-    border-color var(--duration-fast) var(--ease-standard),
-    transform var(--duration-fast) var(--ease-standard);
+.frontDescription {
+  display: block;
+  max-width: 34ch;
+  margin-top: 0.9rem;
+  color: var(--text-secondary, var(--color-text-secondary));
+  font-size: 0.87rem;
+  line-height: 1.6;
 }
 
-.serviceTab[aria-selected='true'] .tabMark {
-  transform: scale(1.12);
-  border-color: var(--color-gold);
-  background: var(--color-gold);
-}
-
-.servicePanel {
+.frontHint {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 35rem;
-  padding: clamp(1.7rem, 4vw, 3.4rem);
-  overflow: hidden;
-  border-radius: var(--radius-large);
-  background:
-    radial-gradient(ellipse at 100% 0%, rgb(232 213 143 / 8%), transparent 48%),
-    linear-gradient(150deg, var(--color-navy-deep), var(--color-navy-original-deep));
-  color: var(--color-paper);
-  animation: service-enter var(--duration-reveal) var(--ease-standard) both;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1.8rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border, var(--color-border-light));
+  color: var(--text-secondary, var(--color-text-secondary));
+  font-size: 0.75rem;
+  font-weight: 650;
 }
 
-.servicePanel:focus-visible {
-  outline: 2px solid var(--color-navy);
+.frontHint svg {
+  width: 0.9rem;
+  flex: 0 0 auto;
+  color: var(--accent, var(--color-gold));
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  transition: transform 180ms ease;
+}
+
+.frontTrigger:hover .frontHint svg {
+  transform: translate(1px, -1px);
+}
+
+.backFace {
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 100% 0%, var(--accent-muted, color-mix(in srgb, var(--color-gold) 11%, transparent)), transparent 52%),
+    linear-gradient(150deg, var(--surface-raised), var(--surface-dark));
+  color: var(--text-primary);
+  transition:
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 600ms;
+}
+
+.serviceCard[data-open='true'] .frontFace {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.serviceCard[data-open='true'] .backFace {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s;
+}
+
+.frontTrigger:focus-visible {
+  outline: none;
+}
+
+.serviceCard:focus-within .cardFaces {
+  outline: 2px solid var(--accent, var(--color-gold));
   outline-offset: 4px;
 }
 
-.panelHeader {
+.backHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgb(243 241 234 / 17%);
+  min-height: 2.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
 }
 
-.panelLabel {
-  color: var(--color-gold-soft);
-  font-size: 0.67rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+.serviceLink:focus-visible {
+  outline: 2px solid var(--accent, var(--color-gold-soft));
+  outline-offset: 3px;
 }
 
-.panelIndex {
-  color: rgb(243 241 234 / 55%);
-  font-size: 0.64rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.panelContent {
+.backContent {
   min-width: 0;
   margin-block: auto;
-  padding-block: 2rem;
+  padding-block: 1.15rem;
 }
 
-.panelContent h3 {
+.backContent h3 {
   max-width: 14ch;
   font-family: var(--font-display);
-  font-size: clamp(2.7rem, 5vw, 4.7rem);
+  font-size: clamp(1.75rem, 2.2vw, 2.15rem);
   font-weight: 500;
-  letter-spacing: -0.045em;
-  line-height: 0.98;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
-.serviceDescription {
-  max-width: 44ch;
-  margin-top: 1rem;
-  color: rgb(243 241 234 / 72%);
-  font-size: 0.91rem;
-  line-height: 1.65;
+.backDescription {
+  margin-top: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.48;
 }
 
 .activities {
-  position: relative;
   display: grid;
-  gap: 0.7rem;
-  margin: 1.6rem 0 0;
+  gap: 0.48rem;
+  margin: 1rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-.activities::before {
-  position: absolute;
-  top: 0.82rem;
-  bottom: 0.82rem;
-  left: 0.34rem;
-  width: 1px;
-  background: linear-gradient(var(--color-gold), rgb(232 213 143 / 17%));
-  content: '';
-}
-
 .activities li {
   position: relative;
-  display: grid;
-  grid-template-columns: 1.4rem minmax(0, 1fr);
-  align-items: baseline;
-  gap: 0.8rem;
-  min-width: 0;
-  color: rgb(243 241 234 / 89%);
-  font-size: 0.82rem;
-  line-height: 1.45;
+  padding-left: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
-.activities li span {
-  z-index: 1;
-  color: var(--color-gold-soft);
-  font-size: 0.61rem;
-  font-variant-numeric: tabular-nums;
+.activities li::before {
+  position: absolute;
+  top: 0.42em;
+  left: 0;
+  width: 0.32rem;
+  height: 0.32rem;
+  border-radius: 50%;
+  background: var(--accent, var(--color-gold));
+  content: '';
 }
 
 .serviceLink {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  gap: 0.65rem;
-  margin-top: 1rem;
-  color: var(--color-paper);
-  font-size: 0.82rem;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--accent, var(--color-gold)) 58%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 8%, transparent);
+  color: var(--text-primary);
+  box-sizing: border-box;
+  font-size: 0.78rem;
   font-weight: 650;
-  text-decoration-color: rgb(243 241 234 / 45%);
-  text-underline-offset: 0.3em;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 120ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .serviceLink:hover {
-  color: var(--color-gold-soft);
-  text-decoration-color: var(--color-gold-soft);
+  color: var(--accent, var(--color-gold-soft));
+  border-color: var(--accent, var(--color-gold-soft));
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 14%, transparent);
 }
 
 .serviceLink svg {
   width: 1rem;
+  flex: 0 0 auto;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.5;
-  transition: transform var(--duration-fast) var(--ease-standard);
+  transition: transform 180ms ease;
 }
 
 .serviceLink:hover svg {
-  transform: translateX(0.15rem);
+  transform: translate(1px, -1px);
 }
 
-.serviceLink:focus-visible {
-  outline: 2px solid var(--color-gold-soft);
-  outline-offset: 4px;
+.serviceLink:active {
+  background: color-mix(in srgb, var(--accent, var(--color-gold)) 20%, transparent);
+  transform: scale(0.98);
 }
 
-@keyframes service-enter {
-  from {
-    opacity: 0.35;
-    transform: translateY(var(--distance-reveal));
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 56.25rem) {
+@media (max-width: 68rem) {
   .heading {
     grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.7fr);
     gap: var(--space-8);
   }
 
-  .switcher {
-    grid-template-columns: minmax(13rem, 0.6fr) minmax(0, 1.4fr);
-    gap: var(--space-6);
+  .serviceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.2rem;
   }
 
-  .servicePanel {
-    min-height: 33rem;
+  .serviceCard {
+    height: 29rem;
+  }
+
+  .frontFace,
+  .backFace {
     padding: 1.5rem;
   }
 }
@@ -303,12 +345,8 @@
     padding-block: 4.75rem;
   }
 
-  .heading,
-  .switcher {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .heading {
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-4);
   }
 
@@ -317,50 +355,52 @@
     font-size: clamp(2.7rem, 10vw, 3.6rem);
   }
 
-  .switcher {
-    gap: 1.5rem;
+  .serviceGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
     margin-top: var(--space-12);
   }
 
-  .serviceTabs {
-    grid-template-columns: minmax(0, 1fr);
+  .serviceCard {
+    height: 28rem;
   }
 
-  .serviceTab {
-    min-height: 4.5rem;
-    border-top: 1px solid var(--color-border-light);
-  }
-
-  .servicePanel {
-    min-height: 30rem;
+  .frontFace,
+  .backFace {
     padding: 1.5rem;
   }
 
-  .panelContent h3 {
+  .frontTitle,
+  .backContent h3 {
     max-width: 12ch;
-    font-size: clamp(2.7rem, 11vw, 3.7rem);
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+
+  .backDescription {
+    font-size: 0.82rem;
+  }
+
+  .activities li {
+    font-size: 0.8rem;
   }
 }
 
-@media (max-width: 22rem) {
-  .servicePanel {
-    min-height: 28rem;
-    padding: 1.25rem;
+@media (max-width: 22.5rem) {
+  .serviceCard {
+    height: 30rem;
   }
 
-  .panelContent h3 {
-    font-size: 2.55rem;
+  .frontFace,
+  .backFace {
+    padding: 1.25rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .serviceTab,
-  .tabMark,
+  .frontFace,
+  .backFace,
+  .frontHint svg,
   .serviceLink svg {
     transition: none;
-  }
-
-  .servicePanel {
-    animation: none;
   }
 }

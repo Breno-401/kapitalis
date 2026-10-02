@@ -70,4 +70,33 @@ describe('Kapitalis system story', () => {
       ),
     ).toEqual(chapters.map(({ title }) => title))
   })
+
+  it('story_assigns_only_the_three_supplied_media_assets_to_their_chapters', () => {
+    const { container } = render(
+      <StorySection chapters={currentStory} activeChapterId="entradas" />,
+    )
+
+    const media = Array.from(container.querySelectorAll('[data-story-media]'))
+    expect(media).toHaveLength(3)
+    expect(
+      media.map((frame) => frame.querySelector('img')?.getAttribute('src')),
+    ).toEqual([
+      '/editorial/escritorio-entradas.png',
+      '/editorial/arte-organizacao-servicos.png',
+      '/editorial/atendimento-decisao.png',
+    ])
+    expect(
+      container.querySelector('[data-story-id="visibilidade"] [data-story-media]'),
+    ).toBeNull()
+    expect(container.querySelector('[data-story-id="entradas"] [data-story-media]')
+      ?.getAttribute('data-revealed')).toBe('true')
+    expect(screen.getByText('Estrutura para acompanhar a rotina de perto.'))
+      .toBeTruthy()
+    expect(screen.getByRole('img', {
+      name: /mesa em L, cadeira de escritório, poltronas, notebook e planta/i,
+    })).toBeTruthy()
+    expect(screen.getByRole('img', {
+      name: /uma pessoa está atrás da mesa e duas pessoas estão sentadas de frente/i,
+    })).toBeTruthy()
+  })
 })

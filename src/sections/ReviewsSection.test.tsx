@@ -4,12 +4,29 @@ import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
 
 describe('Google Reviews section', () => {
-  it('renders nine real reviews without an aggregate block or external navigation', () => {
-    render(<ReviewsSection data={googleReviewsSnapshot} />)
+  it('renders the verified Google proof block and links both CTAs to the Kapitalis profile', () => {
+    const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
 
-    expect(screen.queryByText('5,0')).toBeNull()
+    expect(screen.getByText('5,0')).toBeTruthy()
+    expect(screen.getByRole('img', { name: '5 de 5 estrelas' })).toBeTruthy()
+    expect(screen.getByText('Mais de 50 avaliações no Google')).toBeTruthy()
+    expect(
+      screen.getByRole('link', {
+        name: 'Google, nota 5,0 de 5 estrelas. Mais de 50 avaliações no Google. Ver avaliações no Google (abre em nova aba)',
+      }),
+    ).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Ver todas no Google (abre em nova aba)' })).toBeTruthy()
+    expect(screen.getByText('Ver todas no Google')).toBeTruthy()
+
+    const profileLinks = container.querySelectorAll<HTMLAnchorElement>('[data-google-profile-link]')
+    expect(profileLinks).toHaveLength(2)
+    for (const link of profileLinks) {
+      expect(link.href).toBe(googleReviewsSnapshot.sourceUrl)
+      expect(link.target).toBe('_blank')
+      expect(link.rel).toContain('noopener')
+      expect(link.rel).toContain('noreferrer')
+    }
     expect(screen.queryByText('52 avaliações no Google')).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Ver avaliações no Google' })).toBeNull()
     expect(screen.getAllByRole('article')).toHaveLength(9)
     expect(
       within(screen.getByRole('article', { name: 'Avaliação de Jimmy Campos' })).getByText(
@@ -24,6 +41,20 @@ describe('Google Reviews section', () => {
     for (const review of screen.getAllByRole('article')) {
       expect(within(review).queryAllByRole('link')).toHaveLength(0)
     }
+  })
+
+  it('keeps the aggregate proof beside the heading and the closing CTA after the review rail', () => {
+    const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+
+    const section = container.querySelector<HTMLElement>('#avaliacoes')!
+    const header = section.querySelector<HTMLElement>('[data-review-header]')!
+    const proof = section.querySelector<HTMLElement>('[data-review-proof]')!
+    const trackFrame = section.querySelector<HTMLElement>('[data-review-frame]')!
+    const closingCta = section.querySelector<HTMLElement>('[data-review-closing-cta]')!
+
+    expect(section.dataset.themeSurface).toBe('dark')
+    expect(header.contains(proof)).toBe(true)
+    expect(trackFrame.compareDocumentPosition(closingCta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('omits the carousel hint and arrow controls while keeping the Google mark', () => {
@@ -105,8 +136,44 @@ describe('Google Reviews section', () => {
     }
   })
 
+  it('uses the shared duplicated transform loop at mobile widths', () => {
+    const frames: FrameRequestCallback[] = []
+    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      frames.push(callback)
+      return frames.length
+    })
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
+    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
+      })
+
+    try {
+      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+      const track = container.querySelector<HTMLElement>('[data-review-track]')!
+      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      const sets = container.querySelectorAll('[data-review-set]')
+
+      expect(sets).toHaveLength(2)
+      frames.shift()?.(0)
+      frames.shift()?.(50)
+
+      expect(rail.style.transform).toBe('translate3d(-1.016px, 0, 0)')
+      expect(track.scrollLeft).toBe(0)
+    } finally {
+      vi.unstubAllGlobals()
+      requestFrame.mockRestore()
+      cancelFrame.mockRestore()
+      measureRects.mockRestore()
+    }
+  })
+
   it('preserves the mobile swipe position when a review expands and collapses', () => {
     let resizeCallback: ResizeObserverCallback | undefined
+    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1)
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
     vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
     vi.stubGlobal(
       'ResizeObserver',
@@ -118,23 +185,47 @@ describe('Google Reviews section', () => {
         disconnect() {}
       },
     )
+    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
+      })
 
     try {
       const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
       const track = container.querySelector<HTMLElement>('[data-review-track]')!
       const review = screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' })
       const expand = within(review).getByRole('button', { name: 'Ler mais' })
-      track.scrollLeft = 240
+      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch',
+        pointerId: 3,
+        clientX: 240,
+        button: 0,
+      })
+      fireEvent.pointerMove(track, {
+        pointerType: 'touch',
+        pointerId: 3,
+        clientX: 180,
+        button: 0,
+      })
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 3 })
+      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
 
       fireEvent.click(expand)
       resizeCallback?.([], {} as ResizeObserver)
-      expect(track.scrollLeft).toBe(240)
+      expect(track.scrollLeft).toBe(0)
+      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
 
       fireEvent.click(expand)
       resizeCallback?.([], {} as ResizeObserver)
-      expect(track.scrollLeft).toBe(240)
+      expect(track.scrollLeft).toBe(0)
+      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
     } finally {
       vi.unstubAllGlobals()
+      requestFrame.mockRestore()
+      cancelFrame.mockRestore()
+      measureRects.mockRestore()
     }
   })
 
@@ -149,7 +240,7 @@ describe('Google Reviews section', () => {
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000 } as DOMRect
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
 
     try {
@@ -170,7 +261,7 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it('uses a fifty-second seamless loop and runs only while the rail is visible', () => {
+  it('uses a fifty-second mobile loop and starts only while the rail is visible', () => {
     const frames: FrameRequestCallback[] = []
     let observerCallback: IntersectionObserverCallback | undefined
     const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
@@ -178,7 +269,7 @@ describe('Google Reviews section', () => {
       return frames.length
     })
     const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
-    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
     vi.stubGlobal(
       'IntersectionObserver',
       class {
@@ -192,7 +283,7 @@ describe('Google Reviews section', () => {
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000 } as DOMRect
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
 
     try {
@@ -250,7 +341,7 @@ describe('Google Reviews section', () => {
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000 } as DOMRect
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
 
     try {
@@ -303,7 +394,7 @@ describe('Google Reviews section', () => {
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000 } as DOMRect
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
 
     try {
@@ -327,12 +418,44 @@ describe('Google Reviews section', () => {
     }
   })
 
+  it('keeps a focused review control visible without skipping a partially visible card', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
+    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        if (this.hasAttribute('data-review-track')) {
+          return { left: 0, right: 308, width: 308, top: 0, bottom: 448, height: 448 } as DOMRect
+        }
+        if (this.hasAttribute('data-review-card')) {
+          return { left: 60, right: 370, width: 310, top: 0, bottom: 300, height: 300 } as DOMRect
+        }
+        if (this.tagName === 'BUTTON') {
+          return { left: 250, right: 298, width: 48, top: 260, bottom: 280, height: 20 } as DOMRect
+        }
+        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
+      })
+
+    try {
+      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
+      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      const review = screen.getByRole('article', { name: 'Avaliação de Maicon C. Boone' })
+      const button = within(review).getByRole('button', { name: 'Ler mais' })
+
+      fireEvent.focus(button)
+
+      expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
+    } finally {
+      vi.unstubAllGlobals()
+      measureRects.mockRestore()
+    }
+  })
+
   it('does not start a drag from an interactive review control', () => {
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000 } as DOMRect
+        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
 
     try {

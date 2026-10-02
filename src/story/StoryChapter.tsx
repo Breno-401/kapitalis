@@ -1,4 +1,5 @@
 import styles from './StorySection.module.css'
+import { StoryMedia } from './StoryMedia'
 import type { StoryChapter as StoryChapterData } from './types'
 
 type StoryChapterProps = {
@@ -31,6 +32,9 @@ export function StoryChapter({
           ))}
         </ul>
       </div>
+      {chapter.media ? (
+        <StoryMedia media={chapter.media} revealed={isActive} />
+      ) : null}
     </article>
   )
 }

@@ -25,6 +25,21 @@ describe('replaceable story media', () => {
     )
   })
 
+  it('wraps_story_photos_in_the_reusable_editorial_frame', () => {
+    const { container } = render(
+      <StoryMedia
+        media={{
+          kind: 'image',
+          src: '/editorial/escritorio-entradas.png',
+          alt: 'Sala de atendimento com mesa em L, cadeira de escritório, poltronas, notebook e planta.',
+          objectPosition: 'center 54%',
+        }}
+      />,
+    )
+
+    expect(container.querySelector('[data-story-media]')).toBeTruthy()
+  })
+
   it('diagram_scene_changes_with_chapter_data', () => {
     const { rerender } = render(
       <StoryMedia media={{ kind: 'diagram', scene: 'sources' }} />,

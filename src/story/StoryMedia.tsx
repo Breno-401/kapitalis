@@ -3,6 +3,7 @@ import type { StoryMedia as StoryMediaData } from './types'
 
 type StoryMediaProps = {
   media: StoryMediaData
+  revealed?: boolean
 }
 
 const sceneNames = {
@@ -12,16 +13,24 @@ const sceneNames = {
   decision: 'Decisão informada',
 } as const
 
-export function StoryMedia({ media }: StoryMediaProps) {
+export function StoryMedia({ media, revealed = true }: StoryMediaProps) {
   if (media.kind === 'image') {
     return (
-      <figure className={styles.mediaFrame}>
-        <picture>
+      <figure
+        className={styles.mediaFrame}
+        data-story-media
+        data-revealed={revealed}
+        data-fit={media.fit ?? 'cover'}
+      >
+        <picture className={styles.mediaPicture}>
           <img
+            className={styles.mediaImage}
             src={media.src}
             alt={media.alt}
             loading="lazy"
             decoding="async"
+            width="960"
+            height="600"
             style={
               media.objectPosition
                 ? { objectPosition: media.objectPosition }
@@ -29,6 +38,9 @@ export function StoryMedia({ media }: StoryMediaProps) {
             }
           />
         </picture>
+        {media.caption ? (
+          <figcaption className={styles.mediaCaption}>{media.caption}</figcaption>
+        ) : null}
       </figure>
     )
   }

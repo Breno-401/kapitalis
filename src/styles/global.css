@@ -9,7 +9,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--space-8);
-  background: var(--color-paper);
+  background: var(--surface-page);
 }
 
 html[data-theme-transitioning] *,
@@ -23,13 +23,13 @@ html[data-theme-transitioning] *::after {
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--color-paper);
-  color: var(--color-navy);
+  background: var(--surface-page);
+  color: var(--text-primary);
   font-family: var(--font-interface);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.55;
-  caret-color: var(--color-navy);
+  caret-color: var(--accent);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -72,13 +72,13 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-navy);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--color-gold);
-  color: var(--color-navy);
+  background: var(--accent-strong);
+  color: var(--text-on-accent);
 }
 
 .container {
@@ -95,13 +95,13 @@ a {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-paper);
+  background: var(--surface-page);
 }
 
 ::-webkit-scrollbar-thumb {
   border: 0.2rem solid var(--color-paper);
   border-radius: 999px;
-  background: var(--color-navy-raised);
+  background: var(--surface-interactive);
 }
 
 @media (prefers-reduced-motion: reduce) {
