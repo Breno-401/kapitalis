@@ -1,5 +1,6 @@
 import { useId, useRef } from 'react'
 import { useProcessScrollProgress } from './useProcessScrollProgress'
+import { useProcessReveal } from './useProcessReveal'
 import styles from './ProcessSection.module.css'
 
 const steps = [
@@ -40,6 +41,7 @@ export function ProcessSection() {
   const sceneRef = useRef<HTMLDivElement>(null)
   const sectionId = useId()
   const { activeIndex, staticLayout } = useProcessScrollProgress(trackRef, sceneRef, steps.length)
+  useProcessReveal(trackRef, activeIndex, staticLayout)
 
   return (
     <section

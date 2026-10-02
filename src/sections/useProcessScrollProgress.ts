@@ -25,12 +25,17 @@ export function useProcessScrollProgress(trackRef: ElementRef, sceneRef: Element
     let isStatic = prefersStaticLayout()
     let frame = 0
     let disposed = false
+    let currentIndex = -1
 
     function update() {
       frame = 0
       if (disposed) return
       const progress = isStatic ? 0 : Math.max(0, Math.min(1, (window.scrollY - start) / range))
-      setActiveIndex(Math.min(count - 1, Math.floor(progress * count)))
+      const nextIndex = Math.min(count - 1, Math.floor(progress * count))
+      if (nextIndex !== currentIndex) {
+        currentIndex = nextIndex
+        setActiveIndex(nextIndex)
+      }
       // The final stage occupies the last scroll interval, with the line already complete.
       track!.style.setProperty('--process-progress', Math.min(1, progress * count / (count - 1)).toFixed(4))
     }

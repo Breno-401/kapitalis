@@ -137,15 +137,16 @@
   min-width: 0;
   padding-top: 1.5rem;
   opacity: 0;
-  transform: translateY(0.5rem);
+  transform: translateY(-8px);
   pointer-events: none;
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition: opacity 180ms ease-out, transform 220ms ease-out;
 }
 
 .chapter[data-active='true'] {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+  transition-duration: 0s;
 }
 
 .chapterNumber {
@@ -285,10 +286,91 @@
   .microvisual { display: none; }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .section[data-process-layout='sticky'] .chapter[data-motion] .chapterNumber,
+  .section[data-process-layout='sticky'] .chapter[data-motion] .copy h3,
+  .section[data-process-layout='sticky'] .chapter[data-motion] .description,
+  .section[data-process-layout='sticky'] .chapter[data-motion] .result > p,
+  .section[data-process-layout='sticky'] .chapter[data-motion] .counter {
+    animation-duration: 400ms;
+    animation-timing-function: var(--ease-standard);
+    animation-delay: var(--reveal-delay, 0ms);
+    animation-fill-mode: both;
+  }
+
+  .section[data-process-layout='sticky'] .chapter[data-motion='a'] .chapterNumber,
+  .section[data-process-layout='sticky'] .chapter[data-motion='a'] .copy h3,
+  .section[data-process-layout='sticky'] .chapter[data-motion='a'] .description,
+  .section[data-process-layout='sticky'] .chapter[data-motion='a'] .result > p,
+  .section[data-process-layout='sticky'] .chapter[data-motion='a'] .counter {
+    animation-name: process-content-enter-a;
+  }
+
+  .section[data-process-layout='sticky'] .chapter[data-motion='b'] .chapterNumber,
+  .section[data-process-layout='sticky'] .chapter[data-motion='b'] .copy h3,
+  .section[data-process-layout='sticky'] .chapter[data-motion='b'] .description,
+  .section[data-process-layout='sticky'] .chapter[data-motion='b'] .result > p,
+  .section[data-process-layout='sticky'] .chapter[data-motion='b'] .counter {
+    animation-name: process-content-enter-b;
+  }
+
+  .section[data-process-layout='sticky'] .chapter[data-motion-wait] .chapterNumber,
+  .section[data-process-layout='sticky'] .chapter[data-motion-wait] .copy h3,
+  .section[data-process-layout='sticky'] .chapter[data-motion-wait] .description,
+  .section[data-process-layout='sticky'] .chapter[data-motion-wait] .result > p,
+  .section[data-process-layout='sticky'] .chapter[data-motion-wait] .counter {
+    opacity: 0;
+    animation: none;
+  }
+
+  .chapterNumber { --reveal-opacity: 0.2; --reveal-y: 14px; }
+  .copy h3 { --reveal-delay: 50ms; --reveal-y: 18px; }
+  .description { --reveal-delay: 100ms; --reveal-y: 12px; }
+  .resultLabel { --reveal-delay: 150ms; --reveal-y: 12px; }
+  .result > p:last-child { --reveal-delay: 200ms; --reveal-y: 12px; }
+  .counter { --reveal-delay: 250ms; --reveal-y: 10px; }
+
+  .section[data-process-layout='sticky'] .step[data-active='true'] .stepNumber {
+    animation: process-step-activate 400ms var(--ease-standard) both;
+  }
+
+  .section[data-process-layout='static'] .chapter[data-viewport-reveal='pending'] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: none;
+  }
+
+  .section[data-process-layout='static'] .chapter[data-viewport-reveal='visible'] {
+    animation: process-chapter-enter 520ms var(--ease-standard) both;
+  }
+}
+
+@keyframes process-content-enter-a {
+  from { opacity: 0; transform: translateY(var(--reveal-y, 12px)); }
+  to { opacity: var(--reveal-opacity, 1); transform: translateY(0); }
+}
+
+@keyframes process-content-enter-b {
+  from { opacity: 0; transform: translateY(var(--reveal-y, 12px)); }
+  to { opacity: var(--reveal-opacity, 1); transform: translateY(0); }
+}
+
+@keyframes process-step-activate {
+  from { transform: scale(0.96); }
+  to { transform: scale(1); }
+}
+
+@keyframes process-chapter-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chapter,
   .step,
   .stepNumber {
     transition: none;
+    animation: none;
+    transform: none;
   }
 }
