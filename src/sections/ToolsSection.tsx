@@ -14,9 +14,9 @@ export function ToolsSection() {
         <TaxSimulator headingId={taxHeadingId} />
 
         <section className={styles.complementary} aria-labelledby={complementaryHeadingId}>
-          <div className={styles.heading}>
-            <h2 id={complementaryHeadingId}>Ferramentas Complementares</h2>
-            <p>Simule situações comuns da rotina empresarial.</p>
+          <div className={styles.heading} data-reveal-group>
+            <h2 id={complementaryHeadingId} data-reveal="text">Ferramentas Complementares</h2>
+            <p data-reveal="text" data-reveal-step="1">Simule situações comuns da rotina empresarial.</p>
           </div>
           <ComplementarySimulator headingId={complementaryHeadingId} />
         </section>

@@ -17,9 +17,9 @@ export function SectionHeading({
   const Heading = as
 
   return (
-    <div className={className}>
-      <Heading id={id}>{title}</Heading>
-      {description ? <p>{description}</p> : null}
+    <div className={className} data-reveal-group>
+      <Heading id={id} data-reveal="text" data-reveal-step="1">{title}</Heading>
+      {description ? <p data-reveal="text" data-reveal-step="2">{description}</p> : null}
     </div>
   )
 }

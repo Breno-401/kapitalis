@@ -46,19 +46,7 @@
   margin: clamp(1.5rem, 3vh, 2rem) 0 0;
   overflow: hidden;
   background: var(--surface-raised);
-  clip-path: inset(7% 0 7% 0 round 0.75rem);
-  opacity: 0;
-  transform: scale(0.99);
-  transition:
-    clip-path 680ms cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 440ms var(--ease-standard),
-    transform 640ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.mediaFrame[data-revealed='true'] {
   clip-path: inset(0 0 0 0 round 0.75rem);
-  opacity: 1;
-  transform: scale(1);
 }
 
 .mediaPicture,
@@ -70,12 +58,6 @@
 
 .mediaImage {
   object-fit: cover;
-  transform: scale(1.035);
-  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.mediaFrame[data-revealed='true'] .mediaImage {
-  transform: scale(1);
 }
 
 .mediaFrame[data-fit='contain'] .mediaImage {

@@ -53,7 +53,7 @@ export function BpoSection() {
       aria-labelledby="bpo-title"
     >
       <div className={`container ${styles.inner}`}>
-        <p className={styles.eyebrow}>BPO Financeiro</p>
+        <p className={styles.eyebrow} data-reveal="text">BPO Financeiro</p>
         <SectionHeading
           className={styles.heading}
           id="bpo-title"
@@ -61,7 +61,7 @@ export function BpoSection() {
           description="Veja o que começa a ficar claro quando a Kapitalis organiza pagamentos, recebimentos e fechamento."
         />
 
-        <div className={styles.workspace}>
+        <div className={styles.workspace} data-reveal="text" data-reveal-step="2">
           <div
             className={styles.controls}
           >

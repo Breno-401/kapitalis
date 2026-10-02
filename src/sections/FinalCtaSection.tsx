@@ -9,15 +9,17 @@ export function FinalCtaSection() {
       aria-labelledby="final-cta-title"
     >
       <div className={`container ${styles.inner}`}>
-        <div className={styles.content}>
-          <p className={styles.eyebrow}>Próximo passo</p>
-          <h2 id="final-cta-title">Vamos conversar sobre a rotina da sua empresa.</h2>
-          <p>
+        <div className={styles.content} data-reveal-group>
+          <p className={styles.eyebrow} data-reveal="text">Próximo passo</p>
+          <h2 id="final-cta-title" data-reveal="text" data-reveal-step="1">Vamos conversar sobre a rotina da sua empresa.</h2>
+          <p data-reveal="text" data-reveal-step="2">
             Conte à equipe o que está acontecendo no dia a dia da empresa.
           </p>
           <a
             aria-label="Conversar no WhatsApp (abre em nova aba)"
             className={styles.action}
+            data-reveal="text"
+            data-reveal-step="3"
             href={site.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -28,7 +30,7 @@ export function FinalCtaSection() {
             </svg>
           </a>
         </div>
-        <div className={styles.portrait} aria-hidden="true">
+        <div className={styles.portrait} aria-hidden="true" data-reveal="media" data-reveal-step="2">
           <img src="/images/next-step-person.png" alt="" />
         </div>
         <span className={styles.rule} aria-hidden="true" />

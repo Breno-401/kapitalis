@@ -1,3 +1,5 @@
+import { useLayoutEffect } from 'react'
+import { initLandingReveal } from '../motion/landingReveal'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { PrivacyNotice } from '../components/PrivacyNotice'
@@ -14,6 +16,8 @@ import { ServicesSection } from '../sections/ServicesSection'
 import { ToolsSection } from '../sections/ToolsSection'
 
 export function HomePage() {
+  useLayoutEffect(() => initLandingReveal(document), [])
+
   return (
     <>
       <SiteHeader />

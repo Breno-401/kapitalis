@@ -30,15 +30,15 @@ export function FaqSection() {
   return (
     <section className={styles.section} id="duvidas-frequentes" aria-labelledby={`${id}-title`}>
       <div className={`container ${styles.inner}`}>
-        <p className={styles.eyebrow}>Respostas sobre a rotina</p>
-        <h2 id={`${id}-title`}>Dúvidas frequentes</h2>
+        <p className={styles.eyebrow} data-reveal="text">Respostas sobre a rotina</p>
+        <h2 id={`${id}-title`} data-reveal="text" data-reveal-step="1">Dúvidas frequentes</h2>
         <div className={styles.layout}>
           <div className={styles.questions} role="group" aria-label="Perguntas frequentes">
             {questions.map(({ question }, index) => {
               const expanded = selectedIndex === index
               const buttonId = `${id}-question-${index}`
               return (
-                <article className={styles.item} key={question}>
+                <article className={styles.item} key={question} data-reveal="text" data-reveal-step={index + 2}>
                   <h3>
                     <button
                       aria-controls={panelId}
@@ -62,6 +62,8 @@ export function FaqSection() {
             aria-labelledby={selectedButtonId}
             aria-live="polite"
             className={styles.answerPanel}
+            data-reveal="text"
+            data-reveal-step="2"
             id={panelId}
             role="region"
           >

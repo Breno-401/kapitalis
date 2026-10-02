@@ -16,9 +16,9 @@ const footerNavigation = [
 
 export function SiteFooter() {
   return (
-    <footer className={styles.footer} data-theme-surface="dark" id="contato">
+    <footer className={styles.footer} data-theme-surface="dark" id="contato" data-reveal-group>
       <div className={`container ${styles.content}`}>
-        <div className={styles.brandBlock}>
+        <div className={styles.brandBlock} data-reveal="quiet">
           <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
             <BrandMark
               className={styles.brandMark}
@@ -33,7 +33,7 @@ export function SiteFooter() {
           <p className={styles.locality}>{site.locality}</p>
         </div>
 
-        <nav className={styles.navigation} aria-label="Navegação complementar">
+        <nav className={styles.navigation} aria-label="Navegação complementar" data-reveal="quiet" data-reveal-step="1">
           <h2 className={styles.groupTitle}>Navegação</h2>
           <ul className={styles.linkList}>
             {footerNavigation.map(({ href, label }) => (
@@ -52,7 +52,7 @@ export function SiteFooter() {
           </ul>
         </nav>
 
-        <address className={styles.contact}>
+        <address className={styles.contact} data-reveal="quiet" data-reveal-step="2">
           <h2 className={styles.groupTitle}>Fale com a Kapitalis</h2>
           <ul className={styles.linkList}>
             <li>
@@ -105,7 +105,7 @@ export function SiteFooter() {
         </address>
       </div>
 
-      <div className={`container ${styles.bottom}`}>
+      <div className={`container ${styles.bottom}`} data-reveal="quiet">
         <p>© 2026 {site.name}</p>
       </div>
     </footer>

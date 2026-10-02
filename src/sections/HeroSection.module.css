@@ -669,35 +669,6 @@
     animation: hero-atmosphere-drift 26s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
   }
 
-  .heroCopy [data-entry='eyebrow'] {
-    animation: hero-enter 760ms var(--ease-standard) 120ms both;
-  }
-
-  .heroCopy [data-entry='headline-one'] {
-    animation: hero-line-reveal 920ms var(--ease-standard) 260ms both;
-  }
-
-  .heroCopy [data-entry='headline-two'] {
-    animation: hero-line-reveal 920ms var(--ease-standard) 420ms both;
-  }
-
-  .heroCopy .titleLine em {
-    display: inline-block;
-    animation: hero-enter 760ms var(--ease-standard) 620ms both;
-  }
-
-  .heroCopy [data-entry='subcopy'] {
-    animation: hero-enter 760ms var(--ease-standard) 700ms both;
-  }
-
-  .heroCopy [data-entry='cta'] {
-    animation: hero-enter 760ms var(--ease-standard) 840ms both;
-  }
-
-  .scrollCue[data-entry='scroll-cue'] {
-    animation: hero-enter 760ms var(--ease-standard) 1040ms both;
-  }
-
   .scrollIndicator {
     animation: scroll-indicator 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   }
@@ -716,32 +687,6 @@
 
   to {
     transform: translate3d(0.45%, -0.3%, 0) scale(1.035);
-  }
-}
-
-@keyframes hero-enter {
-  from {
-    opacity: 0;
-    transform: translateY(0.48em);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes hero-line-reveal {
-  from {
-    clip-path: inset(0 0 100% 0);
-    opacity: 0.28;
-    transform: translateY(0.28em);
-  }
-
-  to {
-    clip-path: inset(0 0 0 0);
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 

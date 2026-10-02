@@ -54,11 +54,11 @@ export function ProcessSection() {
       aria-labelledby="process-title"
     >
       <div className={`container ${styles.scene}`} ref={sceneRef} data-process-scene="">
-        <header>
-          <p className={styles.eyebrow}>Etapas conceituais</p>
+        <header data-reveal-group role="presentation">
+          <p className={styles.eyebrow} data-reveal="text">Etapas conceituais</p>
           <div className={styles.heading}>
-            <h2 id="process-title">Como uma rotina pode se organizar.</h2>
-            <p>
+            <h2 id="process-title" data-reveal="text" data-reveal-step="1">Como uma rotina pode se organizar.</h2>
+            <p data-reveal="text" data-reveal-step="2">
               Uma sequência de referência para pensar o caminho entre conhecer a
               operação e acompanhar decisões.
             </p>

@@ -310,10 +310,10 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       }}
     >
       <div className={`container ${styles.header}`} data-review-header>
-        <div className={styles.intro}>
-          <p className={styles.eyebrow}>Vozes de quem já conhece a Kapitalis</p>
-          <h2 id="reviews-title">A confiança aparece em cada avaliação.</h2>
-          <p className={styles.description}>
+        <div className={styles.intro} data-reveal-group>
+          <p className={styles.eyebrow} data-reveal="text">Vozes de quem já conhece a Kapitalis</p>
+          <h2 id="reviews-title" data-reveal="text" data-reveal-step="1">A confiança aparece em cada avaliação.</h2>
+          <p className={styles.description} data-reveal="text" data-reveal-step="2">
             Relatos públicos de pessoas que já confiaram sua rotina à equipe.
           </p>
         </div>
@@ -324,6 +324,8 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           rel="noopener noreferrer"
           aria-label={`Google, nota ${formattedRating} de 5 estrelas. ${reviewVolume}. Ver avaliações no Google (abre em nova aba)`}
           data-review-proof
+          data-reveal="text"
+          data-reveal-step="2"
           data-google-profile-link="summary"
         >
           <span className={styles.proofMetric}>
@@ -342,7 +344,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
         </a>
       </div>
 
-      <div className={styles.trackFrame} data-review-frame>
+      <div className={styles.trackFrame} data-review-frame data-reveal="text" data-reveal-step="3">
         <div
           className={styles.track}
           data-review-track
@@ -394,7 +396,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
         </div>
       </div>
 
-      <div className={`container ${styles.closingCta}`} data-review-closing-cta>
+      <div className={`container ${styles.closingCta}`} data-review-closing-cta data-reveal="quiet">
         <a
           className={styles.closingLink}
           href={data.sourceUrl}

@@ -83,6 +83,8 @@ function ServiceFlipCard({ service, index }: { service: Service; index: number }
       aria-labelledby={titleId}
       className={styles.serviceCard}
       data-open={isOpen}
+      data-reveal="card"
+      data-reveal-step={index}
       onBlurCapture={handleBlur}
       onFocusCapture={handleFocus}
       onPointerDown={handleTouchClose}
@@ -163,7 +165,7 @@ export function ServicesSection() {
       aria-labelledby="services-title"
     >
       <div className={`container ${styles.inner}`}>
-        <p className={styles.eyebrow}>Serviços</p>
+        <p className={styles.eyebrow} data-reveal="text">Serviços</p>
         <SectionHeading
           className={styles.heading}
           id="services-title"

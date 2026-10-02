@@ -24,12 +24,12 @@ export function FinancialToolShell({
 }) {
   return (
     <section className={styles.shell} aria-label={ariaLabel} aria-labelledby={ariaLabel ? undefined : headingId}>
-      {title && <div className={styles.header}><h2 id={headingId}>{title}</h2></div>}
+      {title && <div className={styles.header} data-reveal="text"><h2 id={headingId}>{title}</h2></div>}
       <div className={styles.columns} data-stable-height={stableHeight || undefined}>
-        <div className={`${styles.inputs} ${leftClassName ?? ''}`} data-financial-inputs>{left}</div>
-        <div className={`${styles.dashboard} ${rightClassName ?? ''}`}>{right}</div>
+        <div className={`${styles.inputs} ${leftClassName ?? ''}`} data-financial-inputs data-reveal="text" data-reveal-step="1">{left}</div>
+        <div className={`${styles.dashboard} ${rightClassName ?? ''}`} data-reveal="text" data-reveal-step="2">{right}</div>
       </div>
-      <div className={`${styles.footer} ${footerClassName ?? ''}`} data-financial-footer>
+      <div className={`${styles.footer} ${footerClassName ?? ''}`} data-financial-footer data-reveal="quiet">
         <SpecialistCTA />
       </div>
     </section>

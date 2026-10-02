@@ -54,6 +54,9 @@ export function FinancialCore({
     <div
       className={styles.core}
       data-financial-core
+      data-reveal="media"
+      data-reveal-initial
+      data-entry="diagram"
       data-state={state}
       data-revealed={revealed}
     >

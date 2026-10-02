@@ -19,6 +19,8 @@ export function StoryMedia({ media, revealed = true }: StoryMediaProps) {
       <figure
         className={styles.mediaFrame}
         data-story-media
+        data-reveal="image"
+        data-reveal-step="2"
         data-revealed={revealed}
         data-fit={media.fit ?? 'cover'}
       >
@@ -48,6 +50,8 @@ export function StoryMedia({ media, revealed = true }: StoryMediaProps) {
   return (
     <div
       className={styles.diagram}
+      data-reveal="media"
+      data-reveal-step="2"
       data-scene={media.scene}
       role="img"
       aria-label={sceneNames[media.scene]}

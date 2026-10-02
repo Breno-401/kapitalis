@@ -301,7 +301,7 @@ export function SiteHeader() {
       <a className={styles.skipLink} href="#conteudo-principal">
         Pular para o conteúdo
       </a>
-      <div className={styles.inner}>
+      <div className={styles.inner} data-reveal="text" data-reveal-initial data-entry="navbar">
         <a className={styles.brand} href="#inicio" aria-label="Kapitalis, início">
           <BrandMark
             className={styles.brandMark}

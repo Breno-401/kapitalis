@@ -22,11 +22,11 @@ export function StoryChapter({
       data-active={isActive}
       aria-current={isActive ? 'step' : undefined}
     >
-      <div className={styles.chapterText}>
-        <p className={styles.chapterEyebrow}>{chapter.eyebrow}</p>
-        <h3>{chapter.title}</h3>
-        <p className={styles.chapterBody}>{chapter.body}</p>
-        <ul className={styles.chapterItems} aria-label={`${chapter.title}: tópicos`}>
+      <div className={styles.chapterText} data-reveal-group>
+        <p className={styles.chapterEyebrow} data-reveal="text">{chapter.eyebrow}</p>
+        <h3 data-reveal="text" data-reveal-step="1">{chapter.title}</h3>
+        <p className={styles.chapterBody} data-reveal="text" data-reveal-step="2">{chapter.body}</p>
+        <ul className={styles.chapterItems} aria-label={`${chapter.title}: tópicos`} data-reveal="text" data-reveal-step="3">
           {chapter.items.map((item) => (
             <li key={item}>{item}</li>
           ))}

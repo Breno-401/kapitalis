@@ -47,22 +47,22 @@ export function HeroSection() {
               data-intro-hidden={introHidden}
               inert={introHidden ? true : undefined}
             >
-              <p className={styles.kicker} data-entry="eyebrow">
+              <p className={styles.kicker} data-entry="eyebrow" data-reveal="text" data-reveal-initial>
                 Contabilidade &amp; BPO Financeiro · {site.locality}
               </p>
               <h1 className={styles.title} id="hero-title">
-                <span className={styles.titleLine} data-entry="headline-one">
+                <span className={styles.titleLine} data-entry="headline-one" data-reveal="text" data-reveal-initial>
                   <span>Seus números sob controle.</span>
                 </span>
-                <span className={styles.titleLine} data-entry="headline-two">
+                <span className={styles.titleLine} data-entry="headline-two" data-reveal="text" data-reveal-initial>
                   Suas decisões com <em>mais clareza.</em>
                 </span>
               </h1>
-              <p className={styles.description} data-entry="subcopy">
+              <p className={styles.description} data-entry="subcopy" data-reveal="text" data-reveal-initial>
                 A Kapitalis organiza a rotina contábil e financeira para você
                 acompanhar o negócio com mais clareza.
               </p>
-              <div className={styles.actions} data-entry="cta">
+              <div className={styles.actions} data-entry="cta" data-reveal="text" data-reveal-initial>
                 <a
                   className={styles.primaryAction}
                   href={site.whatsappUrl}
@@ -88,6 +88,9 @@ export function HeroSection() {
               aria-label="Responsável pela Kapitalis"
             >
               <img
+                data-reveal="media"
+                data-reveal-initial
+                data-entry="portrait"
                 alt="Responsável pela Kapitalis"
                 decoding="async"
                 fetchPriority="high"
@@ -116,6 +119,8 @@ export function HeroSection() {
               aria-hidden={introHidden}
               className={styles.scrollCue}
               data-entry="scroll-cue"
+              data-reveal="quiet"
+              data-reveal-initial
               href="#sistema"
               aria-label="Rolar para o Sistema Kapitalis"
               tabIndex={introHidden ? -1 : undefined}
