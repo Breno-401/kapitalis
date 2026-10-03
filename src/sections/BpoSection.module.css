@@ -176,7 +176,32 @@
   }
 
   .viewTabs {
+    position: relative;
     gap: var(--space-1);
+    --active-indicator-offset: 0px;
+  }
+
+  .viewTabs::before {
+    position: absolute;
+    z-index: 1;
+    top: 1rem;
+    left: 0;
+    width: 2px;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--color-gold-soft);
+    content: '';
+    pointer-events: none;
+    transform: translateY(var(--active-indicator-offset));
+    transition: transform 280ms var(--ease-standard);
+  }
+
+  .viewTabs:has(> .viewButton:nth-child(2)[aria-selected='true']) {
+    --active-indicator-offset: calc(4rem + var(--space-1));
+  }
+
+  .viewTabs:has(> .viewButton:nth-child(3)[aria-selected='true']) {
+    --active-indicator-offset: calc(8rem + var(--space-1) + var(--space-1));
   }
 
   .viewButton {
@@ -186,7 +211,14 @@
     padding: 0.65rem var(--space-2);
     border: 0;
     border-bottom: 1px solid var(--color-on-dark-border-soft);
-    border-left: 1px solid transparent;
+    border-left: 0;
+    background: transparent;
+    color: var(--color-on-dark-muted);
+    transition:
+      color 260ms var(--ease-standard),
+      background-color 260ms var(--ease-standard),
+      border-color 260ms var(--ease-standard),
+      transform 260ms var(--ease-standard);
   }
 
   .viewButton:last-child {
@@ -195,12 +227,15 @@
 
   .viewButton[aria-selected='true'] {
     border-bottom-color: var(--color-on-dark-border-soft);
-    border-left-color: var(--color-gold);
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-gold-wash) 28%, transparent),
-      transparent 82%
-    );
+    background: color-mix(in srgb, var(--color-paper) 4%, transparent);
+    color: var(--color-paper);
+  }
+
+  .viewButton:hover {
+    border-bottom-color: var(--color-on-dark-border-medium);
+    background-color: color-mix(in srgb, var(--color-paper) 4%, transparent);
+    color: var(--color-paper);
+    transform: translateX(2px);
   }
 
   .buttonIndicator {
@@ -214,13 +249,18 @@
     font-size: 0.66rem;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.06em;
+    transition: color 260ms var(--ease-standard);
+  }
+
+  .viewButton:hover .buttonIndicator {
+    color: var(--color-on-dark-strong);
   }
 
   .viewButton[aria-selected='true'] .buttonIndicator {
     border: 0;
     background: transparent;
     box-shadow: none;
-    color: color-mix(in srgb, var(--color-gold-soft) 80%, var(--color-paper));
+    color: var(--color-gold-soft);
     font-weight: 700;
   }
 
@@ -238,6 +278,18 @@
 
   .buttonDetail {
     font-size: 0.68rem;
+  }
+}
+
+@media (min-width: 75rem) and (prefers-reduced-motion: reduce) {
+  .viewTabs::before,
+  .viewButton,
+  .buttonIndicator {
+    transition: none;
+  }
+
+  .viewButton:hover {
+    transform: none;
   }
 }
 
