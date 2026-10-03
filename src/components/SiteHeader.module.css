@@ -518,6 +518,8 @@
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
+    position: relative;
+    top: -4px;
   }
 
   .themeIcon {
