@@ -18,11 +18,18 @@ function initials(author: string) {
 export function ReviewCard({
   review,
   idPrefix = '',
+  expanded,
+  onToggle,
+  buttonTabIndex,
 }: {
   review: GoogleReview
   idPrefix?: string
+  expanded?: boolean
+  onToggle?: () => void
+  buttonTabIndex?: number
 }) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [localExpanded, setLocalExpanded] = useState(false)
+  const isExpanded = expanded ?? localExpanded
   const [hasAvatarError, setHasAvatarError] = useState(false)
   const isLong = review.text.length > previewLimit
   const displayedText =
@@ -60,7 +67,8 @@ export function ReviewCard({
           type="button"
           aria-expanded={isExpanded}
           aria-controls={reviewTextId}
-          onClick={() => setIsExpanded((expanded) => !expanded)}
+          tabIndex={buttonTabIndex}
+          onClick={onToggle ?? (() => setLocalExpanded((value) => !value))}
         >
           {isExpanded ? 'Recolher' : 'Ler mais'}
         </button>

@@ -1,24 +1,31 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
 import { GoogleMark } from '../components/GoogleMark'
 import { ReviewCard } from './ReviewCard'
+import { installReviewsMobileMotion } from './ReviewsMobileMotion'
 import styles from './ReviewsSection.module.css'
 
 type ReviewsSectionProps = {
   data: GoogleReviewsSnapshot
 }
 
-const GESTURE_AXIS_THRESHOLD = 10
-const GESTURE_AXIS_DOMINANCE = 1.25
+const mobileQuery = '(max-width: 700px)'
+
+function subscribeMobileViewport(onChange: () => void) {
+  const media = window.matchMedia?.(mobileQuery)
+  media?.addEventListener?.('change', onChange)
+  return () => media?.removeEventListener?.('change', onChange)
+}
+
+function isMobileViewport() {
+  return window.matchMedia?.(mobileQuery).matches ?? false
+}
 
 type DragState = {
   pointerId: number
-  pointerType: string
   startX: number
-  startY: number
   startOffset: number
-  axis: 'pending' | 'horizontal' | 'vertical'
   moved: boolean
 }
 
@@ -63,6 +70,8 @@ function setRailOffset(
 }
 
 export function ReviewsSection({ data }: ReviewsSectionProps) {
+  const isMobile = useSyncExternalStore(subscribeMobileViewport, isMobileViewport, () => false)
+  const [expandedReviews, setExpandedReviews] = useState(new Set<string>())
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
@@ -70,10 +79,9 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   const seamRef = useRef(0)
   const pauseReasonsRef = useRef(new Set<string>())
   const dragRef = useRef<DragState | null>(null)
-  const touchControlRef = useRef<number | null>(null)
   const suppressClickUntilRef = useRef(0)
   const pauseAutoplayRef = useRef<() => void>(() => {})
-  const resumeAutoplayRef = useRef<(delay?: number) => void>(() => {})
+  const resumeAutoplayRef = useRef<() => void>(() => {})
   const finishDragRef = useRef<(pointerId: number) => void>(() => {})
 
   const formattedRating = data.averageRating.toLocaleString('pt-BR', {
@@ -90,14 +98,13 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     const track = trackRef.current
     const rail = railRef.current
     if (!section || !track || !rail) return
+    if (isMobile) return installReviewsMobileMotion(section, track, rail)
     const activeTrack = track as HTMLDivElement
     const activeRail = rail as HTMLDivElement
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    const mobileViewport = window.matchMedia?.('(max-width: 700px)')
     const hasIntersectionObserver = typeof IntersectionObserver !== 'undefined'
     let frame: number | null = null
-    let resumeTimer: number | null = null
     let lastTime: number | null = null
     let isVisible = hasIntersectionObserver ? false : isTrackInViewport(activeTrack)
     let pageVisible = document.visibilityState !== 'hidden'
@@ -125,7 +132,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     function advance(timestamp: number) {
       if (lastTime !== null && pauseReasonsRef.current.size === 0 && !dragRef.current) {
         const elapsed = Math.min(timestamp - lastTime, 80)
-        const pixelsPerSecond = mobileViewport?.matches ? 8 : 20
+        const pixelsPerSecond = 20
         moveRail(offsetRef.current + (elapsed * pixelsPerSecond) / 1000)
       }
       lastTime = timestamp
@@ -135,7 +142,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     function startAutoplay() {
       if (
         frame !== null ||
-        resumeTimer !== null ||
         !isVisible ||
         !pageVisible ||
         reducedMotion?.matches ||
@@ -146,27 +152,8 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       frame = window.requestAnimationFrame(advance)
     }
 
-    pauseAutoplayRef.current = () => {
-      if (resumeTimer !== null) {
-        window.clearTimeout(resumeTimer)
-        resumeTimer = null
-      }
-      stopAutoplay()
-    }
-    resumeAutoplayRef.current = (delay = 0) => {
-      if (resumeTimer !== null) {
-        window.clearTimeout(resumeTimer)
-        resumeTimer = null
-      }
-      if (delay <= 0) {
-        startAutoplay()
-        return
-      }
-      resumeTimer = window.setTimeout(() => {
-        resumeTimer = null
-        startAutoplay()
-      }, delay)
-    }
+    pauseAutoplayRef.current = stopAutoplay
+    resumeAutoplayRef.current = startAutoplay
 
     function syncLayout() {
       measureSeam()
@@ -213,7 +200,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     syncLayout()
 
     return () => {
-      if (resumeTimer !== null) window.clearTimeout(resumeTimer)
       stopAutoplay()
       pauseAutoplayRef.current = () => {}
       resumeAutoplayRef.current = () => {}
@@ -224,7 +210,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       reducedMotion?.removeEventListener?.('change', syncLayout)
     }
-  }, [data.reviews])
+  }, [data.reviews, isMobile])
 
   function keepFocusedCardVisible(target: EventTarget, track: HTMLDivElement) {
     const rail = railRef.current
@@ -244,28 +230,14 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     }
   }
 
+  // The approved desktop motor is isolated from the mobile GSAP lifecycle.
   function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType !== 'touch' && event.button !== 0) return
-    if (dragRef.current || touchControlRef.current !== null) return
-    if (
-      event.target instanceof Element &&
-      event.target.closest('button, a, [role="button"], [data-clickable]')
-    ) {
-      if (event.pointerType === 'touch') {
-        touchControlRef.current = event.pointerId
-        pauseReasonsRef.current.add('touch-control')
-        pauseAutoplayRef.current()
-      }
-      return
-    }
-
+    if (isMobile || event.button !== 0 || dragRef.current) return
+    if (event.target instanceof Element && event.target.closest('button, a, [role="button"], [data-clickable]')) return
     dragRef.current = {
       pointerId: event.pointerId,
-      pointerType: event.pointerType,
       startX: event.clientX,
-      startY: event.clientY,
       startOffset: offsetRef.current,
-      axis: 'pending',
       moved: false,
     }
     pauseReasonsRef.current.add('drag')
@@ -273,16 +245,10 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   }
 
   useEffect(() => {
+    if (isMobile) return
     const finishDrag = (pointerId: number) => {
       const drag = dragRef.current
-      if (!drag || drag.pointerId !== pointerId) {
-        if (touchControlRef.current !== pointerId) return
-        touchControlRef.current = null
-        pauseReasonsRef.current.delete('touch-control')
-        resumeAutoplayRef.current(3000)
-        return
-      }
-
+      if (!drag || drag.pointerId !== pointerId) return
       if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
       dragRef.current = null
       const track = trackRef.current
@@ -290,75 +256,42 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
         track.dataset.dragging = 'false'
         try {
           if (track.hasPointerCapture?.(pointerId)) track.releasePointerCapture?.(pointerId)
-        } catch {
-          // The pointer may already have been released by the browser.
-        }
+        } catch { /* Already released by the browser. */ }
       }
       pauseReasonsRef.current.delete('drag')
-      resumeAutoplayRef.current(drag.pointerType === 'touch' ? 3000 : 0)
+      resumeAutoplayRef.current()
     }
     finishDragRef.current = finishDrag
-
     const move = (event: PointerEvent) => {
       const drag = dragRef.current
-      const track = trackRef.current
-      const rail = railRef.current
       if (!drag || drag.pointerId !== event.pointerId) return
-      if (drag.axis === 'vertical') return
-
       const distance = event.clientX - drag.startX
-      const verticalDistance = event.clientY - drag.startY
-      if (drag.axis === 'pending') {
-        const horizontalDistance = Math.abs(distance)
-        const verticalDistanceMagnitude = Math.abs(verticalDistance)
-        if (
-          horizontalDistance >= GESTURE_AXIS_THRESHOLD &&
-          horizontalDistance > verticalDistanceMagnitude * GESTURE_AXIS_DOMINANCE
-        ) {
-          drag.axis = 'horizontal'
-        } else if (
-          verticalDistanceMagnitude >= GESTURE_AXIS_THRESHOLD &&
-          verticalDistanceMagnitude > horizontalDistance * GESTURE_AXIS_DOMINANCE
-        ) {
-          drag.axis = 'vertical'
-          return
-        } else {
-          return
-        }
-      }
-
+      if (!drag.moved && Math.abs(distance) < 10) return
+      const track = trackRef.current
       if (!drag.moved) {
-        try {
-          track?.setPointerCapture(event.pointerId)
-        } catch {
-          // Pointer capture is optional; window listeners keep dragging available.
-        }
+        try { track?.setPointerCapture(event.pointerId) } catch { /* Window listeners remain available. */ }
       }
       drag.moved = true
       event.preventDefault()
       if (track) track.dataset.dragging = 'true'
-      if (!rail || seamRef.current <= 0) return
-
-      setRailOffset(rail, offsetRef, seamRef, drag.startOffset - distance)
+      const rail = railRef.current
+      if (rail && seamRef.current > 0) setRailOffset(rail, offsetRef, seamRef, drag.startOffset - distance)
     }
-
-    const finish = (event: PointerEvent) => {
-      finishDragRef.current(event.pointerId)
-    }
-
+    const finish = (event: PointerEvent) => finishDrag(event.pointerId)
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', finish)
     window.addEventListener('pointercancel', finish)
     return () => {
+      if (dragRef.current) finishDrag(dragRef.current.pointerId)
       finishDragRef.current = () => {}
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', finish)
       window.removeEventListener('pointercancel', finish)
     }
-  }, [])
+  }, [isMobile])
 
   function handleClickCapture(event: ReactMouseEvent<HTMLDivElement>) {
-    if (Date.now() > suppressClickUntilRef.current) return
+    if (isMobile || Date.now() > suppressClickUntilRef.current) return
     suppressClickUntilRef.current = 0
     event.preventDefault()
     event.stopPropagation()
@@ -372,12 +305,13 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       aria-labelledby="reviews-title"
       ref={sectionRef}
       onFocusCapture={(event) => {
+        if (isMobile) return
         pauseReasonsRef.current.add('focus')
         const track = trackRef.current
         if (track) keepFocusedCardVisible(event.target, track)
       }}
       onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        if (!isMobile && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
           pauseReasonsRef.current.delete('focus')
           resumeAutoplayRef.current()
         }
@@ -428,18 +362,18 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           ref={trackRef}
           tabIndex={0}
           onPointerEnter={(event) => {
-            if (event.pointerType !== 'touch') pauseReasonsRef.current.add('hover')
+            if (!isMobile && event.pointerType !== 'touch') pauseReasonsRef.current.add('hover')
           }}
           onPointerLeave={(event) => {
-            if (event.pointerType !== 'touch') {
+            if (!isMobile && event.pointerType !== 'touch') {
               pauseReasonsRef.current.delete('hover')
               resumeAutoplayRef.current()
             }
-            if (!dragRef.current?.moved) event.currentTarget.dataset.dragging = 'false'
+            if (!isMobile && !dragRef.current?.moved) event.currentTarget.dataset.dragging = 'false'
           }}
           onPointerDown={beginDrag}
           onLostPointerCapture={(event) => {
-            finishDragRef.current(event.pointerId)
+            if (!isMobile) finishDragRef.current(event.pointerId)
           }}
           onClickCapture={handleClickCapture}
         >
@@ -450,7 +384,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
                 key={duplicate ? 'duplicate' : 'primary'}
                 data-review-set={duplicate ? 'duplicate' : 'primary'}
                 aria-hidden={duplicate ? 'true' : undefined}
-                inert={duplicate || undefined}
+                inert={(duplicate && !isMobile) || undefined}
               >
                 {data.reviews.map((review) => (
                   <li
@@ -458,7 +392,18 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
                     key={`${review.id}-${duplicate ? 'duplicate' : 'primary'}`}
                     data-review-card
                   >
-                    <ReviewCard review={review} idPrefix={duplicate ? 'duplicate-' : ''} />
+                    <ReviewCard
+                      review={review}
+                      idPrefix={duplicate ? 'duplicate-' : ''}
+                      expanded={isMobile ? expandedReviews.has(review.id) : undefined}
+                      buttonTabIndex={isMobile && duplicate ? -1 : undefined}
+                      onToggle={isMobile ? () => setExpandedReviews((current) => {
+                        const next = new Set(current)
+                        if (next.has(review.id)) next.delete(review.id)
+                        else next.add(review.id)
+                        return next
+                      }) : undefined}
+                    />
                   </li>
                 ))}
               </ul>

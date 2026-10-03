@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { gsap } from 'gsap'
 import { describe, expect, it, vi } from 'vitest'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
@@ -136,362 +137,98 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it.each([
-    [320, 812],
-    [375, 812],
-    [390, 844],
-    [402, 874],
-    [430, 932],
-  ])('gives mobile touch control priority at %i×%i', (width, height) => {
-    const frames = new Map<number, FrameRequestCallback>()
-    let nextFrameId = 0
-    let observerCallback: IntersectionObserverCallback | undefined
-    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-      const id = ++nextFrameId
-      frames.set(id, callback)
-      return id
-    })
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => {
-      frames.delete(id)
-    })
-    vi.stubGlobal('innerWidth', width)
-    vi.stubGlobal('innerHeight', height)
-    vi.stubGlobal('matchMedia', (query: string) => ({
-      matches: query.includes('max-width: 700px') && width <= 700,
-    }))
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        constructor(callback: IntersectionObserverCallback) {
-          observerCallback = callback
-        }
-        observe() {}
-        disconnect() {}
-      },
-    )
-    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: HTMLElement) {
-        if (this.matches('[data-review-track]')) {
-          return { left: 0, right: width, width, top: 0, bottom: 400, height: 400 } as DOMRect
-        }
-        if (this.hasAttribute('data-review-card')) {
-          const index = Array.prototype.indexOf.call(this.parentElement!.children, this) as number
-          const duplicate = this.parentElement?.dataset.reviewSet === 'duplicate' ? 1016 : 0
-          const rail = this.parentElement?.parentElement
-          const translation = Number(rail?.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
-          const left = 24 + index * 110 + duplicate + translation
-          return { left, right: left + 100, width: 100, top: 0, bottom: 300, height: 300 } as DOMRect
-        }
+  it.each([[320, 812], [375, 812], [390, 844], [402, 874], [430, 932]])(
+    'lets one ticker own mobile drag, release and autoplay at %i×%i', (width, height) => {
+      vi.useFakeTimers({ toFake: ['performance'] })
+      vi.stubGlobal('innerWidth', width)
+      vi.stubGlobal('innerHeight', height)
+      vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
+      const ticks = new Set<gsap.TickerCallback>()
+      const add = vi.spyOn(gsap.ticker, 'add').mockImplementation(callback => { ticks.add(callback); return callback })
+      const remove = vi.spyOn(gsap.ticker, 'remove').mockImplementation(callback => { ticks.delete(callback) })
+      const rects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
         const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
         return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
-    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] })
-    let unmount: (() => void) | undefined
-
-    try {
-      const rendered = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      unmount = rendered.unmount
-      const { container } = rendered
-      const track = container.querySelector<HTMLElement>('[data-review-track]')!
-      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-      const pointerCapture = vi.fn()
-      Object.defineProperty(track, 'setPointerCapture', {
-        configurable: true,
-        value: pointerCapture,
-      })
-      const readOffset = () =>
-        -Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
-      const normalizedOffset = (offset: number) => ((offset % 1016) + 1016) % 1016
-      const transformFor = (offset: number) =>
-        `translate3d(${-Number(normalizedOffset(offset).toFixed(3))}px, 0, 0)`
-      const dispatchPointerMove = (pointerId: number, clientX: number, clientY: number) => {
-        const event = document.createEvent('Event')
-        event.initEvent('pointermove', true, true)
-        Object.assign(event, { pointerId, pointerType: 'touch', button: 0, clientX, clientY })
-        fireEvent(track, event)
-        return event
+      const frame = () => act(() => { for (const tick of ticks) tick(0, 50, 1, 0) })
+      const x = (rail: HTMLElement) => Number(gsap.getProperty(rail, 'x'))
+      let unmount: (() => void) | undefined
+      try {
+        const view = render(<ReviewsSection data={googleReviewsSnapshot} />)
+        unmount = view.unmount
+        const track = view.container.querySelector<HTMLElement>('[data-review-track]')!
+        const rail = view.container.querySelector<HTMLElement>('[data-review-rail]')!
+        const down = (id: number) => fireEvent.pointerDown(track, {pointerType:'touch', pointerId:id, clientX:180, clientY:180, button:0})
+        const move = (id: number, clientX: number) => fireEvent.pointerMove(window, {pointerType:'touch', pointerId:id, clientX, clientY:180})
+        frame()
+        const before = rail.style.transform
+        down(1)
+        move(1, 120)
+        // Pointer listeners must not compete with the render clock for transform.
+        expect(rail.style.transform).toBe(before)
+        frame()
+        expect(x(rail)).toBeCloseTo(-60.4, 3)
+        const held = rail.style.transform
+        frame()
+        expect(rail.style.transform).toBe(held)
+        // A touch starts with implicit capture on a child. Transferring capture
+        // to the rail emits this event; it must not end the active gesture.
+        fireEvent.lostPointerCapture(track.querySelector('p')!, { pointerType: 'touch', pointerId: 1 })
+        move(1, 240)
+        frame()
+        expect(x(rail)).toBeCloseTo(-956.4, 3)
+        move(1, -2052)
+        frame()
+        expect(x(rail)).toBeCloseTo(-200.4, 3)
+        fireEvent.pointerUp(window, {pointerType:'touch', pointerId:1})
+        const released = rail.style.transform
+        frame()
+        expect(rail.style.transform).toBe(released)
+        act(() => vi.advanceTimersByTime(3150))
+        frame()
+        expect(x(rail)).toBeLessThan(-200.4)
+        expect(x(rail)).toBeGreaterThan(-200.8)
+        down(2)
+        const interrupted = rail.style.transform
+        frame()
+        expect(rail.style.transform).toBe(interrupted)
+        fireEvent.pointerCancel(window, {pointerType:'touch', pointerId:2})
+        act(() => vi.advanceTimersByTime(4000))
+        frame()
+        expect(rail.style.transform).not.toBe(interrupted)
+        expect(track.scrollLeft).toBe(0)
+        unmount()
+        unmount = undefined
+        expect(ticks.size).toBe(0)
+      } finally {
+        unmount?.()
+        vi.useRealTimers()
+        vi.unstubAllGlobals()
+        add.mockRestore()
+        remove.mockRestore()
+        rects.mockRestore()
       }
-      const runFrame = (time: number) => {
-        const next = frames.entries().next().value as [number, FrameRequestCallback] | undefined
-        if (!next) return
-        frames.delete(next[0])
-        act(() => next[1](time))
-      }
+    },
+  )
 
-      observerCallback?.(
-        [{ isIntersecting: true, target: track } as unknown as IntersectionObserverEntry],
-        {} as IntersectionObserver,
-      )
-      expect(window.matchMedia('(max-width: 700px)').matches).toBe(true)
-      expect(observerCallback).toBeDefined()
-      expect(document.visibilityState).not.toBe('hidden')
-      expect(frames.size).toBe(1)
-      runFrame(0)
-      expect(frames.size).toBe(1)
-      runFrame(50)
-      expect(frames.size).toBe(1)
-      expect(rail.style.transform).toBe('translate3d(-0.4px, 0, 0)')
-
-      const diagonalPointerId = 50
-      const diagonalStartOffset = readOffset()
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: diagonalPointerId, button: 0, clientX: 100, clientY: 100,
-      })
-      const diagonalStart = dispatchPointerMove(diagonalPointerId, 106, 107)
-      expect(diagonalStart.defaultPrevented).toBe(false)
-      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset))
-      expect(pointerCapture).not.toHaveBeenCalled()
-
-      const horizontalTakeover = dispatchPointerMove(diagonalPointerId, 135, 109)
-      expect(horizontalTakeover.defaultPrevented).toBe(true)
-      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset - 35))
-      expect(pointerCapture).toHaveBeenCalledOnce()
-      expect(pointerCapture).toHaveBeenCalledWith(diagonalPointerId)
-
-      const reversedHorizontal = dispatchPointerMove(diagonalPointerId, 85, 125)
-      expect(reversedHorizontal.defaultPrevented).toBe(true)
-      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset + 15))
-      const diagonalReleaseTransform = rail.style.transform
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: diagonalPointerId })
-      expect(rail.style.transform).toBe(diagonalReleaseTransform)
-
-      const ambiguousPointerId = 51
-      const ambiguousStartOffset = readOffset()
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: ambiguousPointerId, button: 0, clientX: 100, clientY: 100,
-      })
-      const ambiguousMove = dispatchPointerMove(ambiguousPointerId, 112, 111)
-      expect(ambiguousMove.defaultPrevented).toBe(false)
-      expect(rail.style.transform).toBe(transformFor(ambiguousStartOffset))
-      expect(pointerCapture).toHaveBeenCalledOnce()
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: ambiguousPointerId })
-      expect(rail.style.transform).toBe(transformFor(ambiguousStartOffset))
-
-      const distances = [
-        -48, 48, -48, 48, -48, 48,
-        ...Array.from({ length: 6 }, () => -220),
-        ...Array.from({ length: 6 }, () => 220),
-      ]
-      for (const [index, distance] of distances.entries()) {
-        const pointerId = index + 1
-        const translation = Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
-        const startOffset = -translation
-        const expectedOffset = ((startOffset - distance) % 1016 + 1016) % 1016
-        fireEvent.pointerDown(track, {
-          pointerType: 'touch', pointerId, button: 0, clientX: 180, clientY: 180,
-        })
-        expect(cancelFrame).toHaveBeenCalled()
-        expect(frames.size).toBe(0)
-        fireEvent.pointerMove(track, {
-          pointerType: 'touch', pointerId, button: 0,
-          clientX: 180 + distance, clientY: 180,
-        })
-        const draggedTransform = rail.style.transform
-        expect(draggedTransform).toBe(`translate3d(${-Number(expectedOffset.toFixed(3))}px, 0, 0)`)
-        expect(frames.size).toBe(0)
-        fireEvent.pointerUp(track, { pointerType: 'touch', pointerId })
-        expect(rail.style.transform).toBe(draggedTransform)
-        expect(track.dataset.dragging).toBe('false')
-        expect(rail.dataset.settling).toBeUndefined()
-      }
-
-      const offsetBeforeSeamApproach = readOffset()
-      for (let index = 0; index < 10; index += 1) {
-        const pointerId = 60 + index
-        fireEvent.pointerDown(track, {
-          pointerType: 'touch', pointerId, button: 0, clientX: 180, clientY: 180,
-        })
-        fireEvent.pointerMove(track, {
-          pointerType: 'touch', pointerId, button: 0, clientX: 80, clientY: 180,
-        })
-        fireEvent.pointerUp(track, { pointerType: 'touch', pointerId })
-      }
-      expect(readOffset()).toBeCloseTo(normalizedOffset(offsetBeforeSeamApproach + 1000), 3)
-      expect(1016 - readOffset()).toBeLessThan(16)
-
-      const primaryFirstCard = track.querySelector<HTMLElement>(
-        '[data-review-set="primary"] [data-review-card]',
-      )!
-      const duplicateFirstCard = track.querySelector<HTMLElement>(
-        '[data-review-set="duplicate"] [data-review-card]',
-      )!
-      const duplicateCardBeforeSeam = duplicateFirstCard.getBoundingClientRect().left
-      expect(duplicateCardBeforeSeam).toBeGreaterThan(0)
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: 70, button: 0, clientX: 180, clientY: 180,
-      })
-      fireEvent.pointerMove(track, {
-        pointerType: 'touch', pointerId: 70, button: 0, clientX: 160, clientY: 180,
-      })
-      const primaryCardAfterSeam = primaryFirstCard.getBoundingClientRect().left
-      expect(primaryCardAfterSeam).toBeCloseTo(duplicateCardBeforeSeam - 20, 3)
-      const seamReleaseTransform = rail.style.transform
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 70 })
-      expect(rail.style.transform).toBe(seamReleaseTransform)
-
-      expect(track.dataset.dragging).toBe('false')
-      expect(frames.size).toBe(0)
-
-      const reversePointerId = 19
-      const currentTranslation = Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
-      const dragBase = -currentTranslation
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: reversePointerId, button: 0, clientX: 180, clientY: 180,
-      })
-      for (const clientX of [160, 200, 175]) {
-        fireEvent.pointerMove(track, {
-          pointerType: 'touch', pointerId: reversePointerId, button: 0, clientX, clientY: 180,
-        })
-        const expectedOffset = ((dragBase - (clientX - 180)) % 1016 + 1016) % 1016
-        expect(rail.style.transform).toBe(`translate3d(${-Number(expectedOffset.toFixed(3))}px, 0, 0)`)
-      }
-      const reverseReleaseTransform = rail.style.transform
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: reversePointerId })
-      expect(rail.style.transform).toBe(reverseReleaseTransform)
-
-      act(() => vi.advanceTimersByTime(2500))
-      const beforeNewTouch = rail.style.transform
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: 20, button: 0, clientX: 180, clientY: 180,
-      })
-      fireEvent.pointerMove(track, {
-        pointerType: 'touch', pointerId: 20, button: 0, clientX: 120, clientY: 180,
-      })
-      const afterNewDrag = rail.style.transform
-      expect(afterNewDrag).not.toBe(beforeNewTouch)
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 20 })
-      expect(rail.style.transform).toBe(afterNewDrag)
-      act(() => vi.advanceTimersByTime(2999))
-      expect(frames.size).toBe(0)
-      act(() => vi.advanceTimersByTime(1))
-      expect(frames.size).toBe(1)
-
-      const expandButton = screen.getAllByRole('button', { name: 'Ler mais' })[0]!
-      fireEvent.pointerDown(expandButton, {
-        pointerType: 'touch', pointerId: 8, button: 0, clientX: 180, clientY: 180,
-      })
-      expect(frames.size).toBe(0)
-      fireEvent.pointerUp(expandButton, { pointerType: 'touch', pointerId: 8 })
-      act(() => vi.advanceTimersByTime(2999))
-      expect(frames.size).toBe(0)
-      act(() => vi.advanceTimersByTime(1))
-      expect(frames.size).toBe(1)
-
-      const captureCountBeforeVertical = pointerCapture.mock.calls.length
-      const offsetBeforeVertical = rail.style.transform
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch', pointerId: 7, button: 0, clientX: 180, clientY: 180,
-      })
-      const verticalMove = dispatchPointerMove(7, 186, 205)
-      expect(verticalMove.defaultPrevented).toBe(false)
-      expect(rail.style.transform).toBe(offsetBeforeVertical)
-      expect(pointerCapture).toHaveBeenCalledTimes(captureCountBeforeVertical)
-      expect(frames.size).toBe(0)
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 7 })
-      act(() => vi.advanceTimersByTime(2999))
-      expect(frames.size).toBe(0)
-      act(() => vi.advanceTimersByTime(1))
-      expect(frames.size).toBe(1)
-    } finally {
-      unmount?.()
-      vi.useRealTimers()
-      vi.unstubAllGlobals()
-      requestFrame.mockRestore()
-      cancelFrame.mockRestore()
-      measureRects.mockRestore()
-    }
-  })
-
-  it('uses the shared duplicated transform loop at mobile widths', () => {
-    const frames: FrameRequestCallback[] = []
-    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-      frames.push(callback)
-      return frames.length
-    })
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
-    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
-      })
-
+  it('keeps mobile duplicate controls usable and expansion identical across the seam', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') || query.includes('reduce') }))
     try {
       const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      const track = container.querySelector<HTMLElement>('[data-review-track]')!
-      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-      const sets = container.querySelectorAll('[data-review-set]')
-
-      expect(sets).toHaveLength(2)
-      frames.shift()?.(0)
-      frames.shift()?.(50)
-
-      expect(rail.style.transform).toBe('translate3d(-0.4px, 0, 0)')
-      expect(track.scrollLeft).toBe(0)
+      const primary = container.querySelector<HTMLElement>('[data-review-set="primary"]')!
+      const duplicate = container.querySelector<HTMLElement>('[data-review-set="duplicate"]')!
+      const primaryButton = primary.querySelector<HTMLButtonElement>('button')!
+      const duplicateButton = duplicate.querySelector<HTMLButtonElement>('button')!
+      expect(duplicate.hasAttribute('inert')).toBe(false)
+      expect(duplicateButton.tabIndex).toBe(-1)
+      fireEvent.click(duplicateButton)
+      expect(duplicateButton.getAttribute('aria-expanded')).toBe('true')
+      expect(primaryButton.getAttribute('aria-expanded')).toBe('true')
+      fireEvent.click(primaryButton)
+      expect(duplicateButton.getAttribute('aria-expanded')).toBe('false')
+      expect(screen.getAllByRole('article')).toHaveLength(9)
     } finally {
       vi.unstubAllGlobals()
-      requestFrame.mockRestore()
-      cancelFrame.mockRestore()
-      measureRects.mockRestore()
-    }
-  })
-
-  it('preserves the mobile swipe position when a review expands and collapses', () => {
-    let resizeCallback: ResizeObserverCallback | undefined
-    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1)
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
-    vi.stubGlobal(
-      'ResizeObserver',
-      class {
-        constructor(callback: ResizeObserverCallback) {
-          resizeCallback = callback
-        }
-        observe() {}
-        disconnect() {}
-      },
-    )
-    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
-      })
-
-    try {
-      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      const track = container.querySelector<HTMLElement>('[data-review-track]')!
-      const review = screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' })
-      const expand = within(review).getByRole('button', { name: 'Ler mais' })
-      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-      fireEvent.pointerDown(track, {
-        pointerType: 'touch',
-        pointerId: 3,
-        clientX: 240,
-        button: 0,
-      })
-      fireEvent.pointerMove(track, {
-        pointerType: 'touch',
-        pointerId: 3,
-        clientX: 180,
-        button: 0,
-      })
-      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 3 })
-      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
-
-      fireEvent.click(expand)
-      resizeCallback?.([], {} as ResizeObserver)
-      expect(track.scrollLeft).toBe(0)
-      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
-
-      fireEvent.click(expand)
-      resizeCallback?.([], {} as ResizeObserver)
-      expect(track.scrollLeft).toBe(0)
-      expect(rail.style.transform).toBe('translate3d(-60px, 0, 0)')
-    } finally {
-      vi.unstubAllGlobals()
-      requestFrame.mockRestore()
-      cancelFrame.mockRestore()
-      measureRects.mockRestore()
     }
   })
 
@@ -519,59 +256,6 @@ describe('Google Reviews section', () => {
 
       expect(rail.style.transform).toMatch(/translate3d\(-[0-9]/)
       expect(track.scrollLeft).toBe(0)
-    } finally {
-      vi.unstubAllGlobals()
-      requestFrame.mockRestore()
-      cancelFrame.mockRestore()
-      measureRects.mockRestore()
-    }
-  })
-
-  it('moves the mobile loop at a reading-friendly speed and starts only while visible', () => {
-    const frames: FrameRequestCallback[] = []
-    let observerCallback: IntersectionObserverCallback | undefined
-    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-      frames.push(callback)
-      return frames.length
-    })
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        constructor(callback: IntersectionObserverCallback) {
-          observerCallback = callback
-        }
-        observe() {}
-        disconnect() {}
-      },
-    )
-    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
-      })
-
-    try {
-      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      const track = container.querySelector<HTMLElement>('[data-review-track]')!
-      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-
-      expect(frames).toHaveLength(0)
-      observerCallback?.(
-        [{ isIntersecting: true, target: track } as unknown as IntersectionObserverEntry],
-        {} as IntersectionObserver,
-      )
-      frames.shift()?.(0)
-      frames.shift()?.(50)
-
-      expect(rail.style.transform).toBe('translate3d(-0.4px, 0, 0)')
-
-      observerCallback?.(
-        [{ isIntersecting: false, target: track } as unknown as IntersectionObserverEntry],
-        {} as IntersectionObserver,
-      )
-      expect(cancelFrame).toHaveBeenCalled()
     } finally {
       vi.unstubAllGlobals()
       requestFrame.mockRestore()
@@ -691,9 +375,10 @@ describe('Google Reviews section', () => {
       const review = screen.getByRole('article', { name: 'Avaliação de Maicon C. Boone' })
       const button = within(review).getByRole('button', { name: 'Ler mais' })
 
+      const initialTransform = rail.style.transform
       fireEvent.focus(button)
 
-      expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
+      expect(rail.style.transform).toBe(initialTransform)
     } finally {
       vi.unstubAllGlobals()
       measureRects.mockRestore()

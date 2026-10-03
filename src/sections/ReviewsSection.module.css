@@ -488,6 +488,11 @@
     height: auto;
     min-height: inherit;
     margin: 0;
+    user-select: none;
+  }
+
+  .reviewSet[aria-hidden='true'] {
+    pointer-events: auto;
   }
 
   .trackRail {
