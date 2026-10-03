@@ -53,6 +53,7 @@ function setRailOffset(
   nextOffset: number,
 ) {
   const period = seam.current
+  // Wrapping to the duplicate set keeps the visible cards continuous at the loop seam.
   const normalized = period > 0 ? ((nextOffset % period) + period) % period : 0
   offset.current = normalized
   rail.style.transform = `translate3d(${-Number(normalized.toFixed(3))}px, 0, 0)`
@@ -71,7 +72,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   const pauseAutoplayRef = useRef<() => void>(() => {})
   const resumeAutoplayRef = useRef<(delay?: number) => void>(() => {})
   const finishDragRef = useRef<(pointerId: number) => void>(() => {})
-  const settleTimerRef = useRef<number | null>(null)
 
   const formattedRating = data.averageRating.toLocaleString('pt-BR', {
     minimumFractionDigits: 1,
@@ -264,55 +264,11 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       startOffset: offsetRef.current,
       moved: false,
     }
-    if (settleTimerRef.current !== null) {
-      window.clearTimeout(settleTimerRef.current)
-      settleTimerRef.current = null
-    }
-    const rail = railRef.current
-    if (rail) delete rail.dataset.settling
     pauseReasonsRef.current.add('drag')
     pauseAutoplayRef.current()
   }
 
   useEffect(() => {
-    function snapRailToNearestCard() {
-      const track = trackRef.current
-      const rail = railRef.current
-      const period = seamRef.current
-      if (!track || !rail || period <= 0) return
-
-      const trackRect = track.getBoundingClientRect()
-      const center = trackRect.left + trackRect.width / 2
-      const cards = Array.from(rail.querySelectorAll<HTMLElement>('[data-review-card]'))
-      let nearest: HTMLElement | null = null
-      let nearestDistance = Number.POSITIVE_INFINITY
-
-      for (const card of cards) {
-        const rect = card.getBoundingClientRect()
-        const distance = Math.abs(rect.left + rect.width / 2 - center)
-        if (distance < nearestDistance) {
-          nearest = card
-          nearestDistance = distance
-        }
-      }
-
-      if (!nearest) return
-      const nearestRect = nearest.getBoundingClientRect()
-      const offsetAdjustment = center - (nearestRect.left + nearestRect.width / 2)
-      const desiredOffset = offsetRef.current - offsetAdjustment
-      const normalized = ((desiredOffset % period) + period) % period
-      const targetOffset = normalized + Math.round((offsetRef.current - normalized) / period) * period
-
-      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current)
-      rail.dataset.settling = 'true'
-      offsetRef.current = targetOffset
-      rail.style.transform = `translate3d(${-Number(targetOffset.toFixed(3))}px, 0, 0)`
-      settleTimerRef.current = window.setTimeout(() => {
-        delete rail.dataset.settling
-        settleTimerRef.current = null
-      }, 380)
-    }
-
     const finishDrag = (pointerId: number) => {
       const drag = dragRef.current
       if (!drag || drag.pointerId !== pointerId) {
@@ -324,9 +280,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       }
 
       if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
-      if (drag.pointerType === 'touch' && drag.axis === 'horizontal' && drag.moved) {
-        snapRailToNearestCard()
-      }
       dragRef.current = null
       const track = trackRef.current
       if (track) {
@@ -369,9 +322,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       if (track) track.dataset.dragging = 'true'
       if (!rail || seamRef.current <= 0) return
 
-      const nextOffset = ((drag.startOffset - distance) % seamRef.current + seamRef.current) % seamRef.current
-      offsetRef.current = nextOffset
-      rail.style.transform = `translate3d(${-Number(nextOffset.toFixed(3))}px, 0, 0)`
+      setRailOffset(rail, offsetRef, seamRef, drag.startOffset - distance)
     }
 
     const finish = (event: PointerEvent) => {
@@ -386,7 +337,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', finish)
       window.removeEventListener('pointercancel', finish)
-      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current)
     }
   }, [])
 

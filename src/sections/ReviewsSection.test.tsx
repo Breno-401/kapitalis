@@ -215,9 +215,16 @@ describe('Google Reviews section', () => {
       expect(frames.size).toBe(1)
       expect(rail.style.transform).toBe('translate3d(-0.4px, 0, 0)')
 
-      for (const [index, distance] of [-48, 48, -48, 48, -48, 48].entries()) {
+      const distances = [
+        -48, 48, -48, 48, -48, 48,
+        ...Array.from({ length: 6 }, () => -220),
+        ...Array.from({ length: 6 }, () => 220),
+      ]
+      for (const [index, distance] of distances.entries()) {
         const pointerId = index + 1
-        const initialTransform = rail.style.transform
+        const translation = Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
+        const startOffset = -translation
+        const expectedOffset = ((startOffset - distance) % 1016 + 1016) % 1016
         fireEvent.pointerDown(track, {
           pointerType: 'touch', pointerId, button: 0, clientX: 180, clientY: 180,
         })
@@ -227,23 +234,47 @@ describe('Google Reviews section', () => {
           pointerType: 'touch', pointerId, button: 0,
           clientX: 180 + distance, clientY: 180,
         })
-        expect(rail.style.transform).not.toBe(initialTransform)
+        const draggedTransform = rail.style.transform
+        expect(draggedTransform).toBe(`translate3d(${-Number(expectedOffset.toFixed(3))}px, 0, 0)`)
         expect(frames.size).toBe(0)
         fireEvent.pointerUp(track, { pointerType: 'touch', pointerId })
+        expect(rail.style.transform).toBe(draggedTransform)
         expect(track.dataset.dragging).toBe('false')
+        expect(rail.dataset.settling).toBeUndefined()
       }
 
       expect(track.dataset.dragging).toBe('false')
-      expect(rail.dataset.settling).toBe('true')
-      const center = width / 2
-      const nearestCardCenterDistance = Math.min(
-        ...Array.from(rail.querySelectorAll<HTMLElement>('[data-review-card]'), (card) => {
-          const rect = card.getBoundingClientRect()
-          return Math.abs(rect.left + rect.width / 2 - center)
-        }),
-      )
-      expect(nearestCardCenterDistance).toBeLessThan(1)
       expect(frames.size).toBe(0)
+
+      const reversePointerId = 19
+      const currentTranslation = Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
+      const dragBase = -currentTranslation
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch', pointerId: reversePointerId, button: 0, clientX: 180, clientY: 180,
+      })
+      for (const clientX of [160, 200, 175]) {
+        fireEvent.pointerMove(track, {
+          pointerType: 'touch', pointerId: reversePointerId, button: 0, clientX, clientY: 180,
+        })
+        const expectedOffset = ((dragBase - (clientX - 180)) % 1016 + 1016) % 1016
+        expect(rail.style.transform).toBe(`translate3d(${-Number(expectedOffset.toFixed(3))}px, 0, 0)`)
+      }
+      const reverseReleaseTransform = rail.style.transform
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: reversePointerId })
+      expect(rail.style.transform).toBe(reverseReleaseTransform)
+
+      act(() => vi.advanceTimersByTime(2500))
+      const beforeNewTouch = rail.style.transform
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch', pointerId: 20, button: 0, clientX: 180, clientY: 180,
+      })
+      fireEvent.pointerMove(track, {
+        pointerType: 'touch', pointerId: 20, button: 0, clientX: 120, clientY: 180,
+      })
+      const afterNewDrag = rail.style.transform
+      expect(afterNewDrag).not.toBe(beforeNewTouch)
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 20 })
+      expect(rail.style.transform).toBe(afterNewDrag)
       act(() => vi.advanceTimersByTime(2999))
       expect(frames.size).toBe(0)
       act(() => vi.advanceTimersByTime(1))
