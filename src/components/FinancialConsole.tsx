@@ -36,13 +36,31 @@ export function FinancialConsole({
           <p className={styles.eyebrow}>Rotina financeira</p>
           <h2 id={titleId}>Mesa de Controle Financeira</h2>
         </div>
-        <span className={styles.signal} aria-hidden="true" />
+        {expanded ? (
+          <p className={styles.notice} role="status">
+            <span className={styles.noticeMark} aria-hidden="true" />
+            <span className={styles.noticeTitle} aria-hidden="true">
+              Demonstração
+            </span>
+            <span className={styles.noticeSeparator} aria-hidden="true">·</span>
+            <span className={styles.noticeDetail} aria-hidden="true">
+              Dados fictícios
+            </span>
+            <span className={styles.noticeAccessibleLabel}>
+              AMBIENTE DEMONSTRATIVO · DADOS FICTÍCIOS
+            </span>
+          </p>
+        ) : (
+          <span className={styles.signal} aria-hidden="true" />
+        )}
       </div>
 
-      <p className={styles.notice}>
-        <span className={styles.noticeMark} aria-hidden="true" />
-        AMBIENTE DEMONSTRATIVO · DADOS FICTÍCIOS
-      </p>
+      {!expanded ? (
+        <p className={styles.notice}>
+          <span className={styles.noticeMark} aria-hidden="true" />
+          AMBIENTE DEMONSTRATIVO · DADOS FICTÍCIOS
+        </p>
+      ) : null}
 
       {selectedView ? (
         <div className={styles.interactivePanel}>

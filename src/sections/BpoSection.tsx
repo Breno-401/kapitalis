@@ -62,9 +62,7 @@ export function BpoSection() {
         />
 
         <div className={styles.workspace} data-reveal="text" data-reveal-step="2">
-          <div
-            className={styles.controls}
-          >
+          <div className={styles.controls}>
             <p className={styles.controlsLabel}>Visualizar rotina</p>
             <div
               className={styles.viewTabs}
@@ -87,7 +85,9 @@ export function BpoSection() {
                   onKeyDown={(event) => handleTabKeyDown(event, index)}
                   type="button"
                 >
-                  <span className={styles.buttonIndicator} aria-hidden="true" />
+                  <span className={styles.buttonIndicator} aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
                   <span className={styles.buttonText}>
                     <span>{label}</span>
                     <span className={styles.buttonDetail} aria-hidden="true">

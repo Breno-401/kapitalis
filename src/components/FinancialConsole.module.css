@@ -74,6 +74,15 @@
   background: var(--color-gold);
 }
 
+.noticeAccessibleLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .weekHeader {
   display: flex;
   justify-content: space-between;
@@ -490,6 +499,36 @@
   }
 }
 
+@media (max-width: 74.999rem) {
+  .expanded .header {
+    flex-wrap: wrap;
+  }
+
+  .expanded .header > div:first-child,
+  .expanded .notice {
+    flex-basis: 100%;
+  }
+
+  .expanded .notice {
+    margin-top: var(--space-3);
+  }
+
+  .expanded .noticeTitle,
+  .expanded .noticeSeparator,
+  .expanded .noticeDetail {
+    display: none;
+  }
+
+  .expanded .noticeAccessibleLabel {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+}
+
 /* Only the BPO's expanded desk uses the desktop composition. */
 @media (min-width: 75rem) {
   .expanded {
@@ -497,7 +536,18 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-4) var(--space-6);
-    padding: var(--space-6);
+    padding: var(--space-4) clamp(1.25rem, 1.8vw, 1.75rem);
+    border: 0;
+    border-radius: 0 var(--radius-large) var(--radius-large) 0;
+    background: transparent;
+  }
+
+  .expanded .header {
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-on-dark-border-medium);
   }
 
   .expanded .header h2 {
@@ -510,13 +560,51 @@
   }
 
   .expanded .notice {
+    gap: 0.45rem;
+    flex: 0 0 auto;
     margin-top: 0;
-    padding: var(--space-2) var(--space-3);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-on-dark-muted);
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+  }
+
+  .expanded .noticeMark {
+    width: 0.4rem;
+    height: 0.4rem;
+    box-shadow: 0 0 0 0.18rem var(--color-gold-wash);
+  }
+
+  .expanded .noticeTitle {
+    color: var(--color-gold-soft);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  .expanded .noticeSeparator {
+    color: var(--color-on-dark-subtle);
+  }
+
+  .expanded .noticeDetail {
+    color: var(--color-on-dark-subtle);
+    font-size: 0.7rem;
   }
 
   .expanded .interactivePanel {
     grid-column: 1 / -1;
     margin-top: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .expanded .panelToolbar {
@@ -537,7 +625,21 @@
   }
 
   .expanded .viewSummaryValue {
-    font-size: clamp(2.5rem, 3vw, 3rem);
+    font-size: clamp(2.65rem, 3.25vw, 3rem);
+  }
+
+  .expanded .viewSummary {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .expanded .metricStrip {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .expanded .panelToolbarPeriod {
+    display: none;
   }
 
   .expanded .metricStrip {
@@ -560,8 +662,10 @@
 
   .expanded .recordsHeader {
     grid-column: 1 / -1;
-    margin-top: var(--space-4);
-    padding-bottom: var(--space-3);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-top: 1px solid var(--color-border-dark);
   }
 
   .expanded .viewRecords {
@@ -591,11 +695,11 @@
 
   .expanded .viewSummary,
   .expanded .metricStrip {
-    padding-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
   }
 
   .expanded .viewSummaryValue {
-    font-size: 2.5rem;
+    font-size: 2.65rem;
   }
 
   .expanded .viewRecord {
@@ -603,7 +707,7 @@
   }
 
   .expanded .recordsHeader {
-    margin-top: var(--space-3);
+    margin-top: var(--space-2);
     padding-bottom: var(--space-2);
   }
 }
