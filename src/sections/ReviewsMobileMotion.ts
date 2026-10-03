@@ -24,7 +24,7 @@ export function installReviewsMobileMotion(
   let focused = false
   let keyboardInput = false
   let pendingRender = false
-  let resumeAt = 0
+  let resumeAt: number | null = null
   let suppressClickUntil = 0
   let ticking = false
   let visible = typeof IntersectionObserver === 'undefined'
@@ -34,19 +34,20 @@ export function installReviewsMobileMotion(
   function measure() {
     const sets = rail.querySelectorAll<HTMLElement>('[data-review-set]')
     if (sets.length < 2) return
-    // Measure the actual repeat period, including Kapitalis's gap and gutters.
-    period = sets[1].getBoundingClientRect().left - sets[0].getBoundingClientRect().left
+    // A repeat is one set plus the gap between sets. Outer rail padding is
+    // present only at the endpoints, so it must not enter the repeat period.
+    period = sets[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(rail).columnGap) || 0)
     if (period > 0) wrap = gsap.utils.wrap(0, period)
   }
 
   function render(_time: number, deltaTime: number) {
     if (period <= 0) return
     if (pointerId === null && !hovered && !focused && !reducedMotion?.matches) {
-      const elapsed = performance.now() - resumeAt
+      const elapsed = performance.now() - (resumeAt ?? 0)
       if (elapsed >= 0) {
-        // Preserve 8px/s; ease only the restart, without a tween or second writer.
-        const restart = resumeAt === 0 ? 1 : Math.min(elapsed / 350, 1)
-        position -= deltaTime / 1000 * 8 * restart
+        // Ease only the restart, without a tween or second transform writer.
+        const restart = resumeAt === null ? 1 : Math.min(elapsed / 350, 1)
+        position -= deltaTime / 1000 * 16 * restart
       }
     }
     position = -wrap(-position)
@@ -100,7 +101,7 @@ export function installReviewsMobileMotion(
     dragging = false
     draggable = false
     track.dataset.dragging = 'false'
-    resumeAt = performance.now() + 3000
+    resumeAt = performance.now()
     if (wasDragging) suppressClickUntil = performance.now() + 350
     try {
       if (rail.hasPointerCapture?.(event.pointerId)) rail.releasePointerCapture(event.pointerId)
@@ -119,12 +120,12 @@ export function installReviewsMobileMotion(
   function focus(event: FocusEvent) {
     const control = event.target
     if (!(control instanceof HTMLElement)) return
-    focused = keyboardInput || control.matches(':focus-visible')
-    if (!focused) return
-    if (!control.closest('[data-review-card]')) return
     // Browsers scroll an overflow:hidden region before dispatching focusin.
-    // Reset that native scroll before measuring, so only the rail moves.
+    // Reset for touch too: leaving scrollLeft outside the wrap can expose the
+    // physical end of the duplicate set after an otherwise valid drag.
     track.scrollLeft = 0
+    focused = keyboardInput
+    if (!focused || !control.closest('[data-review-card]')) return
     const viewport = track.getBoundingClientRect()
     const bounds = control.getBoundingClientRect()
     position -= bounds.left < viewport.left ? bounds.left - viewport.left
@@ -137,9 +138,21 @@ export function installReviewsMobileMotion(
     if (event.key === 'Tab') keyboardInput = true
   }
 
-  function pointerFocus() {
+  function pointerFocus(event: PointerEvent) {
     keyboardInput = false
     focused = false
+    if (event.target instanceof Node && track.contains(event.target)) return
+    // A new contact outside the track also recovers a missed touch release.
+    if (pointerId !== null) release({ pointerId } as PointerEvent)
+    hovered = false
+    if (resumeAt === Infinity) resumeAt = performance.now()
+    syncTicker()
+  }
+
+  function resetNativeScroll() {
+    // overflow:hidden is still scrollable by focus and browser scroll anchoring.
+    // GSAP owns the sole horizontal coordinate, including after those events.
+    if (track.scrollLeft !== 0) track.scrollLeft = 0
   }
 
   function blur(event: FocusEvent) {
@@ -182,6 +195,7 @@ export function installReviewsMobileMotion(
   track.addEventListener('pointerenter', enter)
   track.addEventListener('pointerleave', leave)
   track.addEventListener('click', click, true)
+  track.addEventListener('scroll', resetNativeScroll)
   window.addEventListener('pointermove', move)
   window.addEventListener('pointerup', release)
   window.addEventListener('pointercancel', release)
@@ -189,7 +203,7 @@ export function installReviewsMobileMotion(
   window.addEventListener('scroll', fallbackScroll, { passive: true })
   section.addEventListener('focusin', focus)
   section.addEventListener('focusout', blur)
-  section.addEventListener('pointerdown', pointerFocus, true)
+  document.addEventListener('pointerdown', pointerFocus, true)
   document.addEventListener('keydown', keydown)
   document.addEventListener('visibilitychange', visibilityChange)
   reducedMotion?.addEventListener?.('change', syncTicker)
@@ -206,6 +220,7 @@ export function installReviewsMobileMotion(
     track.removeEventListener('pointerenter', enter)
     track.removeEventListener('pointerleave', leave)
     track.removeEventListener('click', click, true)
+    track.removeEventListener('scroll', resetNativeScroll)
     window.removeEventListener('pointermove', move)
     window.removeEventListener('pointerup', release)
     window.removeEventListener('pointercancel', release)
@@ -213,7 +228,7 @@ export function installReviewsMobileMotion(
     window.removeEventListener('scroll', fallbackScroll)
     section.removeEventListener('focusin', focus)
     section.removeEventListener('focusout', blur)
-    section.removeEventListener('pointerdown', pointerFocus, true)
+    document.removeEventListener('pointerdown', pointerFocus, true)
     document.removeEventListener('keydown', keydown)
     document.removeEventListener('visibilitychange', visibilityChange)
     reducedMotion?.removeEventListener?.('change', syncTicker)
