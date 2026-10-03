@@ -31,7 +31,7 @@ export function FinalCtaSection() {
           </a>
         </div>
         <div className={styles.portrait} aria-hidden="true" data-reveal="media" data-reveal-step="2">
-          <img src="/images/next-step-person.png" alt="" />
+          <img src="/images/next-step-person.png" alt="" width="658" height="766" loading="lazy" decoding="async" />
         </div>
         <span className={styles.rule} aria-hidden="true" />
       </div>

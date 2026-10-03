@@ -547,7 +547,7 @@ export function TaxSimulator({ headingId }: { headingId: string }) {
               ))}
             </div>
           </fieldset>
-          <div className={styles.columnHeading}><span>Etapa 2</span><h4>Informe os dados</h4></div>
+          <div className={styles.columnHeading}><span>Etapa 2</span><h3>Informe os dados</h3></div>
           {regime === 'simples' ? (
             <>
               <MoneyField label="Quanto faturou neste mês?" value={input.monthlyRevenue} onChange={(value) => update('monthlyRevenue', value)} />
@@ -596,7 +596,7 @@ export function TaxSimulator({ headingId }: { headingId: string }) {
 
           <div className={styles.comparison}>
             <div className={styles.comparisonHeader}>
-              <h5>Comparação de regimes</h5>
+              <h3>Comparação de regimes</h3>
             </div>
             <ol>
               {comparisonEntries.map((entry) => (

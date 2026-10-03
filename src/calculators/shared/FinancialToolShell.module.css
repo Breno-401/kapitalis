@@ -68,7 +68,7 @@
   transition: background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
   white-space: nowrap;
 }
-.expertCta a:hover { border-color: var(--accent-hover); background: var(--accent-hover); }
+.expertCta a:hover { border-color: var(--accent-hover); background: var(--accent-fill-hover); }
 .expertCta a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
 @media (max-width: 54rem) {

@@ -95,7 +95,7 @@
 
 .action:hover {
   border-color: var(--color-gold-soft);
-  background: var(--color-gold-soft);
+  background: var(--accent-fill-hover);
   transform: translateY(-1px);
 }
 

@@ -58,7 +58,7 @@
 .dashboard { min-width: 0; }
 .columnHeading { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 0.65rem; }
 .inputForm .columnHeading { margin-top: 0.95rem; }
-.columnHeading h4 { font-size: 0.94rem; font-weight: 700; }
+.columnHeading h3 { font-size: 0.94rem; font-weight: 700; }
 
 .field { display: grid; gap: 0.35rem; margin-top: 0.7rem; color: var(--text-primary); font-size: 0.82rem; font-weight: 650; }
 .field > span small { display: block; margin-top: 0.12rem; color: var(--text-secondary); font-size: 0.68rem; font-weight: 450; }
@@ -155,7 +155,7 @@
 
 .comparison { padding: 0.45rem 0 0.1rem; border-top: 1px solid var(--border); }
 .comparisonHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.35rem; }
-.comparison h5 { font-size: 0.73rem; font-weight: 750; }
+.comparison h3 { font-size: 0.73rem; font-weight: 750; }
 .comparison ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
 .regimeCard { display: grid; align-content: start; gap: 0.16rem; min-width: 0; padding: 0.48rem; border: 1px solid var(--border); border-radius: var(--radius-small); background: var(--input-surface); }
 .regimeCard[data-highlighted='true'] { border-color: var(--accent-strong); background: var(--accent-muted); }

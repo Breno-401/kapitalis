@@ -35,6 +35,8 @@
   --accent-strong: #d4af37;
   --accent-muted: rgb(212 175 55 / 16%);
   --accent-hover: #e8d58f;
+  /* Filled actions keep navy text in both themes; text accents can darken. */
+  --accent-fill-hover: #e8d58f;
   --focus-ring: #e8d58f;
   --input-surface: #0d2239;
   --tooltip-surface: #0d2239;
@@ -131,7 +133,7 @@
   --surface-dark: #e9e3d6;
   --text-primary: #051529;
   --text-secondary: #435263;
-  --text-muted: #687889;
+  --text-muted: var(--text-secondary);
   --text-on-accent: #051529;
   --border: #d9dcd8;
   --accent: #8b6914;
@@ -148,7 +150,7 @@
   --color-gold-soft: #8b6914;
   --color-gold-wash: rgb(139 105 20 / 16%);
   --color-text-secondary: #435263;
-  --color-text-muted: #687889;
+  --color-text-muted: var(--text-secondary);
   --color-border-light: #d9dcd8;
   --nav-surface: rgb(243 241 234 / 94%);
   --nav-border: rgb(5 21 41 / 13%);
@@ -191,7 +193,7 @@
   --surface-interactive: #eee8dc;
   --text-primary: #051529;
   --text-secondary: #435263;
-  --text-muted: #687889;
+  --text-muted: var(--text-secondary);
   --border: rgb(5 21 41 / 16%);
   --accent: #8b6914;
   --accent-muted: rgb(139 105 20 / 16%);

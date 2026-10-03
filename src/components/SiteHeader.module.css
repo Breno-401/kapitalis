@@ -196,7 +196,7 @@
 .contactLink:hover {
   gap: 0.62rem;
   border-color: var(--color-gold-soft);
-  background: var(--color-gold-soft);
+  background: var(--accent-fill-hover);
   transform: translateY(-1px) scale(1.005);
 }
 
@@ -493,7 +493,7 @@
   .menuContactLink:hover {
     gap: 0.7rem;
     border-color: var(--color-gold-soft);
-    background: var(--color-gold-soft);
+    background: var(--accent-fill-hover);
   }
 
   .mobileThemeControl {

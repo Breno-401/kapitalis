@@ -184,7 +184,7 @@
 
 .primaryAction:hover {
   gap: 0.9rem;
-  background: var(--color-gold-soft);
+  background: var(--accent-fill-hover);
   transform: translateY(-1px) scale(1.005);
 }
 

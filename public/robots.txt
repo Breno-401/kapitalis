@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kapitaliscontabilidade.com.br/sitemap.xml

@@ -13,7 +13,7 @@
 .control:focus-visible,
 .moneyControl:focus-within { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
 .stepHeading { display: flex; align-items: baseline; gap: 0.65rem; margin: 1rem 0 0.65rem; }
-.stepHeading h4 { color: var(--text-primary); font-size: 0.94rem; font-weight: 700; }
+.stepHeading h3 { color: var(--text-primary); font-size: 0.94rem; font-weight: 700; }
 .fields { display: grid; gap: 0.55rem; }
 .field { display: grid; gap: 0.3rem; min-width: 0; color: var(--text-primary); font-size: 0.76rem; font-weight: 650; }
 .control,

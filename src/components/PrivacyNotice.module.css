@@ -44,7 +44,9 @@
 .noticeActions button:hover,
 .close:hover { border-color: var(--accent); background: var(--accent-muted); }
 .noticeActions .dismiss { border-color: var(--accent); background: var(--accent); color: var(--text-on-accent); }
-.noticeActions .dismiss:hover { background: var(--accent-hover); }
+.noticeActions .dismiss:hover { background: var(--accent-fill-hover); }
+:global(html[data-theme='light']) .noticeActions .dismiss { background: var(--accent-strong); }
+:global(html[data-theme='light']) .noticeActions .dismiss:hover { background: var(--accent-fill-hover); }
 .noticeActions button:focus-visible,
 .close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 

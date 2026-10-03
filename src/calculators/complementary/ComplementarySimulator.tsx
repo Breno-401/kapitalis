@@ -184,7 +184,7 @@ export function ComplementarySimulator({ headingId }: { headingId: string }) {
           ))}
         </div>
       </fieldset>
-      <div className={styles.stepHeading}><span>Etapa 2</span><h4>Informe os dados</h4></div>
+      <div className={styles.stepHeading}><span>Etapa 2</span><h3>Informe os dados</h3></div>
       <div className={styles.fields}>
         {mode === 'prolabore' && <>
           <MoneyField label="Faturamento / Lucro Mensal (R$)" inputId={`${ids}-profit`} value={values.profit ?? ''} onChange={(value) => update('profit', value)} />
