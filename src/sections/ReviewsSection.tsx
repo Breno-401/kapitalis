@@ -11,6 +11,7 @@ type ReviewsSectionProps = {
 
 type DragState = {
   pointerId: number
+  pointerType: string
   startX: number
   startY: number
   startOffset: number
@@ -65,7 +66,12 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   const seamRef = useRef(0)
   const pauseReasonsRef = useRef(new Set<string>())
   const dragRef = useRef<DragState | null>(null)
+  const touchControlRef = useRef<number | null>(null)
   const suppressClickUntilRef = useRef(0)
+  const pauseAutoplayRef = useRef<() => void>(() => {})
+  const resumeAutoplayRef = useRef<(delay?: number) => void>(() => {})
+  const finishDragRef = useRef<(pointerId: number) => void>(() => {})
+  const settleTimerRef = useRef<number | null>(null)
 
   const formattedRating = data.averageRating.toLocaleString('pt-BR', {
     minimumFractionDigits: 1,
@@ -85,8 +91,10 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     const activeRail = rail as HTMLDivElement
 
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
+    const mobileViewport = window.matchMedia?.('(max-width: 700px)')
     const hasIntersectionObserver = typeof IntersectionObserver !== 'undefined'
     let frame: number | null = null
+    let resumeTimer: number | null = null
     let lastTime: number | null = null
     let isVisible = hasIntersectionObserver ? false : isTrackInViewport(activeTrack)
     let pageVisible = document.visibilityState !== 'hidden'
@@ -104,25 +112,57 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     }
 
     function stopAutoplay() {
-      if (frame === null) return
-      window.cancelAnimationFrame(frame)
-      frame = null
+      if (frame !== null) {
+        window.cancelAnimationFrame(frame)
+        frame = null
+      }
       lastTime = null
     }
 
     function advance(timestamp: number) {
       if (lastTime !== null && pauseReasonsRef.current.size === 0 && !dragRef.current) {
         const elapsed = Math.min(timestamp - lastTime, 80)
-        moveRail(offsetRef.current + (elapsed * seamRef.current) / 50_000)
+        const pixelsPerSecond = mobileViewport?.matches ? 8 : 20
+        moveRail(offsetRef.current + (elapsed * pixelsPerSecond) / 1000)
       }
       lastTime = timestamp
       frame = window.requestAnimationFrame(advance)
     }
 
     function startAutoplay() {
-      if (frame !== null || !isVisible || !pageVisible || reducedMotion?.matches) return
+      if (
+        frame !== null ||
+        resumeTimer !== null ||
+        !isVisible ||
+        !pageVisible ||
+        reducedMotion?.matches ||
+        pauseReasonsRef.current.size > 0 ||
+        dragRef.current
+      ) return
       lastTime = null
       frame = window.requestAnimationFrame(advance)
+    }
+
+    pauseAutoplayRef.current = () => {
+      if (resumeTimer !== null) {
+        window.clearTimeout(resumeTimer)
+        resumeTimer = null
+      }
+      stopAutoplay()
+    }
+    resumeAutoplayRef.current = (delay = 0) => {
+      if (resumeTimer !== null) {
+        window.clearTimeout(resumeTimer)
+        resumeTimer = null
+      }
+      if (delay <= 0) {
+        startAutoplay()
+        return
+      }
+      resumeTimer = window.setTimeout(() => {
+        resumeTimer = null
+        startAutoplay()
+      }, delay)
     }
 
     function syncLayout() {
@@ -170,7 +210,10 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     syncLayout()
 
     return () => {
+      if (resumeTimer !== null) window.clearTimeout(resumeTimer)
       stopAutoplay()
+      pauseAutoplayRef.current = () => {}
+      resumeAutoplayRef.current = () => {}
       resizeObserver?.disconnect()
       intersectionObserver?.disconnect()
       window.removeEventListener('resize', syncLayout)
@@ -200,25 +243,105 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
 
   function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
     if (event.pointerType !== 'touch' && event.button !== 0) return
-    if (dragRef.current) return
+    if (dragRef.current || touchControlRef.current !== null) return
     if (
       event.target instanceof Element &&
       event.target.closest('button, a, [role="button"], [data-clickable]')
     ) {
+      if (event.pointerType === 'touch') {
+        touchControlRef.current = event.pointerId
+        pauseReasonsRef.current.add('touch-control')
+        pauseAutoplayRef.current()
+      }
       return
     }
 
     dragRef.current = {
       pointerId: event.pointerId,
+      pointerType: event.pointerType,
       startX: event.clientX,
       startY: event.clientY,
       startOffset: offsetRef.current,
       moved: false,
     }
+    if (settleTimerRef.current !== null) {
+      window.clearTimeout(settleTimerRef.current)
+      settleTimerRef.current = null
+    }
+    const rail = railRef.current
+    if (rail) delete rail.dataset.settling
     pauseReasonsRef.current.add('drag')
+    pauseAutoplayRef.current()
   }
 
   useEffect(() => {
+    function snapRailToNearestCard() {
+      const track = trackRef.current
+      const rail = railRef.current
+      const period = seamRef.current
+      if (!track || !rail || period <= 0) return
+
+      const trackRect = track.getBoundingClientRect()
+      const center = trackRect.left + trackRect.width / 2
+      const cards = Array.from(rail.querySelectorAll<HTMLElement>('[data-review-card]'))
+      let nearest: HTMLElement | null = null
+      let nearestDistance = Number.POSITIVE_INFINITY
+
+      for (const card of cards) {
+        const rect = card.getBoundingClientRect()
+        const distance = Math.abs(rect.left + rect.width / 2 - center)
+        if (distance < nearestDistance) {
+          nearest = card
+          nearestDistance = distance
+        }
+      }
+
+      if (!nearest) return
+      const nearestRect = nearest.getBoundingClientRect()
+      const offsetAdjustment = center - (nearestRect.left + nearestRect.width / 2)
+      const desiredOffset = offsetRef.current - offsetAdjustment
+      const normalized = ((desiredOffset % period) + period) % period
+      const targetOffset = normalized + Math.round((offsetRef.current - normalized) / period) * period
+
+      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current)
+      rail.dataset.settling = 'true'
+      offsetRef.current = targetOffset
+      rail.style.transform = `translate3d(${-Number(targetOffset.toFixed(3))}px, 0, 0)`
+      settleTimerRef.current = window.setTimeout(() => {
+        delete rail.dataset.settling
+        settleTimerRef.current = null
+      }, 380)
+    }
+
+    const finishDrag = (pointerId: number) => {
+      const drag = dragRef.current
+      if (!drag || drag.pointerId !== pointerId) {
+        if (touchControlRef.current !== pointerId) return
+        touchControlRef.current = null
+        pauseReasonsRef.current.delete('touch-control')
+        resumeAutoplayRef.current(3000)
+        return
+      }
+
+      if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
+      if (drag.pointerType === 'touch' && drag.axis === 'horizontal' && drag.moved) {
+        snapRailToNearestCard()
+      }
+      dragRef.current = null
+      const track = trackRef.current
+      if (track) {
+        track.dataset.dragging = 'false'
+        try {
+          if (track.hasPointerCapture?.(pointerId)) track.releasePointerCapture?.(pointerId)
+        } catch {
+          // The pointer may already have been released by the browser.
+        }
+      }
+      pauseReasonsRef.current.delete('drag')
+      resumeAutoplayRef.current(drag.pointerType === 'touch' ? 3000 : 0)
+    }
+    finishDragRef.current = finishDrag
+
     const move = (event: PointerEvent) => {
       const drag = dragRef.current
       const track = trackRef.current
@@ -231,10 +354,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       if (drag.axis === undefined) {
         if (Math.max(Math.abs(distance), Math.abs(verticalDistance)) <= 5) return
         drag.axis = Math.abs(verticalDistance) > Math.abs(distance) ? 'vertical' : 'horizontal'
-        if (drag.axis === 'vertical') {
-          pauseReasonsRef.current.delete('drag')
-          return
-        }
+        if (drag.axis === 'vertical') return
       }
 
       if (!drag.moved) {
@@ -255,32 +375,18 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     }
 
     const finish = (event: PointerEvent) => {
-      const drag = dragRef.current
-      if (!drag || drag.pointerId !== event.pointerId) return
-
-      if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
-      dragRef.current = null
-      const track = trackRef.current
-      if (track) {
-        track.dataset.dragging = 'false'
-        try {
-          if (track.hasPointerCapture?.(event.pointerId)) {
-            track.releasePointerCapture?.(event.pointerId)
-          }
-        } catch {
-          // The pointer may already have been released by the browser.
-        }
-      }
-      pauseReasonsRef.current.delete('drag')
+      finishDragRef.current(event.pointerId)
     }
 
     window.addEventListener('pointermove', move)
     window.addEventListener('pointerup', finish)
     window.addEventListener('pointercancel', finish)
     return () => {
+      finishDragRef.current = () => {}
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', finish)
       window.removeEventListener('pointercancel', finish)
+      if (settleTimerRef.current !== null) window.clearTimeout(settleTimerRef.current)
     }
   }, [])
 
@@ -306,6 +412,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
           pauseReasonsRef.current.delete('focus')
+          resumeAutoplayRef.current()
         }
       }}
     >
@@ -357,18 +464,15 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             if (event.pointerType !== 'touch') pauseReasonsRef.current.add('hover')
           }}
           onPointerLeave={(event) => {
-            if (event.pointerType !== 'touch') pauseReasonsRef.current.delete('hover')
+            if (event.pointerType !== 'touch') {
+              pauseReasonsRef.current.delete('hover')
+              resumeAutoplayRef.current()
+            }
             if (!dragRef.current?.moved) event.currentTarget.dataset.dragging = 'false'
           }}
           onPointerDown={beginDrag}
           onLostPointerCapture={(event) => {
-            if (dragRef.current?.pointerId === event.pointerId) {
-              const drag = dragRef.current
-              if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
-              dragRef.current = null
-              event.currentTarget.dataset.dragging = 'false'
-              pauseReasonsRef.current.delete('drag')
-            }
+            finishDragRef.current(event.pointerId)
           }}
           onClickCapture={handleClickCapture}
         >
