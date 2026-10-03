@@ -196,7 +196,11 @@
   .viewButton[aria-selected='true'] {
     border-bottom-color: var(--color-on-dark-border-soft);
     border-left-color: var(--color-gold);
-    background: linear-gradient(90deg, var(--color-gold-wash), transparent 82%);
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-gold-wash) 28%, transparent),
+      transparent 82%
+    );
   }
 
   .buttonIndicator {
@@ -216,7 +220,8 @@
     border: 0;
     background: transparent;
     box-shadow: none;
-    color: var(--color-gold-soft);
+    color: color-mix(in srgb, var(--color-gold-soft) 80%, var(--color-paper));
+    font-weight: 700;
   }
 
   .buttonText > span:first-child {

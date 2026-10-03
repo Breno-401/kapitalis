@@ -238,7 +238,7 @@
 
 .viewBody {
   padding: clamp(1.2rem, 2.7vw, 2rem);
-  animation: view-arrives var(--duration-reveal) var(--ease-standard) both;
+  animation: view-arrives 280ms var(--ease-standard) both;
 }
 
 .viewSummary {
@@ -490,7 +490,7 @@
 @keyframes view-arrives {
   from {
     opacity: 0;
-    transform: translateY(0.45rem);
+    transform: translateY(5px);
   }
 
   to {
@@ -552,7 +552,7 @@
 
   .expanded .header h2 {
     max-width: none;
-    font-size: 1.3rem;
+    font-size: 1.42rem;
   }
 
   .expanded .eyebrow {
@@ -650,6 +650,14 @@
   .expanded .metric {
     gap: var(--space-1);
     padding-inline: var(--space-3);
+  }
+
+  .expanded .metric dt {
+    font-size: 0.65rem;
+  }
+
+  .expanded .metric dd {
+    font-size: 1rem;
   }
 
   .expanded .metric:first-child {
