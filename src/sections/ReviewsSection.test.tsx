@@ -194,6 +194,23 @@ describe('Google Reviews section', () => {
       const { container } = rendered
       const track = container.querySelector<HTMLElement>('[data-review-track]')!
       const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      const pointerCapture = vi.fn()
+      Object.defineProperty(track, 'setPointerCapture', {
+        configurable: true,
+        value: pointerCapture,
+      })
+      const readOffset = () =>
+        -Number(rail.style.transform.match(/translate3d\((-?[\d.]+)px/)?.[1] ?? 0)
+      const normalizedOffset = (offset: number) => ((offset % 1016) + 1016) % 1016
+      const transformFor = (offset: number) =>
+        `translate3d(${-Number(normalizedOffset(offset).toFixed(3))}px, 0, 0)`
+      const dispatchPointerMove = (pointerId: number, clientX: number, clientY: number) => {
+        const event = document.createEvent('Event')
+        event.initEvent('pointermove', true, true)
+        Object.assign(event, { pointerId, pointerType: 'touch', button: 0, clientX, clientY })
+        fireEvent(track, event)
+        return event
+      }
       const runFrame = (time: number) => {
         const next = frames.entries().next().value as [number, FrameRequestCallback] | undefined
         if (!next) return
@@ -214,6 +231,41 @@ describe('Google Reviews section', () => {
       runFrame(50)
       expect(frames.size).toBe(1)
       expect(rail.style.transform).toBe('translate3d(-0.4px, 0, 0)')
+
+      const diagonalPointerId = 50
+      const diagonalStartOffset = readOffset()
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch', pointerId: diagonalPointerId, button: 0, clientX: 100, clientY: 100,
+      })
+      const diagonalStart = dispatchPointerMove(diagonalPointerId, 106, 107)
+      expect(diagonalStart.defaultPrevented).toBe(false)
+      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset))
+      expect(pointerCapture).not.toHaveBeenCalled()
+
+      const horizontalTakeover = dispatchPointerMove(diagonalPointerId, 135, 109)
+      expect(horizontalTakeover.defaultPrevented).toBe(true)
+      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset - 35))
+      expect(pointerCapture).toHaveBeenCalledOnce()
+      expect(pointerCapture).toHaveBeenCalledWith(diagonalPointerId)
+
+      const reversedHorizontal = dispatchPointerMove(diagonalPointerId, 85, 125)
+      expect(reversedHorizontal.defaultPrevented).toBe(true)
+      expect(rail.style.transform).toBe(transformFor(diagonalStartOffset + 15))
+      const diagonalReleaseTransform = rail.style.transform
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: diagonalPointerId })
+      expect(rail.style.transform).toBe(diagonalReleaseTransform)
+
+      const ambiguousPointerId = 51
+      const ambiguousStartOffset = readOffset()
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch', pointerId: ambiguousPointerId, button: 0, clientX: 100, clientY: 100,
+      })
+      const ambiguousMove = dispatchPointerMove(ambiguousPointerId, 112, 111)
+      expect(ambiguousMove.defaultPrevented).toBe(false)
+      expect(rail.style.transform).toBe(transformFor(ambiguousStartOffset))
+      expect(pointerCapture).toHaveBeenCalledOnce()
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: ambiguousPointerId })
+      expect(rail.style.transform).toBe(transformFor(ambiguousStartOffset))
 
       const distances = [
         -48, 48, -48, 48, -48, 48,
@@ -242,6 +294,40 @@ describe('Google Reviews section', () => {
         expect(track.dataset.dragging).toBe('false')
         expect(rail.dataset.settling).toBeUndefined()
       }
+
+      const offsetBeforeSeamApproach = readOffset()
+      for (let index = 0; index < 10; index += 1) {
+        const pointerId = 60 + index
+        fireEvent.pointerDown(track, {
+          pointerType: 'touch', pointerId, button: 0, clientX: 180, clientY: 180,
+        })
+        fireEvent.pointerMove(track, {
+          pointerType: 'touch', pointerId, button: 0, clientX: 80, clientY: 180,
+        })
+        fireEvent.pointerUp(track, { pointerType: 'touch', pointerId })
+      }
+      expect(readOffset()).toBeCloseTo(normalizedOffset(offsetBeforeSeamApproach + 1000), 3)
+      expect(1016 - readOffset()).toBeLessThan(16)
+
+      const primaryFirstCard = track.querySelector<HTMLElement>(
+        '[data-review-set="primary"] [data-review-card]',
+      )!
+      const duplicateFirstCard = track.querySelector<HTMLElement>(
+        '[data-review-set="duplicate"] [data-review-card]',
+      )!
+      const duplicateCardBeforeSeam = duplicateFirstCard.getBoundingClientRect().left
+      expect(duplicateCardBeforeSeam).toBeGreaterThan(0)
+      fireEvent.pointerDown(track, {
+        pointerType: 'touch', pointerId: 70, button: 0, clientX: 180, clientY: 180,
+      })
+      fireEvent.pointerMove(track, {
+        pointerType: 'touch', pointerId: 70, button: 0, clientX: 160, clientY: 180,
+      })
+      const primaryCardAfterSeam = primaryFirstCard.getBoundingClientRect().left
+      expect(primaryCardAfterSeam).toBeCloseTo(duplicateCardBeforeSeam - 20, 3)
+      const seamReleaseTransform = rail.style.transform
+      fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 70 })
+      expect(rail.style.transform).toBe(seamReleaseTransform)
 
       expect(track.dataset.dragging).toBe('false')
       expect(frames.size).toBe(0)
@@ -291,20 +377,15 @@ describe('Google Reviews section', () => {
       act(() => vi.advanceTimersByTime(1))
       expect(frames.size).toBe(1)
 
-      const verticalMove = document.createEvent('Event')
-      verticalMove.initEvent('pointermove', true, true)
-      Object.assign(verticalMove, {
-        pointerId: 7,
-        pointerType: 'touch',
-        button: 0,
-        clientX: 180,
-        clientY: 240,
-      })
+      const captureCountBeforeVertical = pointerCapture.mock.calls.length
+      const offsetBeforeVertical = rail.style.transform
       fireEvent.pointerDown(track, {
         pointerType: 'touch', pointerId: 7, button: 0, clientX: 180, clientY: 180,
       })
-      fireEvent(track, verticalMove)
+      const verticalMove = dispatchPointerMove(7, 186, 205)
       expect(verticalMove.defaultPrevented).toBe(false)
+      expect(rail.style.transform).toBe(offsetBeforeVertical)
+      expect(pointerCapture).toHaveBeenCalledTimes(captureCountBeforeVertical)
       expect(frames.size).toBe(0)
       fireEvent.pointerUp(track, { pointerType: 'touch', pointerId: 7 })
       act(() => vi.advanceTimersByTime(2999))

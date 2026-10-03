@@ -9,13 +9,16 @@ type ReviewsSectionProps = {
   data: GoogleReviewsSnapshot
 }
 
+const GESTURE_AXIS_THRESHOLD = 10
+const GESTURE_AXIS_DOMINANCE = 1.25
+
 type DragState = {
   pointerId: number
   pointerType: string
   startX: number
   startY: number
   startOffset: number
-  axis?: 'horizontal' | 'vertical'
+  axis: 'pending' | 'horizontal' | 'vertical'
   moved: boolean
 }
 
@@ -262,6 +265,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       startX: event.clientX,
       startY: event.clientY,
       startOffset: offsetRef.current,
+      axis: 'pending',
       moved: false,
     }
     pauseReasonsRef.current.add('drag')
@@ -304,10 +308,23 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
 
       const distance = event.clientX - drag.startX
       const verticalDistance = event.clientY - drag.startY
-      if (drag.axis === undefined) {
-        if (Math.max(Math.abs(distance), Math.abs(verticalDistance)) <= 5) return
-        drag.axis = Math.abs(verticalDistance) > Math.abs(distance) ? 'vertical' : 'horizontal'
-        if (drag.axis === 'vertical') return
+      if (drag.axis === 'pending') {
+        const horizontalDistance = Math.abs(distance)
+        const verticalDistanceMagnitude = Math.abs(verticalDistance)
+        if (
+          horizontalDistance >= GESTURE_AXIS_THRESHOLD &&
+          horizontalDistance > verticalDistanceMagnitude * GESTURE_AXIS_DOMINANCE
+        ) {
+          drag.axis = 'horizontal'
+        } else if (
+          verticalDistanceMagnitude >= GESTURE_AXIS_THRESHOLD &&
+          verticalDistanceMagnitude > horizontalDistance * GESTURE_AXIS_DOMINANCE
+        ) {
+          drag.axis = 'vertical'
+          return
+        } else {
+          return
+        }
       }
 
       if (!drag.moved) {
