@@ -8,13 +8,22 @@ type FinancialCoreProps = {
   revealed?: boolean
 }
 
+const coreCenter = 320
+const outerOrbitRadius = 262
+
 const sources = [
   { id: 'bancos', label: 'Bancos', x: 320, y: 74 },
   { id: 'vendas', label: 'Vendas', x: 545, y: 212 },
   { id: 'notas', label: 'Notas', x: 460, y: 474 },
   { id: 'folha', label: 'Folha', x: 180, y: 474 },
   { id: 'despesas', label: 'Despesas', x: 95, y: 212 },
-]
+].map(source => {
+  // Keep each source's angle, but place its center exactly on the outer orbit.
+  const dx = source.x - coreCenter
+  const dy = source.y - coreCenter
+  const scale = outerOrbitRadius / Math.hypot(dx, dy)
+  return { ...source, x: coreCenter + dx * scale, y: coreCenter + dy * scale }
+})
 
 const insights = [
   {
@@ -69,9 +78,9 @@ export function FinancialCore({
       >
         <circle
           className={`${styles.orbit} ${styles.outerOrbit}`}
-          cx="320"
-          cy="320"
-          r="262"
+          cx={coreCenter}
+          cy={coreCenter}
+          r={outerOrbitRadius}
           data-orbit-ring="outer"
           data-active={state === 'organizacao' || state === 'decisao'}
         />

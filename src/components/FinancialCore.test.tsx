@@ -3,6 +3,35 @@ import { describe, expect, it } from 'vitest'
 import { FinancialCore } from './FinancialCore'
 
 describe('Kapitalis financial core visual', () => {
+  it.each(['entradas', 'organizacao', 'visibilidade', 'decisao'] as const)(
+    'keeps all source nodes on the concentric outer circle in %s',
+    (state) => {
+      const { container } = render(<FinancialCore state={state} />)
+      const orbit = container.querySelector('[data-orbit-ring="outer"]')!
+      const cx = Number(orbit.getAttribute('cx'))
+      const cy = Number(orbit.getAttribute('cy'))
+      const radius = Number(orbit.getAttribute('r'))
+      const logo = container.querySelector('[data-kapitalis-brandmark]')!.closest('svg')!
+      expect(Number(logo.getAttribute('x')) + Number(logo.getAttribute('width')) / 2).toBe(cx)
+      expect(Number(logo.getAttribute('y')) + Number(logo.getAttribute('height')) / 2).toBe(cy)
+      for (const ring of container.querySelectorAll('[data-orbit-ring]')) {
+        expect(Number(ring.getAttribute('cx'))).toBe(cx)
+        expect(Number(ring.getAttribute('cy'))).toBe(cy)
+      }
+
+      const nodes = container.querySelectorAll('[data-financial-node][data-source]')
+      expect(nodes).toHaveLength(5)
+      for (const node of nodes) {
+        const coordinates = node.getAttribute('transform')!.match(/^translate\(([^ ]+) ([^)]+)\)$/)!
+        const x = Number(coordinates[1])
+        const y = Number(coordinates[2])
+        expect(Math.hypot(x - cx, y - cy)).toBeCloseTo(radius, 9)
+        const line = container.querySelector(`[data-flow="source-to-core"][data-source="${node.getAttribute('data-source')}"]`)!
+        expect(line.getAttribute('d')).toBe(`M ${x} ${y} L ${cx} ${cy}`)
+      }
+    },
+  )
+
   it('one_financial_scene_changes_state_without_changing_its_sources', () => {
     const { container } = render(<FinancialCore state="visibilidade" />)
 
