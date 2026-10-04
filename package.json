@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "gsap": "3.15.0",
+    "@bro-design/bro-marquee": "1.0.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

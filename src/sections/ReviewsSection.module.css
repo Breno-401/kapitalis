@@ -504,6 +504,12 @@
     gap: 0.75rem;
   }
 
+  /* The official motor divides list.scrollWidth by the number of copies.
+     Include a trailing gap so that each native copy has the same width. */
+  .reviewSet[bro-marquee-element='list'] {
+    padding-inline-end: 0.75rem;
+  }
+
   .trackItem {
     flex-basis: min(23.5rem, calc(100vw - 8rem));
   }

@@ -3,7 +3,7 @@ import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent }
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
 import { GoogleMark } from '../components/GoogleMark'
 import { ReviewCard } from './ReviewCard'
-import { installReviewsMobileMotion } from './ReviewsMobileMotion'
+import { installReviewsBroMarquee } from './ReviewsBroMarquee'
 import styles from './ReviewsSection.module.css'
 
 type ReviewsSectionProps = {
@@ -71,7 +71,7 @@ function setRailOffset(
 
 export function ReviewsSection({ data }: ReviewsSectionProps) {
   const isMobile = useSyncExternalStore(subscribeMobileViewport, isMobileViewport, () => false)
-  const reviewSets = isMobile ? ['previous', 'primary', 'next'] : ['primary', 'duplicate']
+  const reviewSets = isMobile ? ['reviews'] : ['primary', 'duplicate']
   const [expandedReviews, setExpandedReviews] = useState(new Set<string>())
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
@@ -99,7 +99,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     const track = trackRef.current
     const rail = railRef.current
     if (!section || !track || !rail) return
-    if (isMobile) return installReviewsMobileMotion(section, track, rail)
+    if (isMobile) return installReviewsBroMarquee(track, rail)
     const activeTrack = track as HTMLDivElement
     const activeRail = rail as HTMLDivElement
 
@@ -231,7 +231,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
     }
   }
 
-  // The approved desktop motor is isolated from the mobile GSAP lifecycle.
+  // The approved desktop motor is isolated from the mobile broMarquee lifecycle.
   function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
     if (isMobile || event.button !== 0 || dragRef.current) return
     if (event.target instanceof Element && event.target.closest('button, a, [role="button"], [data-clickable]')) return
@@ -292,7 +292,19 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   }, [isMobile])
 
   function handleClickCapture(event: ReactMouseEvent<HTMLDivElement>) {
-    if (isMobile || Date.now() > suppressClickUntilRef.current) return
+    if (isMobile) {
+      if (!(event.target instanceof Element) || !event.target.closest('button[aria-expanded]')) return
+      const id = event.target.closest<HTMLElement>('[data-review-id]')?.dataset.reviewId
+      if (!id) return
+      setExpandedReviews(current => {
+        const next = new Set(current)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        return next
+      })
+      return
+    }
+    if (Date.now() > suppressClickUntilRef.current) return
     suppressClickUntilRef.current = 0
     event.preventDefault()
     event.stopPropagation()
@@ -357,6 +369,12 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
         <div
           className={styles.track}
           data-review-track
+          bro-marquee-element={isMobile ? 'marquee' : undefined}
+          bro-marquee-speed={isMobile ? '0.26672' : undefined}
+          bro-marquee-speed-mobile={isMobile ? '0.26672' : undefined}
+          bro-marquee-direction={isMobile ? 'left' : undefined}
+          bro-marquee-clones={isMobile ? '1' : undefined}
+          bro-marquee-pause-on-hover={isMobile ? 'false' : undefined}
           aria-label="Avaliações de clientes no Google"
           aria-live="off"
           role="region"
@@ -378,13 +396,14 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           }}
           onClickCapture={handleClickCapture}
         >
-          <div className={styles.trackRail} data-review-rail ref={railRef}>
+          <div key={isMobile ? 'mobile' : 'desktop'} className={styles.trackRail} data-review-rail ref={railRef} bro-marquee-element={isMobile ? 'wrapper' : undefined}>
             {reviewSets.map((set) => (
               <ul
                 className={styles.reviewSet}
                 key={set}
                 data-review-set={set}
-                aria-hidden={set !== 'primary' ? 'true' : undefined}
+                bro-marquee-element={isMobile ? 'list' : undefined}
+                aria-hidden={!isMobile && set !== 'primary' ? 'true' : undefined}
                 inert={(set !== 'primary' && !isMobile) || undefined}
               >
                 {data.reviews.map((review) => (
@@ -392,18 +411,13 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
                     className={styles.trackItem}
                     key={`${review.id}-${set}`}
                     data-review-card
+                    data-review-id={review.id}
                   >
                     <ReviewCard
                       review={review}
-                      idPrefix={set !== 'primary' ? `${set}-` : ''}
+                      idPrefix={!isMobile && set !== 'primary' ? `${set}-` : ''}
                       expanded={isMobile ? expandedReviews.has(review.id) : undefined}
-                      buttonTabIndex={isMobile && set !== 'primary' ? -1 : undefined}
-                      onToggle={isMobile ? () => setExpandedReviews((current) => {
-                        const next = new Set(current)
-                        if (next.has(review.id)) next.delete(review.id)
-                        else next.add(review.id)
-                        return next
-                      }) : undefined}
+                      onToggle={isMobile ? () => {} : undefined}
                     />
                   </li>
                 ))}

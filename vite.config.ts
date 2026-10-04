@@ -1,8 +1,9 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
+import { broMarqueeReact } from './build/broMarqueeReact.js'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [broMarqueeReact(), react()],
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],

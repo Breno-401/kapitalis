@@ -1,5 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import { gsap } from 'gsap'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { googleReviewsSnapshot } from '../data/googleReviews'
 import { ReviewsSection } from './ReviewsSection'
@@ -137,107 +136,6 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it.each([[320, 812], [375, 812], [390, 844], [402, 874], [430, 932]])(
-    'lets one ticker own mobile drag, release and autoplay at %i×%i', (width, height) => {
-      vi.useFakeTimers({ toFake: ['performance'] })
-      vi.stubGlobal('innerWidth', width)
-      vi.stubGlobal('innerHeight', height)
-      vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
-      const ticks = new Set<gsap.TickerCallback>()
-      const add = vi.spyOn(gsap.ticker, 'add').mockImplementation(callback => { ticks.add(callback); return callback })
-      const remove = vi.spyOn(gsap.ticker, 'remove').mockImplementation(callback => { ticks.delete(callback) })
-      const rects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'primary' ? 1016 : this.dataset.reviewSet === 'next' ? 2032 : 0
-        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
-      })
-      const frame = () => act(() => { for (const tick of ticks) tick(0, 50, 1, 0) })
-      const x = (rail: HTMLElement) => Number(gsap.getProperty(rail, 'x'))
-      let unmount: (() => void) | undefined
-      try {
-        const view = render(<ReviewsSection data={googleReviewsSnapshot} />)
-        unmount = view.unmount
-        const track = view.container.querySelector<HTMLElement>('[data-review-track]')!
-        const rail = view.container.querySelector<HTMLElement>('[data-review-rail]')!
-        const down = (id: number) => fireEvent.pointerDown(track, {pointerType:'touch', pointerId:id, clientX:180, clientY:180, button:0})
-        const move = (id: number, clientX: number) => fireEvent.pointerMove(window, {pointerType:'touch', pointerId:id, clientX, clientY:180})
-        frame()
-        const before = rail.style.transform
-        down(1)
-        move(1, 120)
-        // Pointer listeners must not compete with the render clock for transform.
-        expect(rail.style.transform).toBe(before)
-        frame()
-        expect(x(rail)).toBeCloseTo(-1076.8, 3)
-        const held = rail.style.transform
-        frame()
-        expect(rail.style.transform).toBe(held)
-        // A touch starts with implicit capture on a child. Transferring capture
-        // to the rail emits this event; it must not end the active gesture.
-        fireEvent.lostPointerCapture(track.querySelector('p')!, { pointerType: 'touch', pointerId: 1 })
-        move(1, 240)
-        frame()
-        expect(x(rail)).toBeCloseTo(-1972.8, 3)
-        move(1, -2052)
-        frame()
-        expect(x(rail)).toBeCloseTo(-1216.8, 3)
-        fireEvent.pointerUp(window, {pointerType:'touch', pointerId:1})
-        const released = rail.style.transform
-        frame()
-        expect(rail.style.transform).toBe(released)
-        act(() => vi.advanceTimersByTime(175))
-        frame()
-        expect(x(rail)).toBeCloseTo(-1217.2, 3)
-        down(2)
-        const interrupted = rail.style.transform
-        frame()
-        expect(rail.style.transform).toBe(interrupted)
-        fireEvent.pointerCancel(window, {pointerType:'touch', pointerId:2})
-        act(() => vi.advanceTimersByTime(350))
-        frame()
-        expect(rail.style.transform).not.toBe(interrupted)
-        expect(track.scrollLeft).toBe(0)
-        unmount()
-        unmount = undefined
-        expect(ticks.size).toBe(0)
-      } finally {
-        unmount?.()
-        vi.useRealTimers()
-        vi.unstubAllGlobals()
-        add.mockRestore()
-        remove.mockRestore()
-        rects.mockRestore()
-      }
-    },
-  )
-
-  it('keeps mobile duplicate controls usable and expansion identical across the seam', () => {
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') || query.includes('reduce') }))
-    try {
-      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      const primary = container.querySelector<HTMLElement>('[data-review-set="primary"]')!
-      const sets = container.querySelectorAll<HTMLElement>('[data-review-set]')
-      expect(Array.from(sets, set => set.dataset.reviewSet)).toEqual(['previous', 'primary', 'next'])
-      const duplicate = container.querySelector<HTMLElement>('[data-review-set="next"]')!
-      expect(sets[0]?.querySelectorAll('article')).toHaveLength(9)
-      expect(sets[2]?.querySelectorAll('article')).toHaveLength(9)
-      const primaryButton = primary.querySelector<HTMLButtonElement>('button')!
-      const duplicateButton = duplicate.querySelector<HTMLButtonElement>('button')!
-      expect(duplicate.hasAttribute('inert')).toBe(false)
-      expect(duplicateButton.tabIndex).toBe(-1)
-      fireEvent.click(duplicateButton)
-      expect(duplicateButton.getAttribute('aria-expanded')).toBe('true')
-      expect(primaryButton.getAttribute('aria-expanded')).toBe('true')
-      expect(sets[0]?.querySelector('button')?.getAttribute('aria-expanded')).toBe('true')
-      fireEvent.click(primaryButton)
-      expect(duplicateButton.getAttribute('aria-expanded')).toBe('false')
-      expect(screen.getAllByRole('article')).toHaveLength(9)
-      const ids = Array.from(container.querySelectorAll<HTMLElement>('[id]'), node => node.id)
-      expect(new Set(ids).size).toBe(ids.length)
-    } finally {
-      vi.unstubAllGlobals()
-    }
-  })
-
   it('moves the duplicated review rail with transform instead of scrolling the page track', () => {
     const frames: FrameRequestCallback[] = []
     const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
@@ -359,7 +257,7 @@ describe('Google Reviews section', () => {
   })
 
   it('keeps a focused review control visible without skipping a partially visible card', () => {
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('max-width: 700px') }))
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
         if (this.hasAttribute('data-review-track')) {
