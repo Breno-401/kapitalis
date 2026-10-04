@@ -14,7 +14,7 @@ export function installReviewsMobileMotion(
   const originalTransform = rail.style.transform
   let position = Number(gsap.getProperty(rail, 'x')) || 0
   let period = 0
-  let wrap = gsap.utils.wrap(0, 1)
+  let wrap = gsap.utils.wrap(1, 2)
   let pointerId: number | null = null
   let startX = 0
   let startPosition = 0
@@ -33,11 +33,21 @@ export function installReviewsMobileMotion(
 
   function measure() {
     const sets = rail.querySelectorAll<HTMLElement>('[data-review-set]')
-    if (sets.length < 2) return
-    // A repeat is one set plus the gap between sets. Outer rail padding is
-    // present only at the endpoints, so it must not enter the repeat period.
-    period = sets[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(rail).columnGap) || 0)
-    if (period > 0) wrap = gsap.utils.wrap(0, period)
+    if (sets.length < 3) return
+    const previousPeriod = period
+    // Start-to-start includes every internal gap and the gap between copies,
+    // while the common outer gutter and transform cancel out of the distance.
+    period = sets[1].getBoundingClientRect().left - sets[0].getBoundingClientRect().left
+    if (period <= 0) return
+    // Start at PRIMARY, with PREVIOUS and NEXT already rendered on both sides.
+    // Rebase this origin if layout changes, including an active drag's origin.
+    position += previousPeriod - period
+    startPosition += previousPeriod - period
+    // Positive travel [period, 2*period) maps to x in (-2*period, -period].
+    // PRIMARY's entire sequence remains reachable by its keyboard controls.
+    wrap = gsap.utils.wrap(period, 2 * period)
+    // The same writer places the initial rail even with reduced motion/offscreen.
+    render(0, 0)
   }
 
   function render(_time: number, deltaTime: number) {
@@ -50,6 +60,8 @@ export function installReviewsMobileMotion(
         position -= deltaTime / 1000 * 16 * restart
       }
     }
+    // Recycle inside the central window, before either physical end can appear.
+    // Pointer distance stays unbounded; equivalent copies preserve card positions.
     position = -wrap(-position)
     gsap.set(rail, { x: position, force3D: true })
     pendingRender = false

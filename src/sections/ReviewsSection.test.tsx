@@ -146,14 +146,8 @@ describe('Google Reviews section', () => {
       const ticks = new Set<gsap.TickerCallback>()
       const add = vi.spyOn(gsap.ticker, 'add').mockImplementation(callback => { ticks.add(callback); return callback })
       const remove = vi.spyOn(gsap.ticker, 'remove').mockImplementation(callback => { ticks.delete(callback) })
-      const getStyle = window.getComputedStyle.bind(window)
-      const computedStyle = vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
-        const style = getStyle(element)
-        if (element.hasAttribute('data-review-rail')) Object.defineProperty(style, 'columnGap', { value: '16px' })
-        return style
-      })
       const rects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
+        const left = this.dataset.reviewSet === 'primary' ? 1016 : this.dataset.reviewSet === 'next' ? 2032 : 0
         return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
       })
       const frame = () => act(() => { for (const tick of ticks) tick(0, 50, 1, 0) })
@@ -173,7 +167,7 @@ describe('Google Reviews section', () => {
         // Pointer listeners must not compete with the render clock for transform.
         expect(rail.style.transform).toBe(before)
         frame()
-        expect(x(rail)).toBeCloseTo(-60.8, 3)
+        expect(x(rail)).toBeCloseTo(-1076.8, 3)
         const held = rail.style.transform
         frame()
         expect(rail.style.transform).toBe(held)
@@ -182,17 +176,17 @@ describe('Google Reviews section', () => {
         fireEvent.lostPointerCapture(track.querySelector('p')!, { pointerType: 'touch', pointerId: 1 })
         move(1, 240)
         frame()
-        expect(x(rail)).toBeCloseTo(-956.8, 3)
+        expect(x(rail)).toBeCloseTo(-1972.8, 3)
         move(1, -2052)
         frame()
-        expect(x(rail)).toBeCloseTo(-200.8, 3)
+        expect(x(rail)).toBeCloseTo(-1216.8, 3)
         fireEvent.pointerUp(window, {pointerType:'touch', pointerId:1})
         const released = rail.style.transform
         frame()
         expect(rail.style.transform).toBe(released)
         act(() => vi.advanceTimersByTime(175))
         frame()
-        expect(x(rail)).toBeCloseTo(-201.2, 3)
+        expect(x(rail)).toBeCloseTo(-1217.2, 3)
         down(2)
         const interrupted = rail.style.transform
         frame()
@@ -212,7 +206,6 @@ describe('Google Reviews section', () => {
         add.mockRestore()
         remove.mockRestore()
         rects.mockRestore()
-        computedStyle.mockRestore()
       }
     },
   )
@@ -222,7 +215,11 @@ describe('Google Reviews section', () => {
     try {
       const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
       const primary = container.querySelector<HTMLElement>('[data-review-set="primary"]')!
-      const duplicate = container.querySelector<HTMLElement>('[data-review-set="duplicate"]')!
+      const sets = container.querySelectorAll<HTMLElement>('[data-review-set]')
+      expect(Array.from(sets, set => set.dataset.reviewSet)).toEqual(['previous', 'primary', 'next'])
+      const duplicate = container.querySelector<HTMLElement>('[data-review-set="next"]')!
+      expect(sets[0]?.querySelectorAll('article')).toHaveLength(9)
+      expect(sets[2]?.querySelectorAll('article')).toHaveLength(9)
       const primaryButton = primary.querySelector<HTMLButtonElement>('button')!
       const duplicateButton = duplicate.querySelector<HTMLButtonElement>('button')!
       expect(duplicate.hasAttribute('inert')).toBe(false)
@@ -230,9 +227,12 @@ describe('Google Reviews section', () => {
       fireEvent.click(duplicateButton)
       expect(duplicateButton.getAttribute('aria-expanded')).toBe('true')
       expect(primaryButton.getAttribute('aria-expanded')).toBe('true')
+      expect(sets[0]?.querySelector('button')?.getAttribute('aria-expanded')).toBe('true')
       fireEvent.click(primaryButton)
       expect(duplicateButton.getAttribute('aria-expanded')).toBe('false')
       expect(screen.getAllByRole('article')).toHaveLength(9)
+      const ids = Array.from(container.querySelectorAll<HTMLElement>('[id]'), node => node.id)
+      expect(new Set(ids).size).toBe(ids.length)
     } finally {
       vi.unstubAllGlobals()
     }

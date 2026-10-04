@@ -71,6 +71,7 @@ function setRailOffset(
 
 export function ReviewsSection({ data }: ReviewsSectionProps) {
   const isMobile = useSyncExternalStore(subscribeMobileViewport, isMobileViewport, () => false)
+  const reviewSets = isMobile ? ['previous', 'primary', 'next'] : ['primary', 'duplicate']
   const [expandedReviews, setExpandedReviews] = useState(new Set<string>())
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
@@ -378,25 +379,25 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
           onClickCapture={handleClickCapture}
         >
           <div className={styles.trackRail} data-review-rail ref={railRef}>
-            {[false, true].map((duplicate) => (
+            {reviewSets.map((set) => (
               <ul
                 className={styles.reviewSet}
-                key={duplicate ? 'duplicate' : 'primary'}
-                data-review-set={duplicate ? 'duplicate' : 'primary'}
-                aria-hidden={duplicate ? 'true' : undefined}
-                inert={(duplicate && !isMobile) || undefined}
+                key={set}
+                data-review-set={set}
+                aria-hidden={set !== 'primary' ? 'true' : undefined}
+                inert={(set !== 'primary' && !isMobile) || undefined}
               >
                 {data.reviews.map((review) => (
                   <li
                     className={styles.trackItem}
-                    key={`${review.id}-${duplicate ? 'duplicate' : 'primary'}`}
+                    key={`${review.id}-${set}`}
                     data-review-card
                   >
                     <ReviewCard
                       review={review}
-                      idPrefix={duplicate ? 'duplicate-' : ''}
+                      idPrefix={set !== 'primary' ? `${set}-` : ''}
                       expanded={isMobile ? expandedReviews.has(review.id) : undefined}
-                      buttonTabIndex={isMobile && duplicate ? -1 : undefined}
+                      buttonTabIndex={isMobile && set !== 'primary' ? -1 : undefined}
                       onToggle={isMobile ? () => setExpandedReviews((current) => {
                         const next = new Set(current)
                         if (next.has(review.id)) next.delete(review.id)
