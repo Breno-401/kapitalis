@@ -491,23 +491,45 @@
     user-select: none;
   }
 
-  .reviewSet[aria-hidden='true'] {
-    pointer-events: auto;
-  }
-
   .trackRail {
     gap: 0.75rem;
     padding-inline: var(--layout-gutter);
   }
 
-  .reviewSet {
-    gap: 0.75rem;
+  .trackFrame[data-review-mobile] {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y pinch-zoom;
   }
 
-  /* The official motor divides list.scrollWidth by the number of copies.
-     Include a trailing gap so that each native copy has the same width. */
-  .reviewSet[bro-marquee-element='list'] {
-    padding-inline-end: 0.75rem;
+  .trackFrame[data-review-mobile]:focus-visible {
+    outline: 2px solid var(--accent, var(--color-gold-soft));
+    outline-offset: -2px;
+  }
+
+  .track[data-review-layout] {
+    position: relative;
+    width: calc(100% - 2 * var(--layout-gutter));
+    margin-inline: var(--layout-gutter);
+    /* The existing masked trackFrame clips the full section width. Let the
+       slide shadows and edge cards reach that mask beyond the layout gutter. */
+    overflow: visible;
+  }
+
+  /* The original frame is Embla's viewport; its container stays inside the
+     approved gutter, with the real cards as direct slides. */
+  .mobileRail {
+    align-items: flex-start;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding-inline: 0;
+    list-style: none;
+  }
+
+  /* Embla reads the last slide's margin to include the cyclic gap in loop. */
+  .mobileRail > .trackItem:last-child {
+    margin-inline-end: 0.75rem;
   }
 
   .trackItem {
