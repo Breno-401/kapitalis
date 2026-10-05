@@ -1,10 +1,10 @@
 [
   {
     "id": "entradas",
-    "eyebrow": "01 · ENTRADAS",
-    "title": "Entradas",
-    "body": "Vendas, bancos, notas, folha e despesas fazem parte de uma mesma rotina financeira.",
-    "items": ["Vendas", "Bancos", "Notas", "Folha", "Despesas"],
+    "eyebrow": "01 · ACOMPANHAMENTO",
+    "title": "Acompanhamento",
+    "body": "Sua empresa não é apenas mais um CNPJ. Na Kapitalis, acompanhamos de perto a rotina da sua empresa, cuidando da contabilidade e das obrigações para que você tenha informações claras e segurança para tomar decisões.",
+    "items": ["Abertura e Fechamento de empresas", "Regularização e Pendência Fiscal", "Departamento Pessoal", "Planejamento Tributário", "BPO Financeiro"],
     "media": {
       "kind": "image",
       "src": "/editorial/escritorio-entradas.png",
@@ -18,22 +18,23 @@
     "id": "organizacao",
     "eyebrow": "02 · ORGANIZAÇÃO",
     "title": "Organização",
-    "body": "Pagamentos, recebimentos, conciliação, tributos e fechamento compõem o acompanhamento do período.",
+    "body": "Sua empresa merece mais do que uma contabilidade que apenas entrega obrigações. Merece acompanhamento, análise e orientação em cada etapa.",
     "items": ["Pagamentos", "Recebimentos", "Conciliação", "Tributos", "Fechamento"],
     "media": {
       "kind": "image",
-      "src": "/editorial/arte-organizacao-servicos.png",
-      "alt": "Cartaz Como podemos ajudar? com abertura de empresa, regularização da situação fiscal, consultoria e gestão empresarial, análise tributária, imposto de renda e assessoria contábil empresarial completa.",
+      "src": "/editorial/alexandre-neto-organizacao.jpg",
+      "alt": "Responsável pela Kapitalis sentado à mesa do escritório, diante de uma estante e de um notebook.",
+      "width": 562,
+      "height": 740,
       "objectPosition": "center center",
-      "fit": "contain",
-      "caption": "Serviços para a rotina empresarial."
+      "fit": "contain"
     }
   },
   {
     "id": "visibilidade",
     "eyebrow": "03 · VISIBILIDADE",
     "title": "Visibilidade",
-    "body": "Fluxo de caixa, compromissos e previsibilidade ajudam a compor a leitura do negócio.",
+    "body": "Com uma contabilidade próxima, você nunca precisará tomar decisões sozinho.",
     "items": ["Fluxo de caixa", "Compromissos", "Previsibilidade"],
     "media": {
       "kind": "image",
@@ -47,7 +48,7 @@
     "id": "decisao",
     "eyebrow": "04 · DECISÃO",
     "title": "Decisão",
-    "body": "Contexto, prioridade e próximo passo podem orientar uma conversa sobre a rotina financeira.",
+    "body": "Decisões melhores começam com informações confiáveis.",
     "items": ["Contexto", "Prioridade", "Próximo passo"],
     "media": {
       "kind": "image",

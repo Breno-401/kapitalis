@@ -89,19 +89,6 @@ function ActivityField({ value, legacy = false, onChange }: { value: TaxSimulati
   )
 }
 
-function RevenueBasisField({ value, disabled = false, onChange }: { value: SharedTaxSimulation['revenueBasis']; disabled?: boolean; onChange: (value: SharedTaxSimulation['revenueBasis']) => void }) {
-  return (
-    <label className={styles.field} data-disabled={disabled}>
-      <span>Quando essa receita foi gerada ou recebida?</span>
-      <select disabled={disabled} value={value} onChange={(event) => onChange(event.target.value as SharedTaxSimulation['revenueBasis'])}>
-        <option value="">Selecione</option>
-        <option value="competencia">No mês em que foi gerada</option>
-        <option value="caixa">No mês em que foi recebida</option>
-      </select>
-    </label>
-  )
-}
-
 type RingSegment = {
   key: string
   label: string
@@ -517,14 +504,6 @@ export function TaxSimulator({ headingId }: { headingId: string }) {
     setSimulation((current) => ({ ...current, profitMargin: value }))
   }
 
-  function updateRevenueBasis(value: SharedTaxSimulation['revenueBasis']) {
-    setSimulation((current) => ({
-      ...current,
-      revenueBasis: value,
-      input: { ...current.input, accrualBasis: value === 'competencia' },
-    }))
-  }
-
   function selectRegime(value: TaxRegime) {
     setSimulation((current) => ({ ...current, regime: value }))
   }
@@ -550,10 +529,9 @@ export function TaxSimulator({ headingId }: { headingId: string }) {
           <div className={styles.columnHeading}><span>Etapa 2</span><h3>Informe os dados</h3></div>
           {regime === 'simples' ? (
             <>
-              <MoneyField label="Quanto faturou neste mês?" value={input.monthlyRevenue} onChange={(value) => update('monthlyRevenue', value)} />
+              <MoneyField label="Quanto faturou neste mês?" hint="Considere a receita no mês em que foi gerada." value={input.monthlyRevenue} onChange={(value) => update('monthlyRevenue', value)} />
               <MoneyField label="Quanto faturou nos últimos 12 meses?" hint="Ajuda a estimar o imposto pelo faturamento do ano." value={input.rbt12} onChange={(value) => update('rbt12', value)} />
               <ActivityField value={input.activity} onChange={(value) => update('activity', value)} />
-              <RevenueBasisField value={simulation.revenueBasis} onChange={updateRevenueBasis} />
             </>
           ) : regime === 'presumido' ? (
             <>

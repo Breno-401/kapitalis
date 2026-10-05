@@ -75,8 +75,8 @@ export function HeroSection() {
                     <path d="M4.5 10h10m-4-4 4 4-4 4" />
                   </svg>
                 </a>
-                <a className={styles.secondaryAction} href="#sistema">
-                  Conhecer o sistema Kapitalis
+            <a className={styles.secondaryAction} href="#sistema">
+                  Como a Kapitalis acompanha sua empresa
                 </a>
               </div>
             </div>
@@ -104,8 +104,8 @@ export function HeroSection() {
               className={styles.systemLabel}
               data-system-visible={systemVisible}
             >
-              <p>Sistema financeiro em perspectiva</p>
-              <h2 id="system-title">Sistema Kapitalis</h2>
+              <p>Serviços contábeis e BPO financeiro</p>
+              <h2 id="system-title">Kapitalis Contabilidade &amp; BPO Financeiro</h2>
             </div>
 
             <div className={styles.corePosition}>
@@ -122,7 +122,7 @@ export function HeroSection() {
               data-reveal="quiet"
               data-reveal-initial
               href="#sistema"
-              aria-label="Rolar para o Sistema Kapitalis"
+              aria-label="Conhecer o acompanhamento da Kapitalis"
               tabIndex={introHidden ? -1 : undefined}
             >
               <span aria-hidden="true">SCROLL</span>

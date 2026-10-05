@@ -14,7 +14,7 @@ describe('Kapitalis hero', () => {
     expect(primaryAction.getAttribute('rel')).toBe('noopener noreferrer')
 
     const secondaryAction = screen.getByRole('link', {
-      name: 'Conhecer o sistema Kapitalis',
+      name: 'Como a Kapitalis acompanha sua empresa',
     })
     expect(secondaryAction.getAttribute('href')).toBe('#sistema')
     expect(secondaryAction.tagName).toBe('A')
@@ -25,19 +25,20 @@ describe('Kapitalis hero', () => {
 
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     expect(document.querySelectorAll('[data-financial-core]')).toHaveLength(1)
-    expect(screen.getByRole('heading', { name: 'Sistema Kapitalis' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Kapitalis Contabilidade & BPO Financeiro' })).toBeTruthy()
+    expect(screen.queryByText(/Sistema Kapitalis/i)).toBeNull()
     expect(
       screen.queryByRole('region', { name: 'Mesa de Controle Financeira' }),
     ).toBeNull()
     const scrollCue = screen.getByRole('link', {
-      name: 'Rolar para o Sistema Kapitalis',
+      name: 'Conhecer o acompanhamento da Kapitalis',
     })
     expect(scrollCue.getAttribute('href')).toBe('#sistema')
     expect(scrollCue.textContent?.trim()).toBe('SCROLL')
     expect(scrollCue.querySelectorAll('[data-scroll-indicator]')).toHaveLength(1)
 
     const heading = screen.getByRole('heading', { level: 1 })
-    const firstChapter = screen.getByText('01 · ENTRADAS')
+    const firstChapter = screen.getByText('01 · ACOMPANHAMENTO')
     expect(
       heading.compareDocumentPosition(firstChapter) &
         Node.DOCUMENT_POSITION_FOLLOWING,
@@ -55,7 +56,7 @@ describe('Kapitalis hero', () => {
       portrait.closest('[data-hero-portrait]')?.getAttribute('data-portrait-crop'),
     ).toBe('upper-torso')
     expect(document.querySelectorAll('[data-financial-core]')).toHaveLength(1)
-    expect(screen.getByRole('heading', { name: 'Sistema Kapitalis' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Kapitalis Contabilidade & BPO Financeiro' })).toBeTruthy()
   })
 
   it('hero_eyebrow_has_no_decorative_dash_and_preserves_locality_punctuation', () => {
@@ -89,7 +90,7 @@ describe('Kapitalis hero', () => {
       expect(document.querySelector('[data-intro-hidden="true"]')).toBeNull()
       expect(screen.getByRole('heading', { name: /Seus números sob controle/ }))
         .toBeTruthy()
-      expect(screen.getByRole('heading', { name: 'Entradas' })).toBeTruthy()
+      expect(screen.getByRole('heading', { name: 'Acompanhamento' })).toBeTruthy()
     } finally {
       vi.unstubAllGlobals()
       Object.defineProperty(window, 'innerWidth', {

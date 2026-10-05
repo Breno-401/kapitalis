@@ -5,33 +5,33 @@ import styles from './ProcessSection.module.css'
 
 const steps = [
   {
-    title: 'Entender a operação',
-    description: 'Entender como informações, pagamentos, recebimentos e responsabilidades circulam hoje.',
-    result: 'Uma visão clara de como a rotina funciona atualmente.',
+    title: 'CONHECER O SEU NEGÓCIO',
+    description: 'Antes de cuidar da contabilidade, entendemos como sua empresa funciona, quais são suas necessidades e quais desafios fazem parte da sua rotina.',
+    result: '➡️ Uma contabilidade que conhece o seu negócio de verdade.',
     points: [[18, 22], [112, 18], [64, 70], [146, 98], [26, 132]],
   },
   {
-    title: 'Organizar os dados',
-    description: 'Reunir as informações necessárias e criar uma base organizada para o acompanhamento.',
-    result: 'Informações financeiras reunidas e estruturadas.',
+    title: 'ORGANIZAR A EMPRESA',
+    description: 'Organizamos as informações contábeis, fiscais, trabalhistas e tributárias para que sua empresa tenha uma base segura para seguir em frente.',
+    result: '➡️ Mais organização, segurança e tranquilidade para manter sua empresa em dia.',
     points: [[28, 32], [80, 32], [132, 32], [54, 112], [106, 112]],
   },
   {
-    title: 'Assumir as rotinas',
-    description: 'Acompanhar os processos recorrentes e reduzir a carga operacional da empresa.',
-    result: 'Rotinas acompanhadas com mais consistência.',
+    title: 'CUIDAR DAS OBRIGAÇÕES',
+    description: 'Acompanhamos de perto as rotinas contábeis, fiscais e trabalhistas, cuidando das apurações e das obrigações necessárias para manter sua empresa regularizada.',
+    result: '➡️ A tranquilidade de saber que sua empresa está sendo acompanhada.',
     points: [[24, 80], [52, 80], [80, 80], [108, 80], [136, 80]],
   },
   {
-    title: 'Entregar informação',
-    description: 'Consolidar os movimentos do período em uma leitura mais clara.',
-    result: 'Uma visão organizada do período para apoiar decisões.',
+    title: 'ANALISAR OS NÚMEROS',
+    description: 'A contabilidade não precisa ser apenas uma obrigação. Analisamos as informações da sua empresa para ajudar você a compreender resultados, custos, impostos e o desempenho do negócio.',
+    result: '➡️ Clareza para entender o que os números realmente dizem sobre sua empresa.',
     points: [[24, 28], [24, 80], [24, 132], [84, 80], [140, 80]],
   },
   {
-    title: 'Acompanhar decisões',
-    description: 'Usar contexto e histórico para acompanhar prioridades e próximos passos.',
-    result: 'Mais contexto para planejar o que vem depois.',
+    title: 'ORIENTAR SUAS DECISÕES',
+    description: 'Com informações organizadas e uma visão completa do negócio, ajudamos você a identificar oportunidades, antecipar necessidades e planejar os próximos passos.',
+    result: '➡️ Mais segurança para decidir hoje e planejar o crescimento de amanhã.',
     points: [[24, 124], [52, 98], [80, 72], [108, 46], [136, 20]],
   },
 ] as const

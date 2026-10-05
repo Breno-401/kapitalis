@@ -54,12 +54,16 @@ describe('editorial process section', () => {
     expect(within(region).getAllByRole('article').map((article) =>
       within(article).getByRole('heading').textContent,
     )).toEqual([
-      'Entender a operação', 'Organizar os dados', 'Assumir as rotinas',
-      'Entregar informação', 'Acompanhar decisões',
+      'CONHECER O SEU NEGÓCIO', 'ORGANIZAR A EMPRESA', 'CUIDAR DAS OBRIGAÇÕES',
+      'ANALISAR OS NÚMEROS', 'ORIENTAR SUAS DECISÕES',
     ])
     expect(within(region).getAllByText('O QUE VOCÊ PASSA A TER')).toHaveLength(5)
-    expect(within(region).getByText('Uma visão organizada do período para apoiar decisões.')).toBeTruthy()
-    expect(within(region).getByText('Mais contexto para planejar o que vem depois.')).toBeTruthy()
+    expect(within(region).getByText('Antes de cuidar da contabilidade, entendemos como sua empresa funciona, quais são suas necessidades e quais desafios fazem parte da sua rotina.')).toBeTruthy()
+    expect(within(region).getByText('➡️ Uma contabilidade que conhece o seu negócio de verdade.')).toBeTruthy()
+    expect(within(region).getByText('➡️ Mais organização, segurança e tranquilidade para manter sua empresa em dia.')).toBeTruthy()
+    expect(within(region).getByText('➡️ A tranquilidade de saber que sua empresa está sendo acompanhada.')).toBeTruthy()
+    expect(within(region).getByText('➡️ Clareza para entender o que os números realmente dizem sobre sua empresa.')).toBeTruthy()
+    expect(within(region).getByText('➡️ Mais segurança para decidir hoje e planejar o crescimento de amanhã.')).toBeTruthy()
     expect(within(region).queryByRole('tab')).toBeNull()
     expect(within(region).queryByRole('button')).toBeNull()
     expect(within(region).getByText('Etapas conceituais')).toBeTruthy()

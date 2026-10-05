@@ -12,11 +12,11 @@ const coreCenter = 320
 const outerOrbitRadius = 262
 
 const sources = [
-  { id: 'bancos', label: 'Bancos', x: 320, y: 74 },
-  { id: 'vendas', label: 'Vendas', x: 545, y: 212 },
-  { id: 'notas', label: 'Notas', x: 460, y: 474 },
-  { id: 'folha', label: 'Folha', x: 180, y: 474 },
-  { id: 'despesas', label: 'Despesas', x: 95, y: 212 },
+  { id: 'bancos', label: 'Abertura e Fechamento de empresas', lines: ['Abertura e', 'Fechamento', 'de empresas'], x: 320, y: 74 },
+  { id: 'vendas', label: 'BPO Financeiro', lines: ['BPO Financeiro'], x: 545, y: 212 },
+  { id: 'notas', label: 'Departamento Pessoal', lines: ['Departamento Pessoal'], x: 460, y: 474 },
+  { id: 'folha', label: 'Planejamento Tributário', lines: ['Planejamento Tributário'], x: 180, y: 474 },
+  { id: 'despesas', label: 'Regularização e Pendência Fiscal', lines: ['Regularização e', 'Pendência', 'Fiscal'], x: 95, y: 212 },
 ].map(source => {
   // Keep each source's angle, but place its center exactly on the outer orbit.
   const dx = source.x - coreCenter
@@ -222,7 +222,7 @@ export function FinancialCore({
           ))}
         </g>
 
-        {sources.map(({ id, label, x, y }) => (
+        {sources.map(({ id, label, lines, x, y }) => (
           <g
             className={styles.node}
             data-financial-node={label}
@@ -241,7 +241,9 @@ export function FinancialCore({
               textAnchor="middle"
               y="49"
             >
-              {label}
+              {lines.map((line, index) => (
+                <tspan dy={index === 0 ? 0 : '1.1em'} key={line} x="0">{line}</tspan>
+              ))}
             </text>
           </g>
         ))}

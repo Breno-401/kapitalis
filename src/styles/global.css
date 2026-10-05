@@ -34,6 +34,38 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body::after {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 52rem 38rem at 88% 20%, rgb(48 112 190 / 9%), transparent 72%),
+    radial-gradient(ellipse 46rem 34rem at 12% 76%, rgb(33 91 160 / 5.5%), transparent 74%);
+  content: '';
+  pointer-events: none;
+}
+
+:root[data-theme='light'] body::after {
+  background-image:
+    radial-gradient(ellipse 52rem 38rem at 88% 20%, rgb(50 108 178 / 6.5%), transparent 72%),
+    radial-gradient(ellipse 46rem 34rem at 12% 76%, rgb(33 91 160 / 3.5%), transparent 74%);
+}
+
+@media (max-width: 43.75rem) {
+  body::after,
+  :root[data-theme='light'] body::after {
+    background-image:
+      radial-gradient(ellipse 36rem 31rem at 100% 17%, rgb(48 112 190 / 7.5%), transparent 72%),
+      radial-gradient(ellipse 32rem 29rem at 0% 78%, rgb(33 91 160 / 4.5%), transparent 74%);
+  }
+
+  :root[data-theme='light'] body::after {
+    background-image:
+      radial-gradient(ellipse 36rem 31rem at 100% 17%, rgb(50 108 178 / 5.5%), transparent 72%),
+      radial-gradient(ellipse 32rem 29rem at 0% 78%, rgb(33 91 160 / 3%), transparent 74%);
+  }
+}
+
 button,
 input,
 select,

@@ -7,30 +7,30 @@ import { StorySection } from './StorySection'
 const chapters: readonly StoryChapter[] = [
   {
     id: 'entradas',
-    eyebrow: '01 · ENTRADAS',
-    title: 'Entradas',
-    body: 'As diferentes fontes da rotina financeira.',
-    items: ['Vendas', 'Bancos', 'Notas', 'Folha', 'Despesas'],
+    eyebrow: '01 · ACOMPANHAMENTO',
+    title: 'Acompanhamento',
+    body: 'Sua empresa não é apenas mais um CNPJ. Na Kapitalis, acompanhamos de perto a rotina da sua empresa, cuidando da contabilidade e das obrigações para que você tenha informações claras e segurança para tomar decisões.',
+    items: ['Abertura e Fechamento de empresas', 'Regularização e Pendência Fiscal', 'Departamento Pessoal', 'Planejamento Tributário', 'BPO Financeiro'],
   },
   {
     id: 'organizacao',
     eyebrow: '02 · ORGANIZAÇÃO',
     title: 'Organização',
-    body: 'As rotinas financeiras em uma mesma leitura.',
+    body: 'Sua empresa merece mais do que uma contabilidade que apenas entrega obrigações. Merece acompanhamento, análise e orientação em cada etapa.',
     items: ['Pagamentos', 'Recebimentos', 'Conciliação', 'Tributos', 'Fechamento'],
   },
   {
     id: 'visibilidade',
     eyebrow: '03 · VISIBILIDADE',
     title: 'Visibilidade',
-    body: 'Leituras para acompanhar o período.',
+    body: 'Com uma contabilidade próxima, você nunca precisará tomar decisões sozinho.',
     items: ['Fluxo de caixa', 'Compromissos', 'Previsibilidade'],
   },
   {
     id: 'decisao',
     eyebrow: '04 · DECISÃO',
     title: 'Decisão',
-    body: 'Contexto para organizar uma próxima conversa.',
+    body: 'Decisões melhores começam com informações confiáveis.',
     items: ['Contexto', 'Prioridade', 'Próximo passo'],
   },
 ]
@@ -82,7 +82,7 @@ describe('Kapitalis system story', () => {
       media.map((frame) => frame.querySelector('img')?.getAttribute('src')),
     ).toEqual([
       '/editorial/escritorio-entradas.png',
-      '/editorial/arte-organizacao-servicos.png',
+      '/editorial/alexandre-neto-organizacao.jpg',
       '/editorial/visibilidade-encontro-cutout.png',
       '/editorial/atendimento-decisao.png',
     ])
@@ -90,13 +90,19 @@ describe('Kapitalis system story', () => {
       '[data-story-id="visibilidade"] [data-story-media]',
     )
     expect(portrait?.getAttribute('data-fit')).toBe('contain')
+    expect(container.querySelector('[data-story-id="organizacao"] img')?.getAttribute('width')).toBe('562')
+    expect(container.querySelector('[data-story-id="organizacao"] img')?.getAttribute('height')).toBe('740')
     expect(portrait?.querySelector('figcaption')).toBeNull()
     expect(container.querySelector('[data-story-id="entradas"] [data-story-media]')
       ?.getAttribute('data-revealed')).toBe('true')
-    expect(screen.getByText('Estrutura para acompanhar a rotina de perto.'))
-      .toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Acompanhamento' })).toBeTruthy()
+    expect(screen.getByText(chapters[0]!.body)).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Organização' })).toBeTruthy()
+    expect(screen.getByText(chapters[1]!.body)).toBeTruthy()
+    expect(screen.getByText(chapters[2]!.body)).toBeTruthy()
+    expect(screen.getByText(chapters[3]!.body)).toBeTruthy()
     expect(screen.getByRole('img', {
-      name: /mesa em L, cadeira de escritório, poltronas, notebook e planta/i,
+      name: /responsável pela Kapitalis sentado à mesa do escritório, diante de uma estante e de um notebook/i,
     })).toBeTruthy()
     expect(screen.getByRole('img', {
       name: /uma pessoa está atrás da mesa e duas pessoas estão sentadas de frente/i,

@@ -3,20 +3,24 @@ import styles from './FaqSection.module.css'
 
 const questions = [
   {
-    question: 'Como saber se o caixa realmente está disponível?',
-    answer: 'Olhar entradas e saídas junto com os compromissos do período ajuda a entender o que está disponível. A conciliação financeira e o fluxo de caixa organizam essa leitura.',
+    question: 'Posso misturar as contas da empresa com a minha conta pessoal?',
+    answer: 'Não pode haver confusão patrimonial. A empresa deve ter sua própria conta e suas movimentações financeiras separadas das despesas pessoais dos sócios. Essa organização facilita o controle financeiro, a contabilidade e a correta apuração dos resultados da empresa.',
   },
   {
-    question: 'Como organizar pagamentos e recebimentos?',
-    answer: 'A rotina pode reunir contas a pagar e a receber, conciliação financeira, fluxo de caixa e relatórios em um mesmo acompanhamento.',
+    question: 'Quanto o MEI pode faturar por ano? Existe limite mensal?',
+    answer: 'O MEI possui um limite de faturamento anual de R$ 81 mil por ano, e por mês R$ 6.750,00. O faturamento pode variar de um mês para outro, desde que o limite anual seja respeitado. É importante acompanhar o faturamento ao longo do ano para evitar ultrapassar o limite sem planejamento.',
   },
   {
-    question: 'Como antecipar tributos e obrigações?',
-    answer: 'Organizar o calendário financeiro e contábil ajuda a acompanhar tributos e obrigações antes dos vencimentos. A equipe pode conversar sobre o que se aplica à empresa.',
+    question: 'Preciso emitir nota fiscal de todas as minhas vendas e serviços?',
+    answer: 'Sim! A emissão da nota fiscal é fundamental para formalizar e comprovar as operações realizadas pela empresa. A nota deve ser emitida mesmo que o cliente não a solicite. Dessa forma, a empresa mantém suas receitas devidamente documentadas e a contabilidade consegue registrar corretamente toda a movimentação, garantindo mais segurança e transparência.',
   },
   {
-    question: 'Como ter mais previsibilidade financeira?',
-    answer: 'Com pagamentos, recebimentos, compromissos e fluxo de caixa organizados, os relatórios ajudam a acompanhar o período e pensar nos próximos passos.',
+    question: 'Posso retirar dinheiro da empresa para pagar minhas despesas pessoais?',
+    answer: 'O dinheiro da empresa não deve ser tratado como dinheiro pessoal do sócio. As retiradas precisam ser organizadas e registradas corretamente, podendo ocorrer, conforme o caso, por meio de pró-labore ou distribuição de lucros. Separar essas movimentações evita problemas financeiros e contábeis.',
+  },
+  {
+    question: 'Como saber se estou pagando impostos demais?',
+    answer: 'O valor dos impostos depende de diversos fatores, como atividade, faturamento, regime tributário, folha de pagamento e forma de tributação. Uma análise tributária permite verificar se a empresa está enquadrada corretamente e se existem oportunidades legais para reduzir a carga tributária.',
   },
 ] as const
 

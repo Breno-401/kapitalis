@@ -31,8 +31,8 @@ export function StoryMedia({ media, revealed = true }: StoryMediaProps) {
             alt={media.alt}
             loading="lazy"
             decoding="async"
-            width="960"
-            height="600"
+            width={media.width ?? 960}
+            height={media.height ?? 600}
             style={
               media.objectPosition
                 ? { objectPosition: media.objectPosition }

@@ -18,7 +18,9 @@
 
 .chapter {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: center;
+  min-width: 0;
   min-height: 100svh;
   padding: clamp(3rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem);
   border-top: 1px solid var(--color-on-dark-border-medium);
@@ -64,6 +66,12 @@
   padding: 0.5rem;
   background: var(--surface-raised);
   object-fit: contain;
+}
+
+.chapter[data-story-id='organizacao'] .mediaFrame {
+  width: min(100%, 28rem);
+  aspect-ratio: 562 / 740;
+  background: transparent;
 }
 
 .mediaCaption {
@@ -183,7 +191,7 @@
 
   .chapter h3 {
     max-width: 12ch;
-    font-size: clamp(2.8rem, 11vw, 4rem);
+    font-size: clamp(2.2rem, 11vw, 4rem);
   }
 
   .chapterBody {

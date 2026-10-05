@@ -168,13 +168,15 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it('pauses on hover and focus, supports pointer dragging, and resumes without a jump', () => {
-    const frames: FrameRequestCallback[] = []
+  it('pauses only on mouse hover and resumes immediately without manual navigation', () => {
+    const frames = new Map<number, FrameRequestCallback>()
+    let nextFrame = 0
     const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-      frames.push(callback)
-      return frames.length
+      const id = ++nextFrame
+      frames.set(id, callback)
+      return id
     })
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
+    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation((id) => { frames.delete(id) })
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
@@ -186,33 +188,47 @@ describe('Google Reviews section', () => {
       const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
       const track = container.querySelector<HTMLElement>('[data-review-track]')!
       const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
+      expect(track.hasAttribute('tabindex')).toBe(false)
 
-      fireEvent.pointerEnter(track, { pointerType: 'mouse' })
-      frames.shift()?.(16)
-      frames.shift()?.(1016)
-      expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
+      const runFrame = (time: number) => {
+        const entry = frames.entries().next().value as [number, FrameRequestCallback] | undefined
+        expect(entry).toBeTruthy()
+        frames.delete(entry![0])
+        entry![1](time)
+      }
 
+      runFrame(16)
+      runFrame(1016)
+      expect(rail.style.transform).toBe('translate3d(-1.92px, 0, 0)')
+      const beforeHover = rail.style.transform
+
+      fireEvent.mouseEnter(track)
+      expect(frames.size).toBe(0)
       fireEvent.pointerDown(track, {
         pointerType: 'mouse',
         pointerId: 1,
         clientX: 200,
         button: 0,
       })
-      fireEvent.pointerMove(track, {
+      fireEvent.pointerMove(window, {
         pointerType: 'mouse',
         pointerId: 1,
         clientX: 160,
         button: 0,
       })
-      expect(rail.style.transform).toBe('translate3d(-40px, 0, 0)')
+      expect(rail.style.transform).toBe(beforeHover)
 
-      fireEvent.pointerUp(track, { pointerType: 'mouse', pointerId: 1 })
-      frames.shift()?.(2016)
-      expect(rail.style.transform).toBe('translate3d(-40px, 0, 0)')
+      fireEvent.mouseLeave(track)
+      expect(frames.size).toBe(1)
+      runFrame(2016)
+      runFrame(3016)
+      expect(rail.style.transform).toBe('translate3d(-3.84px, 0, 0)')
 
-      fireEvent.pointerLeave(track, { pointerType: 'mouse' })
-      frames.shift()?.(3016)
-      expect(rail.style.transform).not.toBe('translate3d(-40px, 0, 0)')
+      const reviewButton = within(screen.getByRole('article', { name: 'Avaliação de Rafael de Oliveira Matos' }))
+        .getByRole('button', { name: 'Ler mais' })
+      fireEvent.focus(reviewButton)
+      runFrame(4016)
+      expect(rail.style.transform).toBe('translate3d(-5.76px, 0, 0)')
     } finally {
       vi.unstubAllGlobals()
       requestFrame.mockRestore()
@@ -221,42 +237,7 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it('pauses_automatic_motion_while_review_content_has_keyboard_focus', () => {
-    const frames: FrameRequestCallback[] = []
-    const requestFrame = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
-      frames.push(callback)
-      return frames.length
-    })
-    const cancelFrame = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
-    vi.stubGlobal('matchMedia', () => ({ matches: false }))
-    const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: HTMLElement) {
-        const left = this.dataset.reviewSet === 'duplicate' ? 1016 : 0
-        return { left, right: left + 1000, width: 1000, top: 0, bottom: 400, height: 400 } as DOMRect
-      })
-
-    try {
-      const { container } = render(<ReviewsSection data={googleReviewsSnapshot} />)
-      const track = container.querySelector<HTMLElement>('[data-review-track]')!
-      const rail = container.querySelector<HTMLElement>('[data-review-rail]')!
-
-      fireEvent.focus(track)
-      frames.shift()?.(16)
-      frames.shift()?.(1016)
-      expect(rail.style.transform).toBe('translate3d(0px, 0, 0)')
-
-      fireEvent.blur(track, { relatedTarget: document.body })
-      frames.shift()?.(2016)
-      expect(rail.style.transform).not.toBe('translate3d(0px, 0, 0)')
-    } finally {
-      vi.unstubAllGlobals()
-      requestFrame.mockRestore()
-      cancelFrame.mockRestore()
-      measureRects.mockRestore()
-    }
-  })
-
-  it('keeps a focused review control visible without skipping a partially visible card', () => {
+  it('keeps review controls accessible without using keyboard focus to navigate the rail', () => {
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {
@@ -289,7 +270,7 @@ describe('Google Reviews section', () => {
     }
   })
 
-  it('does not start a drag from an interactive review control', () => {
+  it('does not respond to manual pointer dragging on review controls', () => {
     vi.stubGlobal('matchMedia', () => ({ matches: false }))
     const measureRects = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect')
       .mockImplementation(function (this: HTMLElement) {

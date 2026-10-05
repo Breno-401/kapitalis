@@ -249,18 +249,7 @@
   height: 100%;
   margin: 0;
   overflow: hidden;
-  cursor: grab;
   touch-action: pan-y;
-}
-
-.track[data-dragging='true'] {
-  cursor: grabbing;
-  user-select: none;
-}
-
-.track:focus-visible {
-  outline: 2px solid var(--accent, var(--color-gold-soft));
-  outline-offset: -2px;
 }
 
 .trackRail {
@@ -488,7 +477,6 @@
     height: auto;
     min-height: inherit;
     margin: 0;
-    user-select: none;
   }
 
   .trackRail {
@@ -498,13 +486,7 @@
 
   .trackFrame[data-review-mobile] {
     overflow: hidden;
-    cursor: grab;
     touch-action: pan-y pinch-zoom;
-  }
-
-  .trackFrame[data-review-mobile]:focus-visible {
-    outline: 2px solid var(--accent, var(--color-gold-soft));
-    outline-offset: -2px;
   }
 
   .track[data-review-layout] {

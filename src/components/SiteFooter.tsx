@@ -6,7 +6,7 @@ import styles from './SiteFooter.module.css'
 const footerNavigation = [
   { href: '#inicio', label: 'Início' },
   { href: '#duvidas-frequentes', label: 'FAQ' },
-  { href: '#sistema', label: 'Sistema Kapitalis' },
+  { href: '#sistema', label: 'Contabilidade & BPO Financeiro' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#processo', label: 'Processo' },

@@ -34,7 +34,7 @@ const approvedAnchors = [
 ]
 
 const expectedNavigation = [
-  'Sistema',
+  'Acompanhamento',
   'Serviços',
   'BPO Financeiro',
   'Ferramentas',
@@ -142,7 +142,7 @@ describe('site navigation', () => {
       within(navigation).getByRole('link', { name: 'FAQ' }).getAttribute('href'),
     ).toBe('#duvidas-frequentes')
     expect(
-      within(navigation).getByRole('link', { name: 'Sistema' }).getAttribute('href'),
+      within(navigation).getByRole('link', { name: 'Acompanhamento' }).getAttribute('href'),
     ).toBe('#sistema')
     expect(
       within(header).getAllByRole('link', { name: 'Conversar no WhatsApp (abre em nova aba)' }),

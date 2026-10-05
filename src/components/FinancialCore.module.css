@@ -179,6 +179,10 @@
   transition: opacity 360ms var(--ease-standard);
 }
 
+.nodeLabel tspan {
+  dominant-baseline: alphabetic;
+}
+
 .centerHalo {
   fill: var(--system-center-halo);
   opacity: var(--system-halo-muted-opacity);

@@ -21,7 +21,7 @@ export function StorySection({
 }: StorySectionProps) {
   return (
     <section
-      aria-label="Narrativa do Sistema Kapitalis"
+      aria-label="Acompanhamento contábil e financeiro Kapitalis"
       className={styles.storySection}
       ref={rootRef}
     >

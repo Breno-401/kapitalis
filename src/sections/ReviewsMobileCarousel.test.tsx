@@ -49,21 +49,22 @@ describe('official mobile Embla integration', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('uses the official loop/dragFree and Auto Scroll configuration', async () => {
+  it('uses the infinite Auto Scroll engine with manual dragging disabled', async () => {
     render(<ReviewsSection data={googleReviewsSnapshot} />)
     await act(async () => {})
     expect(createEmbla).toHaveBeenCalledTimes(1)
-    expect(instances[0]!.options).toEqual({ loop: true, dragFree: true, containScroll: false, align: 'start', container: '[data-review-rail]' })
+    expect(instances[0]!.options).toEqual({ loop: true, watchDrag: false, containScroll: false, align: 'start', container: '[data-review-rail]' })
     expect(instances[0]!.plugins).toHaveLength(1)
     expect(instances[0]!.plugins[0]!.name).toBe('autoScroll')
     expect(instances[0]!.plugins[0]!.options).toEqual({
-      speed: 0.266,
+      speed: 0.32,
       startDelay: 0,
       stopOnInteraction: false,
       stopOnMouseEnter: false,
       stopOnFocusIn: false,
       breakpoints: { '(prefers-reduced-motion: reduce)': { active: false } },
     })
+    expect(instances[0]!.viewport.hasAttribute('tabindex')).toBe(false)
   })
 
   it('keeps React expansion local to one review without recreating the carousel', async () => {

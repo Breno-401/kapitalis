@@ -6,7 +6,7 @@ import { BrandMark } from './BrandMark'
 import styles from './SiteHeader.module.css'
 
 const navigation = [
-  { href: '#sistema', label: 'Sistema' },
+  { href: '#sistema', label: 'Acompanhamento' },
   { href: '#servicos', label: 'Serviços' },
   { href: '#bpo', label: 'BPO Financeiro' },
   { href: '#conteudo', label: 'Ferramentas' },

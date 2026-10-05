@@ -1,9 +1,9 @@
-import { useEffect, useRef, useSyncExternalStore } from 'react'
-import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
 import { GoogleMark } from '../components/GoogleMark'
 import { ReviewCard } from './ReviewCard'
 import { ReviewsMobileCarousel } from './ReviewsMobileCarousel'
+import { useInfiniteReviewRail } from './useInfiniteReviewRail'
 import styles from './ReviewsSection.module.css'
 
 type ReviewsSectionProps = {
@@ -11,6 +11,7 @@ type ReviewsSectionProps = {
 }
 
 const mobileQuery = '(max-width: 700px)'
+const reviewSets = ['primary', 'duplicate'] as const
 
 function subscribeMobileViewport(onChange: () => void) {
   const media = window.matchMedia?.(mobileQuery)
@@ -20,13 +21,6 @@ function subscribeMobileViewport(onChange: () => void) {
 
 function isMobileViewport() {
   return window.matchMedia?.(mobileQuery).matches ?? false
-}
-
-type DragState = {
-  pointerId: number
-  startX: number
-  startOffset: number
-  moved: boolean
 }
 
 function GoogleProfileArrow() {
@@ -49,253 +43,24 @@ function ReviewStars({ rating }: { rating: number }) {
   )
 }
 
-function isTrackInViewport(track: HTMLElement) {
-  const rect = track.getBoundingClientRect()
-  const width = window.innerWidth || document.documentElement.clientWidth
-  const height = window.innerHeight || document.documentElement.clientHeight
-  return rect.bottom > 0 && rect.right > 0 && rect.top < height && rect.left < width
-}
-
-function setRailOffset(
-  rail: HTMLDivElement,
-  offset: { current: number },
-  seam: { current: number },
-  nextOffset: number,
-) {
-  const period = seam.current
-  // Wrapping to the duplicate set keeps the visible cards continuous at the loop seam.
-  const normalized = period > 0 ? ((nextOffset % period) + period) % period : 0
-  offset.current = normalized
-  rail.style.transform = `translate3d(${-Number(normalized.toFixed(3))}px, 0, 0)`
-}
-
 export function ReviewsSection({ data }: ReviewsSectionProps) {
   const isMobile = useSyncExternalStore(subscribeMobileViewport, isMobileViewport, () => false)
-  const reviewSets = ['primary', 'duplicate']
-  const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
-  const offsetRef = useRef(0)
-  const seamRef = useRef(0)
-  const pauseReasonsRef = useRef(new Set<string>())
-  const dragRef = useRef<DragState | null>(null)
-  const suppressClickUntilRef = useRef(0)
-  const pauseAutoplayRef = useRef<() => void>(() => {})
-  const resumeAutoplayRef = useRef<() => void>(() => {})
-  const finishDragRef = useRef<(pointerId: number) => void>(() => {})
+  useInfiniteReviewRail({
+    enabled: !isMobile,
+    items: data.reviews,
+    trackRef,
+    railRef,
+  })
 
   const formattedRating = data.averageRating.toLocaleString('pt-BR', {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })
-  const reviewVolume =
-    data.totalReviews > 50
-      ? 'Mais de 50 avaliações no Google'
-      : `${data.totalReviews} avaliações no Google`
-
-  useEffect(() => {
-    if (isMobile) return
-    const section = sectionRef.current
-    const track = trackRef.current
-    const rail = railRef.current
-    if (!section || !track || !rail) return
-    const activeTrack = track as HTMLDivElement
-    const activeRail = rail as HTMLDivElement
-
-    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')
-    const hasIntersectionObserver = typeof IntersectionObserver !== 'undefined'
-    let frame: number | null = null
-    let lastTime: number | null = null
-    let isVisible = hasIntersectionObserver ? false : isTrackInViewport(activeTrack)
-    let pageVisible = document.visibilityState !== 'hidden'
-
-    function moveRail(nextOffset: number) {
-      setRailOffset(activeRail, offsetRef, seamRef, nextOffset)
-    }
-
-    function measureSeam() {
-      const sets = activeRail.querySelectorAll<HTMLElement>('[data-review-set]')
-      if (sets.length < 2) return
-      const [primary, duplicate] = Array.from(sets)
-      seamRef.current = duplicate!.getBoundingClientRect().left - primary!.getBoundingClientRect().left
-      if (seamRef.current > 0) moveRail(offsetRef.current)
-    }
-
-    function stopAutoplay() {
-      if (frame !== null) {
-        window.cancelAnimationFrame(frame)
-        frame = null
-      }
-      lastTime = null
-    }
-
-    function advance(timestamp: number) {
-      if (lastTime !== null && pauseReasonsRef.current.size === 0 && !dragRef.current) {
-        const elapsed = Math.min(timestamp - lastTime, 80)
-        const pixelsPerSecond = 20
-        moveRail(offsetRef.current + (elapsed * pixelsPerSecond) / 1000)
-      }
-      lastTime = timestamp
-      frame = window.requestAnimationFrame(advance)
-    }
-
-    function startAutoplay() {
-      if (
-        frame !== null ||
-        !isVisible ||
-        !pageVisible ||
-        reducedMotion?.matches ||
-        pauseReasonsRef.current.size > 0 ||
-        dragRef.current
-      ) return
-      lastTime = null
-      frame = window.requestAnimationFrame(advance)
-    }
-
-    pauseAutoplayRef.current = stopAutoplay
-    resumeAutoplayRef.current = startAutoplay
-
-    function syncLayout() {
-      measureSeam()
-      if (!hasIntersectionObserver) isVisible = isTrackInViewport(activeTrack)
-      moveRail(offsetRef.current)
-      if (reducedMotion?.matches) stopAutoplay()
-      else startAutoplay()
-    }
-
-    function handleVisibilityChange() {
-      pageVisible = document.visibilityState !== 'hidden'
-      if (!hasIntersectionObserver && pageVisible) {
-        isVisible = isTrackInViewport(activeTrack)
-      }
-      if (pageVisible) startAutoplay()
-      else stopAutoplay()
-    }
-
-    function handleFallbackScroll() {
-      if (hasIntersectionObserver) return
-      isVisible = isTrackInViewport(activeTrack)
-      if (isVisible) startAutoplay()
-      else stopAutoplay()
-    }
-
-    const resizeObserver =
-      typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(syncLayout)
-    const intersectionObserver =
-      !hasIntersectionObserver
-        ? null
-        : new IntersectionObserver(([entry]) => {
-            isVisible = entry?.isIntersecting ?? false
-            if (isVisible && pageVisible) startAutoplay()
-            else stopAutoplay()
-          })
-    resizeObserver?.observe(activeTrack)
-    resizeObserver?.observe(activeRail)
-    activeRail.querySelectorAll('[data-review-set]').forEach((set) => resizeObserver?.observe(set))
-    intersectionObserver?.observe(activeTrack)
-    window.addEventListener('resize', syncLayout)
-    window.addEventListener('scroll', handleFallbackScroll, { passive: true })
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    reducedMotion?.addEventListener?.('change', syncLayout)
-    syncLayout()
-
-    return () => {
-      stopAutoplay()
-      pauseAutoplayRef.current = () => {}
-      resumeAutoplayRef.current = () => {}
-      resizeObserver?.disconnect()
-      intersectionObserver?.disconnect()
-      window.removeEventListener('resize', syncLayout)
-      window.removeEventListener('scroll', handleFallbackScroll)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      reducedMotion?.removeEventListener?.('change', syncLayout)
-    }
-  }, [data.reviews, isMobile])
-
-  function keepFocusedCardVisible(target: EventTarget, track: HTMLDivElement) {
-    const rail = railRef.current
-    const focusedControl = target as HTMLElement
-    if (!rail || !focusedControl.closest('[data-review-card]')) return
-
-    const trackRect = track.getBoundingClientRect()
-    const controlRect = focusedControl.getBoundingClientRect()
-    const offsetAdjustment =
-      controlRect.left < trackRect.left
-        ? controlRect.left - trackRect.left
-        : controlRect.right > trackRect.right
-          ? controlRect.right - trackRect.right
-          : 0
-    if (offsetAdjustment !== 0 && seamRef.current > 0) {
-      setRailOffset(rail, offsetRef, seamRef, offsetRef.current + offsetAdjustment)
-    }
-  }
-
-  // The approved desktop motor is isolated from the mobile Embla component.
-  function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (isMobile || event.button !== 0 || dragRef.current) return
-    if (event.target instanceof Element && event.target.closest('button, a, [role="button"], [data-clickable]')) return
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startOffset: offsetRef.current,
-      moved: false,
-    }
-    pauseReasonsRef.current.add('drag')
-    pauseAutoplayRef.current()
-  }
-
-  useEffect(() => {
-    if (isMobile) return
-    const finishDrag = (pointerId: number) => {
-      const drag = dragRef.current
-      if (!drag || drag.pointerId !== pointerId) return
-      if (drag.moved) suppressClickUntilRef.current = Date.now() + 350
-      dragRef.current = null
-      const track = trackRef.current
-      if (track) {
-        track.dataset.dragging = 'false'
-        try {
-          if (track.hasPointerCapture?.(pointerId)) track.releasePointerCapture?.(pointerId)
-        } catch { /* Already released by the browser. */ }
-      }
-      pauseReasonsRef.current.delete('drag')
-      resumeAutoplayRef.current()
-    }
-    finishDragRef.current = finishDrag
-    const move = (event: PointerEvent) => {
-      const drag = dragRef.current
-      if (!drag || drag.pointerId !== event.pointerId) return
-      const distance = event.clientX - drag.startX
-      if (!drag.moved && Math.abs(distance) < 10) return
-      const track = trackRef.current
-      if (!drag.moved) {
-        try { track?.setPointerCapture(event.pointerId) } catch { /* Window listeners remain available. */ }
-      }
-      drag.moved = true
-      event.preventDefault()
-      if (track) track.dataset.dragging = 'true'
-      const rail = railRef.current
-      if (rail && seamRef.current > 0) setRailOffset(rail, offsetRef, seamRef, drag.startOffset - distance)
-    }
-    const finish = (event: PointerEvent) => finishDrag(event.pointerId)
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerup', finish)
-    window.addEventListener('pointercancel', finish)
-    return () => {
-      if (dragRef.current) finishDrag(dragRef.current.pointerId)
-      finishDragRef.current = () => {}
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', finish)
-      window.removeEventListener('pointercancel', finish)
-    }
-  }, [isMobile])
-
-  function handleClickCapture(event: ReactMouseEvent<HTMLDivElement>) {
-    if (isMobile || Date.now() > suppressClickUntilRef.current) return
-    suppressClickUntilRef.current = 0
-    event.preventDefault()
-    event.stopPropagation()
-  }
+  const reviewVolume = data.totalReviews > 50
+    ? 'Mais de 50 avaliações no Google'
+    : `${data.totalReviews} avaliações no Google`
 
   return (
     <section
@@ -303,19 +68,6 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       data-theme-surface="dark"
       id="avaliacoes"
       aria-labelledby="reviews-title"
-      ref={sectionRef}
-      onFocusCapture={(event) => {
-        if (isMobile) return
-        pauseReasonsRef.current.add('focus')
-        const track = trackRef.current
-        if (track) keepFocusedCardVisible(event.target, track)
-      }}
-      onBlurCapture={(event) => {
-        if (!isMobile && !event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          pauseReasonsRef.current.delete('focus')
-          resumeAutoplayRef.current()
-        }
-      }}
     >
       <div className={`container ${styles.header}`} data-review-header>
         <div className={styles.intro} data-reveal-group>
@@ -353,58 +105,39 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       </div>
 
       {isMobile ? <ReviewsMobileCarousel reviews={data.reviews} /> : (
-      <div className={styles.trackFrame} data-review-frame data-reveal="text" data-reveal-step="3">
-        <div
-          className={styles.track}
-          data-review-track
-          aria-label="Avaliações de clientes no Google"
-          aria-live="off"
-          role="region"
-          ref={trackRef}
-          tabIndex={0}
-          onPointerEnter={(event) => {
-            if (!isMobile && event.pointerType !== 'touch') pauseReasonsRef.current.add('hover')
-          }}
-          onPointerLeave={(event) => {
-            if (!isMobile && event.pointerType !== 'touch') {
-              pauseReasonsRef.current.delete('hover')
-              resumeAutoplayRef.current()
-            }
-            if (!isMobile && !dragRef.current?.moved) event.currentTarget.dataset.dragging = 'false'
-          }}
-          onPointerDown={beginDrag}
-          onLostPointerCapture={(event) => {
-            if (!isMobile) finishDragRef.current(event.pointerId)
-          }}
-          onClickCapture={handleClickCapture}
-        >
-          <div className={styles.trackRail} data-review-rail ref={railRef}>
-            {reviewSets.map((set) => (
-              <ul
-                className={styles.reviewSet}
-                key={set}
-                data-review-set={set}
-                aria-hidden={set !== 'primary' ? 'true' : undefined}
-                inert={(set !== 'primary') || undefined}
-              >
-                {data.reviews.map((review) => (
-                  <li
-                    className={styles.trackItem}
-                    key={`${review.id}-${set}`}
-                    data-review-card
-                    data-review-id={review.id}
-                  >
-                    <ReviewCard
-                      review={review}
-                      idPrefix={set !== 'primary' ? `${set}-` : ''}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ))}
+        <div className={styles.trackFrame} data-review-frame data-reveal="text" data-reveal-step="3">
+          <div
+            className={styles.track}
+            data-review-track
+            aria-label="Avaliações de clientes no Google"
+            aria-live="off"
+            role="region"
+            ref={trackRef}
+          >
+            <div className={styles.trackRail} data-review-rail ref={railRef}>
+              {reviewSets.map((set) => (
+                <ul
+                  className={styles.reviewSet}
+                  key={set}
+                  data-review-set={set}
+                  aria-hidden={set !== 'primary' ? 'true' : undefined}
+                  inert={set !== 'primary' || undefined}
+                >
+                  {data.reviews.map((review) => (
+                    <li
+                      className={styles.trackItem}
+                      key={`${review.id}-${set}`}
+                      data-review-card
+                      data-review-id={review.id}
+                    >
+                      <ReviewCard review={review} idPrefix={set !== 'primary' ? `${set}-` : ''} />
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       <div className={`container ${styles.closingCta}`} data-review-closing-cta data-reveal="quiet">

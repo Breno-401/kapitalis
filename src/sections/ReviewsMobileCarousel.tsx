@@ -7,7 +7,7 @@ import styles from './ReviewsSection.module.css'
 
 export function ReviewsMobileCarousel({ reviews }: { reviews: readonly GoogleReview[] }) {
   const plugins = useMemo(() => [AutoScroll({
-    speed: 0.266,
+    speed: 0.32,
     startDelay: 0,
     stopOnInteraction: false,
     stopOnMouseEnter: false,
@@ -16,7 +16,7 @@ export function ReviewsMobileCarousel({ reviews }: { reviews: readonly GoogleRev
   })], [])
   const [emblaRef] = useEmblaCarousel({
     loop: true,
-    dragFree: true,
+    watchDrag: false,
     containScroll: false,
     align: 'start',
     container: '[data-review-rail]',
@@ -33,7 +33,6 @@ export function ReviewsMobileCarousel({ reviews }: { reviews: readonly GoogleRev
       aria-label="Avaliações de clientes no Google"
       aria-live="off"
       role="region"
-      tabIndex={0}
       ref={emblaRef}
     >
       <div className={styles.track} data-review-layout>

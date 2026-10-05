@@ -15,7 +15,6 @@ function fillSimpleScenario() {
   fireEvent.change(scope.getByLabelText(/Quanto faturou neste mês/), { target: { value: '10000' } })
   fireEvent.change(scope.getByLabelText(/Quanto faturou nos últimos 12 meses/), { target: { value: '120000' } })
   fireEvent.change(scope.getByLabelText('Qual é a atividade principal?'), { target: { value: 'services-iii' } })
-  fireEvent.change(scope.getByLabelText(/Quando essa receita foi gerada ou recebida/), { target: { value: 'competencia' } })
 }
 
 function fillMoney(scope: ReturnType<typeof within>, label: RegExp | string, centsDigits: string) {
@@ -39,6 +38,8 @@ describe('Simulador Tributário 360º', () => {
 
     fillSimpleScenario()
     expect(scope.getByRole('status').textContent).toMatch(/R\$/)
+    expect(scope.getByRole('status').textContent).toContain('600,00')
+    expect(scope.queryByLabelText(/Quando essa receita foi gerada ou recebida/)).toBeNull()
     expect(scope.getAllByRole('group', { name: /gráfico interativo|tributos/i }).length).toBeGreaterThan(0)
 
     fireEvent.click(within(regimeGroup).getByRole('button', { name: 'Lucro Presumido' }))
@@ -49,6 +50,15 @@ describe('Simulador Tributário 360º', () => {
     fireEvent.click(within(regimeGroup).getByRole('button', { name: 'Lucro Real' }))
     expect(scope.getByLabelText(/Margem de Lucro Estimada/)).toBeTruthy()
     expect(scope.queryByLabelText('Qual é a atividade principal?')).toBeNull()
+  })
+
+  it('calcula pela receita do mês mesmo ao abrir um link antigo com regime de caixa', () => {
+    window.history.replaceState({}, '', '/?mensal=10000&rbt12=120000&atividade=services-iii&baseReceita=caixa')
+    render(<ToolsSection />)
+    const scope = tax()
+
+    expect(scope.queryByLabelText(/Quando essa receita foi gerada ou recebida/)).toBeNull()
+    expect(scope.getByRole('status').textContent).toContain('600,00')
   })
 
   it('ativa uma fatia do SVG diretamente e sincroniza legenda e tooltip', () => {

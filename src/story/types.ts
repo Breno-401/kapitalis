@@ -22,6 +22,8 @@ export type StoryMedia =
       kind: 'image'
       src: string
       alt: string
+      width?: number
+      height?: number
       objectPosition?: string
       fit?: 'cover' | 'contain'
       caption?: string

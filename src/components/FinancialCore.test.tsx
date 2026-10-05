@@ -39,18 +39,19 @@ describe('Kapitalis financial core visual', () => {
     expect(core?.getAttribute('data-state')).toBe('visibilidade')
     const nodes = Array.from(
       container.querySelectorAll('[data-financial-node]'),
-    ).map((node) => node.textContent?.trim())
+    ).map((node) => node.getAttribute('data-financial-node'))
     expect(nodes).toHaveLength(6)
     expect(nodes).toEqual(
       expect.arrayContaining([
         'Kapitalis',
-        'Bancos',
-        'Vendas',
-        'Notas',
-        'Folha',
-        'Despesas',
+        'Abertura e Fechamento de empresas',
+        'Regularização e Pendência Fiscal',
+        'Departamento Pessoal',
+        'Planejamento Tributário',
+        'BPO Financeiro',
       ]),
     )
+    expect(container.querySelectorAll('[data-financial-node][data-source]')).toHaveLength(5)
   })
 
   it('kapitalis_brand_asset_replaces_the_invented_center_letter', () => {

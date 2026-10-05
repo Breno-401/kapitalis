@@ -9,7 +9,6 @@ const base: TaxSimulationInput = {
   activity: 'services-iii',
   ordinarySimplesScenario: true,
   pastInitialYear: true,
-  accrualBasis: true,
   singleAnnexRevenue: true,
 }
 
@@ -101,9 +100,16 @@ describe('tax simulator', () => {
     expect(calculateTaxSimulation({ ...base, ordinarySimplesScenario: false }).simples).toMatchObject({ status: 'pending', reason: expect.stringContaining('optante') })
   })
 
-  it('holds the first twelve months, cash basis and mixed Annex revenue for separate apuração', () => {
+  it('holds the first twelve months and mixed Annex revenue for separate apuração', () => {
     expect(calculateTaxSimulation({ ...base, pastInitialYear: false }).simples).toMatchObject({ status: 'pending', reason: expect.stringContaining('12 primeiros meses') })
-    expect(calculateTaxSimulation({ ...base, accrualBasis: false }).simples).toMatchObject({ status: 'pending', reason: expect.stringContaining('caixa') })
     expect(calculateTaxSimulation({ ...base, singleAnnexRevenue: false }).simples).toMatchObject({ status: 'pending', reason: expect.stringContaining('mais de um anexo') })
+  })
+
+  it('calculates the generated monthly revenue without a cash or accrual selection', () => {
+    expect(calculateTaxSimulation(base).simples).toMatchObject({
+      status: 'ready',
+      monthlyCents: 60000,
+      annualCents: 720000,
+    })
   })
 })
