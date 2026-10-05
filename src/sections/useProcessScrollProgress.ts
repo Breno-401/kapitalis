@@ -1,11 +1,11 @@
 import { useEffect, useState, type RefObject } from 'react'
 
 type ElementRef = RefObject<HTMLElement | null>
-const staticQuery = '(max-width: 360px), (max-height: 700px)'
+const staticQuery = '(max-width: 360px)'
 
 function prefersStaticLayout() {
   return typeof window !== 'undefined' && (
-    window.innerWidth <= 360 || window.innerHeight <= 700 ||
+    window.innerWidth <= 360 ||
     (typeof window.matchMedia === 'function' && window.matchMedia(staticQuery).matches)
   )
 }

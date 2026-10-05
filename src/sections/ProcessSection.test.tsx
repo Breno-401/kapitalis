@@ -165,6 +165,13 @@ describe('editorial process section', () => {
     expect(document.querySelector('[data-process-layout="static"]')).toBeTruthy()
   })
 
+  it.each([620, 650, 720])('keeps the sticky editorial motor on a wide desktop at %ipx height', (height) => {
+    vi.stubGlobal('innerWidth', 1280)
+    vi.stubGlobal('innerHeight', height)
+    render(<ProcessSection />)
+    expect(document.querySelector('[data-process-layout="sticky"]')).toBeTruthy()
+  })
+
   it('remeasures the scroll start when content above the process changes height', () => {
     let onResize = () => {}
     const observed: Element[] = []

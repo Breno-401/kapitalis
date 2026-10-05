@@ -127,6 +127,8 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
+  --atmosphere-blue-strong: rgb(34 63 104 / 28%);
+  --atmosphere-blue-soft: rgb(42 76 123 / 17%);
   --surface-page: #f3f1ea;
   --surface-raised: #ffffff;
   --surface-interactive: #eee8dc;

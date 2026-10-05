@@ -45,26 +45,58 @@ body::after {
   pointer-events: none;
 }
 
-:root[data-theme='light'] body::after {
-  background-image:
-    radial-gradient(ellipse 56rem 44rem at 92% 14%, rgb(50 91 146 / 21%), transparent 72%),
-    radial-gradient(ellipse 50rem 40rem at 10% 52%, rgb(44 83 137 / 15%), transparent 74%),
-    radial-gradient(ellipse 62rem 42rem at 84% 96%, rgb(34 67 115 / 11.5%), transparent 78%);
-}
-
 @media (max-width: 43.75rem) {
-  body::after,
-  :root[data-theme='light'] body::after {
+  body::after {
     background-image:
       radial-gradient(ellipse 36rem 31rem at 100% 17%, rgb(48 112 190 / 7.5%), transparent 72%),
       radial-gradient(ellipse 32rem 29rem at 0% 78%, rgb(33 91 160 / 4.5%), transparent 74%);
   }
+}
 
-  :root[data-theme='light'] body::after {
+:root[data-theme='light'] body::after {
+  display: none;
+}
+
+:root[data-theme='light'] main > *,
+:root[data-theme='light'] main + footer {
+  background-image:
+    radial-gradient(ellipse 66rem 42rem at var(--atmosphere-primary, 86% 24%), var(--atmosphere-blue-strong), transparent 74%),
+    radial-gradient(ellipse 54rem 38rem at var(--atmosphere-secondary, 12% 82%), var(--atmosphere-blue-soft), transparent 76%),
+    radial-gradient(ellipse 62rem 42rem at var(--atmosphere-center, 50% 50%), var(--atmosphere-center-color, var(--atmosphere-blue-soft)), transparent 78%);
+}
+
+:root[data-theme='light'] main > *:nth-child(4n + 2) {
+  --atmosphere-primary: 12% 32%;
+  --atmosphere-secondary: 88% 84%;
+  --atmosphere-center: 50% 48%;
+}
+
+:root[data-theme='light'] main > *:nth-child(4n + 3) {
+  --atmosphere-primary: 78% 76%;
+  --atmosphere-secondary: 18% 18%;
+  --atmosphere-center: 48% 54%;
+}
+
+:root[data-theme='light'] main > *:nth-child(4n) {
+  --atmosphere-primary: 22% 60%;
+  --atmosphere-secondary: 86% 18%;
+  --atmosphere-center: 54% 46%;
+}
+
+:root[data-theme='light'] #processo {
+  --atmosphere-primary: 80% 16%;
+  --atmosphere-secondary: 18% 84%;
+  --atmosphere-center: 50% 50%;
+  --atmosphere-center-color: rgb(34 63 104 / 25%);
+}
+
+@media (max-width: 43.75rem) {
+  :root[data-theme='light'] main > *,
+  :root[data-theme='light'] main + footer {
     background-image:
-      radial-gradient(ellipse 36rem 33rem at 100% 15%, rgb(50 91 146 / 20%), transparent 72%),
-      radial-gradient(ellipse 33rem 32rem at 0% 52%, rgb(44 83 137 / 14%), transparent 74%),
-      radial-gradient(ellipse 36rem 30rem at 100% 94%, rgb(34 67 115 / 10.5%), transparent 78%);
+      radial-gradient(ellipse 35rem 31rem at var(--atmosphere-primary, 86% 24%), var(--atmosphere-blue-strong), transparent 74%),
+      radial-gradient(ellipse 31rem 28rem at var(--atmosphere-secondary, 12% 82%), var(--atmosphere-blue-soft), transparent 76%),
+      radial-gradient(ellipse 34rem 30rem at var(--atmosphere-center, 50% 50%), var(--atmosphere-center-color, var(--atmosphere-blue-soft)), transparent 78%);
   }
 }
 
