@@ -39,9 +39,24 @@ describe('editorial process section', () => {
     vi.unstubAllGlobals()
   })
 
-  function scrollToProgress(progress: number) {
+  function scrollToProgress(progress: number, stickyInset = 0) {
+    const track = document.querySelector<HTMLElement>('[data-process-track]')
+    const scene = document.querySelector<HTMLElement>('[data-process-scene]')
+    if (scene && stickyInset > 0) {
+      scene.style.top = `${stickyInset}px`
+      act(() => fireEvent.resize(window))
+    }
+    const trackRect = track?.getBoundingClientRect()
+    const sceneRect = scene?.getBoundingClientRect()
+    const trackStyle = track && window.getComputedStyle(track)
+    const inset = scene ? Number.parseFloat(window.getComputedStyle(scene).top) || 0 : 0
+    const paddingTop = trackStyle ? Number.parseFloat(trackStyle.paddingTop) || 0 : 0
+    const paddingBottom = trackStyle ? Number.parseFloat(trackStyle.paddingBottom) || 0 : 0
+    const start = trackTop + paddingTop - inset
+    const range = Math.max(1, (trackRect?.height ?? 4000) - paddingTop - paddingBottom
+      - (sceneRect?.height ?? 600) + inset)
     act(() => {
-      vi.stubGlobal('scrollY', 2000 + progress * 3400)
+      vi.stubGlobal('scrollY', start + progress * range)
       fireEvent.scroll(window)
       const callbacks = frames.splice(0)
       callbacks.forEach((callback) => callback(0))
@@ -109,6 +124,21 @@ describe('editorial process section', () => {
       expect(document.querySelector('[aria-current="step"]')?.textContent)
         .toContain(String(index + 1).padStart(2, '0'))
     }
+  })
+
+  it('maps progress across the full sticky travel including the scene inset', () => {
+    render(<ProcessSection />)
+    const articles = screen.getAllByRole('article')
+    const track = document.querySelector<HTMLElement>('[data-process-track]')!
+
+    scrollToProgress(0.79, 112)
+    expect(articles[3]?.getAttribute('data-active')).toBe('true')
+    expect(articles[4]?.getAttribute('data-active')).toBe('false')
+    expect(track.style.getPropertyValue('--process-progress')).toBe('0.9875')
+
+    scrollToProgress(0.8, 112)
+    expect(articles[4]?.getAttribute('data-active')).toBe('true')
+    expect(track.style.getPropertyValue('--process-progress')).toBe('1.0000')
   })
 
   it('keeps scroll progression available when reduced motion is preferred', () => {

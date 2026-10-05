@@ -54,7 +54,12 @@ export function useProcessScrollProgress(trackRef: ElementRef, sceneRef: Element
       const paddingTop = Number.parseFloat(trackStyle.paddingTop) || 0
       const paddingBottom = Number.parseFloat(trackStyle.paddingBottom) || 0
       start = rect.top + window.scrollY + paddingTop - inset
-      range = Math.max(1, rect.height - paddingTop - paddingBottom - scene!.getBoundingClientRect().height)
+      // The scroll range starts when the scene reaches its sticky top inset and ends
+      // when it meets the track's bottom edge. Include that inset in the travel distance.
+      range = Math.max(
+        1,
+        rect.height - paddingTop - paddingBottom - scene!.getBoundingClientRect().height + inset,
+      )
       update()
     }
 
