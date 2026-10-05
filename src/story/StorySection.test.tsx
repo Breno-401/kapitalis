@@ -91,7 +91,7 @@ describe('Kapitalis system story', () => {
     )
     expect(portrait?.getAttribute('data-fit')).toBe('contain')
     expect(container.querySelector('[data-story-id="organizacao"] img')?.getAttribute('width')).toBe('562')
-    expect(container.querySelector('[data-story-id="organizacao"] img')?.getAttribute('height')).toBe('740')
+    expect(container.querySelector('[data-story-id="organizacao"] img')?.getAttribute('height')).toBe('730')
     expect(portrait?.querySelector('figcaption')).toBeNull()
     expect(container.querySelector('[data-story-id="entradas"] [data-story-media]')
       ?.getAttribute('data-revealed')).toBe('true')

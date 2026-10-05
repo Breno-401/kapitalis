@@ -47,8 +47,9 @@ body::after {
 
 :root[data-theme='light'] body::after {
   background-image:
-    radial-gradient(ellipse 52rem 38rem at 88% 20%, rgb(50 108 178 / 6.5%), transparent 72%),
-    radial-gradient(ellipse 46rem 34rem at 12% 76%, rgb(33 91 160 / 3.5%), transparent 74%);
+    radial-gradient(ellipse 56rem 44rem at 92% 14%, rgb(50 91 146 / 21%), transparent 72%),
+    radial-gradient(ellipse 50rem 40rem at 10% 52%, rgb(44 83 137 / 15%), transparent 74%),
+    radial-gradient(ellipse 62rem 42rem at 84% 96%, rgb(34 67 115 / 11.5%), transparent 78%);
 }
 
 @media (max-width: 43.75rem) {
@@ -61,8 +62,9 @@ body::after {
 
   :root[data-theme='light'] body::after {
     background-image:
-      radial-gradient(ellipse 36rem 31rem at 100% 17%, rgb(50 108 178 / 5.5%), transparent 72%),
-      radial-gradient(ellipse 32rem 29rem at 0% 78%, rgb(33 91 160 / 3%), transparent 74%);
+      radial-gradient(ellipse 36rem 33rem at 100% 15%, rgb(50 91 146 / 20%), transparent 72%),
+      radial-gradient(ellipse 33rem 32rem at 0% 52%, rgb(44 83 137 / 14%), transparent 74%),
+      radial-gradient(ellipse 36rem 30rem at 100% 94%, rgb(34 67 115 / 10.5%), transparent 78%);
   }
 }
 

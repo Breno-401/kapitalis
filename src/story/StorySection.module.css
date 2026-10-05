@@ -33,10 +33,6 @@
   opacity: 1;
 }
 
-.chapter[data-story-id='decisao'] {
-  min-height: 200svh;
-}
-
 .chapterText {
   width: min(100%, 35rem);
 }
@@ -69,8 +65,8 @@
 }
 
 .chapter[data-story-id='organizacao'] .mediaFrame {
-  width: min(100%, 28rem);
-  aspect-ratio: 562 / 740;
+  width: min(100%, 17rem);
+  aspect-ratio: 562 / 730;
   background: transparent;
 }
 
@@ -181,10 +177,6 @@
     padding: 4rem var(--layout-gutter);
   }
 
-  .chapter[data-story-id='decisao'] {
-    min-height: auto;
-  }
-
   .chapterText {
     width: 100%;
   }
@@ -249,10 +241,6 @@
     min-height: auto;
     opacity: 1;
     transition: none;
-  }
-
-  .chapter[data-story-id='decisao'] {
-    min-height: auto;
   }
 
   .mediaFrame,

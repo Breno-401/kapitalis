@@ -59,11 +59,12 @@ describe('editorial process section', () => {
     ])
     expect(within(region).getAllByText('O QUE VOCÊ PASSA A TER')).toHaveLength(5)
     expect(within(region).getByText('Antes de cuidar da contabilidade, entendemos como sua empresa funciona, quais são suas necessidades e quais desafios fazem parte da sua rotina.')).toBeTruthy()
-    expect(within(region).getByText('➡️ Uma contabilidade que conhece o seu negócio de verdade.')).toBeTruthy()
-    expect(within(region).getByText('➡️ Mais organização, segurança e tranquilidade para manter sua empresa em dia.')).toBeTruthy()
-    expect(within(region).getByText('➡️ A tranquilidade de saber que sua empresa está sendo acompanhada.')).toBeTruthy()
-    expect(within(region).getByText('➡️ Clareza para entender o que os números realmente dizem sobre sua empresa.')).toBeTruthy()
-    expect(within(region).getByText('➡️ Mais segurança para decidir hoje e planejar o crescimento de amanhã.')).toBeTruthy()
+    expect(within(region).getByText('Uma contabilidade que conhece o seu negócio de verdade.')).toBeTruthy()
+    expect(within(region).getByText('Mais organização, segurança e tranquilidade para manter sua empresa em dia.')).toBeTruthy()
+    expect(within(region).getByText('A tranquilidade de saber que sua empresa está sendo acompanhada.')).toBeTruthy()
+    expect(within(region).getByText('Clareza para entender o que os números realmente dizem sobre sua empresa.')).toBeTruthy()
+    expect(within(region).getByText('Mais segurança para decidir hoje e planejar o crescimento de amanhã.')).toBeTruthy()
+    expect(within(region).queryByText(/➡️/)).toBeNull()
     expect(within(region).queryByRole('tab')).toBeNull()
     expect(within(region).queryByRole('button')).toBeNull()
     expect(within(region).getByText('Etapas conceituais')).toBeTruthy()
@@ -96,28 +97,39 @@ describe('editorial process section', () => {
       .getPropertyValue('--process-progress')).toBe('1.0000')
   })
 
-  it('uses a natural complete sequence on mobile', () => {
+  it('keeps the editorial scroll progression active on common mobile widths', () => {
     vi.stubGlobal('innerWidth', 402)
     render(<ProcessSection />)
-    expect(document.querySelector('[data-process-layout="static"]')).toBeTruthy()
+    expect(document.querySelector('[data-process-layout="sticky"]')).toBeTruthy()
     expect(screen.getAllByRole('article')).toHaveLength(5)
-    expect(document.querySelector('[aria-current="step"]')).toBeNull()
+    const articles = screen.getAllByRole('article')
+    for (let index = 0; index < 5; index += 1) {
+      scrollToProgress(index / 5 + 0.01)
+      expect(articles[index]?.getAttribute('data-active')).toBe('true')
+      expect(document.querySelector('[aria-current="step"]')?.textContent)
+        .toContain(String(index + 1).padStart(2, '0'))
+    }
   })
 
-  it('keeps the complete sequence in static flow for reduced motion', () => {
+  it('keeps scroll progression available when reduced motion is preferred', () => {
     reducedMotion = true
     render(<ProcessSection />)
-    expect(document.querySelector('[data-process-layout="static"]')).toBeTruthy()
+    expect(document.querySelector('[data-process-layout="sticky"]')).toBeTruthy()
     expect(screen.getAllByRole('article')).toHaveLength(5)
     scrollToProgress(0.8)
-    expect(document.querySelector('[aria-current="step"]')).toBeNull()
+    expect(screen.getAllByRole('article')[4]?.getAttribute('data-active')).toBe('true')
   })
 
-  it('recalculates the layout when resized from desktop to mobile', () => {
+  it('keeps the editorial layout at mobile width and uses static flow only below its compact cutoff', () => {
     render(<ProcessSection />)
     expect(document.querySelector('[data-process-layout="sticky"]')).toBeTruthy()
     act(() => {
       vi.stubGlobal('innerWidth', 430)
+      fireEvent(window, new Event('resize'))
+    })
+    expect(document.querySelector('[data-process-layout="sticky"]')).toBeTruthy()
+    act(() => {
+      vi.stubGlobal('innerWidth', 360)
       fireEvent(window, new Event('resize'))
     })
     expect(document.querySelector('[data-process-layout="static"]')).toBeTruthy()
@@ -157,7 +169,7 @@ describe('editorial process section', () => {
   })
 
   it('reveals mobile chapters once at 20 percent intersection and cleans up the observer', () => {
-    vi.stubGlobal('innerWidth', 402)
+    vi.stubGlobal('innerWidth', 320)
     let notify: IntersectionObserverCallback = () => {}
     const observe = vi.fn()
     const unobserve = vi.fn()
@@ -188,7 +200,7 @@ describe('editorial process section', () => {
   })
 
   it('does not hide mobile content without IntersectionObserver or with reduced motion', () => {
-    vi.stubGlobal('innerWidth', 402)
+    vi.stubGlobal('innerWidth', 320)
     vi.stubGlobal('IntersectionObserver', undefined)
     const { unmount } = render(<ProcessSection />)
     expect(screen.getAllByRole('article').every(e => !e.hasAttribute('data-viewport-reveal'))).toBe(true)
@@ -202,7 +214,7 @@ describe('editorial process section', () => {
   })
 
   it('keeps all mobile chapters visible if observer initialization fails', () => {
-    vi.stubGlobal('innerWidth', 402)
+    vi.stubGlobal('innerWidth', 320)
     vi.stubGlobal('IntersectionObserver', vi.fn(function () { throw new Error('Unavailable observer') }))
     render(<ProcessSection />)
     expect(screen.getAllByRole('article').every(e => !e.hasAttribute('data-viewport-reveal'))).toBe(true)
