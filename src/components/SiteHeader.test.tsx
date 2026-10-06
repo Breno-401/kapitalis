@@ -153,27 +153,10 @@ describe('site navigation', () => {
         .every((link) => link.getAttribute('href') === site.whatsappUrl),
     ).toBe(true)
     expect(document.querySelector('[data-nav-indicator]')).toBeTruthy()
-    expect(screen.getAllByRole('button', { name: 'Mudar para o tema claro' })).toHaveLength(2)
+    expect(screen.getAllByRole('button', { name: 'Mudar para o tema escuro' })).toHaveLength(2)
   })
 
-  it('theme_toggle_updates_the_page_and_persists_the_selected_theme', () => {
-    render(<App />)
-
-    const themeButtons = screen.getAllByRole('button', {
-      name: 'Mudar para o tema claro',
-    })
-    expect(document.documentElement.dataset.theme).toBe('dark')
-
-    fireEvent.click(themeButtons[0]!)
-
-    expect(document.documentElement.dataset.theme).toBe('light')
-    expect(window.localStorage.getItem('kapitalis-theme')).toBe('light')
-    expect(
-      screen.getAllByRole('button', { name: 'Mudar para o tema escuro' }),
-    ).toHaveLength(2)
-  })
-
-  it('uses_the_system_light_preference_when_no_manual_choice_exists', () => {
+  it('starts_with_the_light_theme_when_no_saved_choice_exists_and_the_system_is_light', () => {
     const restoreMatchMedia = mockMediaQueries({
       '(prefers-color-scheme: light)': true,
     })
@@ -186,7 +169,20 @@ describe('site navigation', () => {
     }
   })
 
-  it('prefers_the_saved_theme_over_the_system_preference', () => {
+  it('starts_with_the_light_theme_when_no_saved_choice_exists_and_the_system_is_dark', () => {
+    const restoreMatchMedia = mockMediaQueries({
+      '(prefers-color-scheme: dark)': true,
+    })
+
+    try {
+      render(<App />)
+      expect(document.documentElement.dataset.theme).toBe('light')
+    } finally {
+      restoreMatchMedia()
+    }
+  })
+
+  it('prefers_a_saved_theme_over_the_system_preference', () => {
     const restoreMatchMedia = mockMediaQueries({
       '(prefers-color-scheme: light)': true,
     })
@@ -200,6 +196,41 @@ describe('site navigation', () => {
     }
   })
 
+  it('uses_a_saved_light_theme_when_the_system_prefers_dark', () => {
+    const restoreMatchMedia = mockMediaQueries({
+      '(prefers-color-scheme: dark)': true,
+    })
+    window.localStorage.setItem('kapitalis-theme', 'light')
+
+    try {
+      render(<App />)
+      expect(document.documentElement.dataset.theme).toBe('light')
+    } finally {
+      restoreMatchMedia()
+    }
+  })
+
+  it('theme_toggle_saves_both_manual_choices_for_the_next_page_load', () => {
+    const firstRender = render(<App />)
+    expect(document.documentElement.dataset.theme).toBe('light')
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Mudar para o tema escuro' })[0]!)
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(window.localStorage.getItem('kapitalis-theme')).toBe('dark')
+
+    firstRender.unmount()
+    const secondRender = render(<App />)
+    expect(document.documentElement.dataset.theme).toBe('dark')
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Mudar para o tema claro' })[0]!)
+    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(window.localStorage.getItem('kapitalis-theme')).toBe('light')
+
+    secondRender.unmount()
+    render(<App />)
+    expect(document.documentElement.dataset.theme).toBe('light')
+  })
+
   it('does_not_add_a_theme_transition_when_reduced_motion_is_requested', () => {
     const restoreMatchMedia = mockMediaQueries({
       '(prefers-reduced-motion: reduce)': true,
@@ -208,10 +239,10 @@ describe('site navigation', () => {
     try {
       render(<App />)
       fireEvent.click(
-        screen.getAllByRole('button', { name: 'Mudar para o tema claro' })[0]!,
+        screen.getAllByRole('button', { name: 'Mudar para o tema escuro' })[0]!,
       )
 
-      expect(document.documentElement.dataset.theme).toBe('light')
+      expect(document.documentElement.dataset.theme).toBe('dark')
       expect(document.documentElement.hasAttribute('data-theme-transitioning')).toBe(
         false,
       )

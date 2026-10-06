@@ -30,16 +30,14 @@
     <meta name="twitter:image:alt" content="Marca da Kapitalis Contabilidade &amp; BPO Financeiro" />
     <script>
       (() => {
-        let theme = 'dark'
+        let theme = 'light'
         try {
           const savedTheme = localStorage.getItem('kapitalis-theme')
           if (savedTheme === 'light' || savedTheme === 'dark') {
             theme = savedTheme
-          } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-            theme = 'light'
           }
         } catch {
-          // Use the dark palette when browser preferences cannot be read.
+          // Use the light palette when local storage cannot be read.
         }
         document.documentElement.dataset.theme = theme
       })()

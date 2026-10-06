@@ -27,9 +27,6 @@ const questions = [
 export function FaqSection() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const id = useId()
-  const panelId = `${id}-answer-panel`
-  const selectedQuestion = questions[selectedIndex]!
-  const selectedButtonId = `${id}-question-${selectedIndex}`
 
   return (
     <section className={styles.section} id="duvidas-frequentes" aria-labelledby={`${id}-title`}>
@@ -38,9 +35,10 @@ export function FaqSection() {
         <h2 id={`${id}-title`} data-reveal="text" data-reveal-step="1">Dúvidas frequentes</h2>
         <div className={styles.layout}>
           <div className={styles.questions} role="group" aria-label="Perguntas frequentes">
-            {questions.map(({ question }, index) => {
+            {questions.map(({ question, answer }, index) => {
               const expanded = selectedIndex === index
               const buttonId = `${id}-question-${index}`
+              const panelId = `${id}-answer-${index}`
               return (
                 <article className={styles.item} key={question} data-reveal="text" data-reveal-step={index + 2}>
                   <h3>
@@ -57,25 +55,27 @@ export function FaqSection() {
                       <span className={styles.mark} aria-hidden="true" data-open={expanded} />
                     </button>
                   </h3>
+                  <div
+                    aria-atomic="true"
+                    aria-hidden={!expanded}
+                    aria-labelledby={buttonId}
+                    aria-live="polite"
+                    className={styles.answerPanel}
+                    data-open={expanded}
+                    id={panelId}
+                    inert={!expanded}
+                    role="region"
+                  >
+                    <div className={styles.answerClip}>
+                      <div className={styles.answerContent}>
+                        <p className={styles.answerLabel}>Resposta</p>
+                        <p className={styles.answerText}>{answer}</p>
+                      </div>
+                    </div>
+                  </div>
                 </article>
               )
             })}
-          </div>
-          <div
-            aria-atomic="true"
-            aria-labelledby={selectedButtonId}
-            aria-live="polite"
-            className={styles.answerPanel}
-            data-reveal="text"
-            data-reveal-step="2"
-            id={panelId}
-            role="region"
-          >
-            <div className={styles.answerContent} key={selectedIndex}>
-              <p className={styles.answerLabel}>Resposta</p>
-              <h3 className={styles.answerTitle}>{selectedQuestion.question}</h3>
-              <p className={styles.answerText}>{selectedQuestion.answer}</p>
-            </div>
           </div>
         </div>
       </div>
