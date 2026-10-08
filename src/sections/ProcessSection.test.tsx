@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { ProcessSection } from './ProcessSection'
 
@@ -65,9 +65,10 @@ describe('manual conceptual chapters', () => {
 
   it('supports roving keyboard focus with arrows, Home and End', () => {
     render(<ProcessSection />)
+    expect(screen.getByRole('tablist').getAttribute('aria-orientation')).toBe('vertical')
     const tabs = screen.getAllByRole('tab')
     tabs[0]!.focus()
-    for (const [key, index] of [['ArrowRight', 1], ['End', 4], ['ArrowRight', 0], ['ArrowLeft', 4], ['Home', 0]] as const) {
+    for (const [key, index] of [['ArrowDown', 1], ['End', 4], ['ArrowDown', 0], ['ArrowUp', 4], ['Home', 0]] as const) {
       fireEvent.keyDown(document.activeElement!, { key })
       expect(document.activeElement).toBe(tabs[index])
       expect(tabs[index]!.tabIndex).toBe(0)
@@ -75,6 +76,38 @@ describe('manual conceptual chapters', () => {
       expect(screen.getByRole('tabpanel').textContent).toContain(titles[index])
     }
     expect(tabs.filter(tab => tab.tabIndex === 0)).toHaveLength(1)
+  })
+
+  it('uses horizontal keyboard navigation in the existing compact mobile layout', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('56.25rem') }))
+    render(<ProcessSection />)
+    expect(screen.getByRole('tablist').getAttribute('aria-orientation')).toBe('horizontal')
+    const tabs = screen.getAllByRole('tab')
+    tabs[0]!.focus()
+    fireEvent.keyDown(tabs[0]!, { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(tabs[1])
+    expect(screen.getByRole('tabpanel').textContent).toContain('ORGANIZAR A EMPRESA')
+    fireEvent.keyDown(tabs[1]!, { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(tabs[0])
+    expect(screen.getByRole('tabpanel').textContent).toContain('CONHECER O SEU NEGÓCIO')
+  })
+
+  it('updates the accessible orientation on resize without changing the selected chapter', () => {
+    let compact = false
+    let notify = () => {}
+    vi.stubGlobal('matchMedia', () => ({
+      get matches() { return compact },
+      addEventListener: (_event: string, callback: () => void) => { notify = callback },
+      removeEventListener: vi.fn(),
+    }))
+    render(<ProcessSection />)
+    fireEvent.click(screen.getAllByRole('tab')[3]!)
+    act(() => { compact = true; notify() })
+    expect(screen.getByRole('tablist').getAttribute('aria-orientation')).toBe('horizontal')
+    expect(screen.getByRole('tabpanel').textContent).toContain('ANALISAR OS NÚMEROS')
+    act(() => { compact = false; notify() })
+    expect(screen.getByRole('tablist').getAttribute('aria-orientation')).toBe('vertical')
+    expect(screen.getByRole('tabpanel').textContent).toContain('ANALISAR OS NÚMEROS')
   })
 
   it('keeps manual selection available with reduced motion and at mobile width', () => {

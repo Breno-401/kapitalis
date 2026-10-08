@@ -1,5 +1,17 @@
-import { useId, useRef, useState, type KeyboardEvent } from 'react'
+import { useId, useRef, useState, useSyncExternalStore, type KeyboardEvent } from 'react'
 import styles from './ProcessSection.module.css'
+
+const compactQuery = '(max-width: 56.25rem)'
+
+function subscribeCompactLayout(onChange: () => void) {
+  const media = window.matchMedia?.(compactQuery)
+  media?.addEventListener?.('change', onChange)
+  return () => media?.removeEventListener?.('change', onChange)
+}
+
+function isCompactLayout() {
+  return window.matchMedia?.(compactQuery).matches ?? false
+}
 
 const steps = [
   {
@@ -37,12 +49,16 @@ const steps = [
 export function ProcessSection() {
   const sectionId = useId()
   const [activeIndex, setActiveIndex] = useState(0)
+  const compactLayout = useSyncExternalStore(subscribeCompactLayout, isCompactLayout, () => false)
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
 
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (compactLayout && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) return
     let nextIndex: number
     switch (event.key) {
+      case 'ArrowDown':
       case 'ArrowRight': nextIndex = (index + 1) % steps.length; break
+      case 'ArrowUp':
       case 'ArrowLeft': nextIndex = (index + steps.length - 1) % steps.length; break
       case 'Home': nextIndex = 0; break
       case 'End': nextIndex = steps.length - 1; break
@@ -73,7 +89,7 @@ export function ProcessSection() {
         </header>
 
         <div className={styles.route}>
-          <div className={styles.timeline} role="tablist" aria-label="Etapas conceituais do processo">
+          <div className={styles.timeline} role="tablist" aria-orientation={compactLayout ? 'horizontal' : 'vertical'} aria-label="Etapas conceituais do processo">
             {steps.map(({ title }, index) => (
               <button
                 type="button"

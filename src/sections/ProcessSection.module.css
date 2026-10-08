@@ -36,22 +36,27 @@
   line-height: 1.65;
 }
 
-.route { margin-top: 3rem; }
+.route {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 4rem;
+  margin-top: 3rem;
+}
 
 .timeline {
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  align-self: center;
+  gap: 0;
 }
 
 .timeline::before {
   content: '';
   position: absolute;
   top: 1.375rem;
-  right: 1.375rem;
+  bottom: 1.375rem;
   left: 1.375rem;
-  height: 1px;
+  width: 1px;
   background: var(--border);
 }
 
@@ -59,10 +64,8 @@
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  flex: 1;
+  gap: 1.25rem;
   min-width: 0;
   min-height: 2.75rem;
   padding: 0;
@@ -72,10 +75,12 @@
   font: inherit;
   font-size: 1rem;
   line-height: 1.4;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
   transition: color 250ms ease;
 }
+
+.step + .step { margin-top: 2.5rem; }
 
 .stepNumber {
   display: grid;
@@ -107,8 +112,6 @@
 
 .chapters {
   min-width: 0;
-  max-width: 48rem;
-  margin: 3rem auto 0;
 }
 
 .chapter {
@@ -167,8 +170,11 @@
   .heading { gap: 2rem; }
   .heading h2 { font-size: clamp(2.2rem, 3vw, 2.5rem); }
   .heading > p { font-size: 0.875rem; line-height: 1.45; }
-  .route { margin-top: 2rem; }
-  .step { font-size: 0.9375rem; }
+  .route { gap: 2rem; margin-top: 1.25rem; }
+  .step { min-height: 2.25rem; font-size: 0.9375rem; }
+  .step + .step { margin-top: 1.5rem; }
+  .stepNumber { flex-basis: 2.25rem; width: 2.25rem; height: 2.25rem; }
+  .timeline::before { top: 1.125rem; bottom: 1.125rem; left: 1.125rem; }
   .chapter { min-height: 24rem; padding-top: 0.75rem; }
   .chapterNumber { top: -0.875rem; font-size: 7rem; }
   .copy h3 { font-size: 2.75rem; }
@@ -182,7 +188,10 @@
   .heading { grid-template-columns: 1fr; gap: 1.5rem; }
   .heading h2 { font-size: 2.625rem; }
   .heading > p { max-width: 42ch; }
-  .step { min-height: 3rem; justify-content: center; }
+  .route { grid-template-columns: 1fr; gap: 0; }
+  .timeline { display: flex; justify-content: space-between; gap: 1rem; }
+  .step { flex: 1; min-height: 3rem; justify-content: center; gap: 0; }
+  .step + .step { margin-top: 0; }
   .step > span:last-child {
     position: absolute;
     width: 1px;
@@ -192,7 +201,7 @@
     white-space: nowrap;
   }
   .stepNumber { flex-basis: 3rem; width: 3rem; height: 3rem; }
-  .timeline::before { top: 1.5rem; }
+  .timeline::before { top: 1.5rem; right: 1.375rem; bottom: auto; left: 1.375rem; width: auto; height: 1px; }
   .chapters { margin-top: 2rem; }
   .chapter { min-height: 27rem; padding-top: 0; }
   .chapterNumber { top: -0.5rem; font-size: 6rem; }
