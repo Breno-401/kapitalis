@@ -57,12 +57,12 @@ describe('Google Reviews section', () => {
     expect(trackFrame.compareDocumentPosition(closingCta) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('omits the carousel hint and arrow controls while keeping the Google mark', () => {
+  it('offers accessible previous/next controls while keeping the Google mark', () => {
     render(<ReviewsSection data={googleReviewsSnapshot} />)
 
     expect(screen.queryByText(/Arraste para explorar/)).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Avaliações anteriores' })).toBeNull()
-    expect(screen.queryByRole('button', { name: 'Próximas avaliações' })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Avaliação anterior' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Próxima avaliação' })).toBeTruthy()
     for (const review of screen.getAllByRole('article')) {
       expect(within(review).getByRole('img', { name: 'Google' })).toBeTruthy()
     }

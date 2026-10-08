@@ -11,11 +11,30 @@ const { instances, createEmbla } = vi.hoisted(() => {
     viewport: HTMLElement
     options: Record<string, unknown>
     plugins: { name: string; options: Record<string, unknown> }[]
+    scrollPrev: ReturnType<typeof vi.fn>
+    scrollNext: ReturnType<typeof vi.fn>
+    on: ReturnType<typeof vi.fn>
+    off: ReturnType<typeof vi.fn>
+    emit: (event: string) => void
+    autoScroll: { stop: ReturnType<typeof vi.fn>; play: ReturnType<typeof vi.fn> }
   }[] = []
   const createEmbla = vi.fn((viewport: HTMLElement, options: Record<string, unknown>, plugins: { name: string; options: Record<string, unknown> }[]) => {
-    const instance = { destroy: vi.fn(), reInit: vi.fn(), viewport, options, plugins }
+    const events = new Map<string, Set<() => void>>()
+    const instance = {
+      destroy: vi.fn(), reInit: vi.fn(), viewport, options, plugins,
+      scrollPrev: vi.fn(), scrollNext: vi.fn(),
+      autoScroll: { stop: vi.fn(), play: vi.fn() },
+      emit: (event: string) => events.get(event)?.forEach(callback => callback()),
+      on: vi.fn((event: string, callback: () => void) => {
+        if (!events.has(event)) events.set(event, new Set())
+        events.get(event)!.add(callback)
+      }),
+      off: vi.fn((event: string, callback: () => void) => events.get(event)?.delete(callback)),
+    }
+    // The public plugin API is exercised by the component; physics stay in browser tests.
+    const api = { ...instance, plugins: () => ({ autoScroll: instance.autoScroll }) }
     instances.push(instance)
-    return instance
+    return api
   })
   return { instances, createEmbla }
 })
@@ -62,6 +81,7 @@ describe('official mobile Embla integration', () => {
       stopOnInteraction: false,
       stopOnMouseEnter: false,
       stopOnFocusIn: false,
+      playOnInit: false,
       breakpoints: { '(prefers-reduced-motion: reduce)': { active: false } },
     })
     expect(instances[0]!.viewport.hasAttribute('tabindex')).toBe(false)
@@ -125,5 +145,70 @@ describe('official mobile Embla integration', () => {
     await act(async () => {})
     expect(createEmbla).not.toHaveBeenCalled()
     expect(container.querySelectorAll('[data-review-set]')).toHaveLength(2)
+  })
+
+  it('stops AutoScroll before official navigation and resumes only when Embla settles', async () => {
+    render(<ReviewsSection data={googleReviewsSnapshot} />)
+    await act(async () => {})
+    const api = instances[0]!
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima avaliação' }))
+    expect(api.autoScroll.stop).toHaveBeenCalledTimes(1)
+    expect(api.scrollNext).toHaveBeenCalledWith(false)
+    expect(api.autoScroll.stop.mock.invocationCallOrder[0]).toBeLessThan(api.scrollNext.mock.invocationCallOrder[0]!)
+    fireEvent.click(screen.getByRole('button', { name: 'Avaliação anterior' }))
+    expect(api.scrollPrev).toHaveBeenCalledWith(false)
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(1)
+    act(() => api.emit('settle'))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(2)
+    act(() => api.emit('settle'))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(2)
+  })
+
+  it('accepts thirty clicks in either direction without disabling loop controls', async () => {
+    render(<ReviewsSection data={googleReviewsSnapshot} />)
+    await act(async () => {})
+    const api = instances[0]!
+    for (const label of ['Avaliação anterior', 'Próxima avaliação', 'Avaliação anterior']) {
+      for (let index = 0; index < 30; index++) fireEvent.click(screen.getByRole('button', { name: label }))
+      act(() => api.emit('settle'))
+    }
+    expect(api.scrollPrev).toHaveBeenCalledTimes(60)
+    expect(api.scrollNext).toHaveBeenCalledTimes(30)
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(4)
+  })
+
+  it('keeps manual navigation instant with reduced motion and does not play AutoScroll', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+    render(<ReviewsSection data={googleReviewsSnapshot} />)
+    await act(async () => {})
+    const api = instances[0]!
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima avaliação' }))
+    expect(api.scrollNext).toHaveBeenCalledWith(true)
+    act(() => api.emit('settle'))
+    expect(api.autoScroll.play).not.toHaveBeenCalled()
+  })
+
+  it('cleans up pending navigation on unmount and ignores late settle events', async () => {
+    const view = render(<ReviewsSection data={googleReviewsSnapshot} />)
+    await act(async () => {})
+    const api = instances[0]!
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima avaliação' }))
+    view.unmount()
+    act(() => api.emit('settle'))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(1)
+    expect(api.autoScroll.stop).toHaveBeenCalledTimes(2)
+  })
+
+  it('resumes after Embla rebuilds a pending navigation on resize', async () => {
+    render(<ReviewsSection data={googleReviewsSnapshot} />)
+    await act(async () => {})
+    const api = instances[0]!
+    fireEvent.click(screen.getByRole('button', { name: 'Próxima avaliação' }))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(1)
+    act(() => api.emit('reInit'))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(2)
+    act(() => api.emit('settle'))
+    expect(api.autoScroll.play).toHaveBeenCalledTimes(2)
   })
 })

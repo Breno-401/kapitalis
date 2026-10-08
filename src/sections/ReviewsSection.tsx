@@ -2,6 +2,7 @@ import { useRef, useSyncExternalStore } from 'react'
 import type { GoogleReviewsSnapshot } from '../data/googleReviews'
 import { GoogleMark } from '../components/GoogleMark'
 import { ReviewCard } from './ReviewCard'
+import { ReviewNavigation } from './ReviewNavigation'
 import { ReviewsMobileCarousel } from './ReviewsMobileCarousel'
 import { useInfiniteReviewRail } from './useInfiniteReviewRail'
 import styles from './ReviewsSection.module.css'
@@ -47,7 +48,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
   const isMobile = useSyncExternalStore(subscribeMobileViewport, isMobileViewport, () => false)
   const trackRef = useRef<HTMLDivElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
-  useInfiniteReviewRail({
+  const { previous, next } = useInfiniteReviewRail({
     enabled: !isMobile,
     items: data.reviews,
     trackRef,
@@ -105,6 +106,8 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
       </div>
 
       {isMobile ? <ReviewsMobileCarousel reviews={data.reviews} /> : (
+        <>
+        <ReviewNavigation onPrevious={previous} onNext={next} />
         <div className={styles.trackFrame} data-review-frame data-reveal="text" data-reveal-step="3">
           <div
             className={styles.track}
@@ -138,6 +141,7 @@ export function ReviewsSection({ data }: ReviewsSectionProps) {
             </div>
           </div>
         </div>
+        </>
       )}
 
       <div className={`container ${styles.closingCta}`} data-review-closing-cta data-reveal="quiet">

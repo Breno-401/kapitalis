@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from 'react'
+import { useEffect, useRef, type RefObject } from 'react'
 
 type InfiniteReviewRailOptions = {
   enabled: boolean
@@ -28,7 +28,7 @@ function setRailOffset(
   rail.style.transform = `translate3d(${-Number(normalized.toFixed(3))}px, 0, 0)`
 }
 
-/** Runs a measured, infinite review rail and pauses only while the mouse is over it. */
+/** One position and animation loop drive both continuous motion and manual navigation. */
 export function useInfiniteReviewRail({
   enabled,
   items,
@@ -36,6 +36,7 @@ export function useInfiniteReviewRail({
   railRef,
   speed = 24,
 }: InfiniteReviewRailOptions) {
+  const navigateRef = useRef<(direction: number) => void>(() => {})
   useEffect(() => {
     if (!enabled) return
     const trackNode = trackRef.current
@@ -53,6 +54,7 @@ export function useInfiniteReviewRail({
     let isHovered = false
     const offset = { current: 0 }
     const seam = { current: 0 }
+    let manual: { from: number; distance: number; start: number | null; progress: number } | null = null
 
     function moveRail(nextOffset: number) {
       setRailOffset(rail, offset, seam, nextOffset)
@@ -75,26 +77,55 @@ export function useInfiniteReviewRail({
     }
 
     function advance(timestamp: number) {
-      if (lastTime !== null && !isHovered) {
+      frame = null
+      if (manual) {
+        manual.start ??= timestamp
+        const progress = Math.min(1, (timestamp - manual.start) / 320)
+        manual.progress = 1 - (1 - progress) ** 3
+        moveRail(manual.from + manual.distance * manual.progress)
+        if (progress === 1) manual = null
+      } else if (lastTime !== null && !isHovered) {
         const elapsed = Math.min(timestamp - lastTime, 80)
         moveRail(offset.current + (elapsed * speed) / 1000)
       }
       lastTime = timestamp
-      frame = window.requestAnimationFrame(advance)
+      startAutoplay()
     }
 
     function startAutoplay() {
-      if (frame !== null || !isVisible || !pageVisible || reducedMotion?.matches || isHovered) return
-      lastTime = null
+      if (frame !== null || !pageVisible) return
+      if (!manual && (!isVisible || reducedMotion?.matches || isHovered)) return
       frame = window.requestAnimationFrame(advance)
+    }
+
+    navigateRef.current = direction => {
+      measureSeam()
+      const cards = rail.querySelectorAll<HTMLElement>('[data-review-set="primary"] [data-review-card]')
+      if (cards.length < 2 || seam.current <= 0) return
+      const step = cards[1]!.getBoundingClientRect().left - cards[0]!.getBoundingClientRect().left
+      if (step <= 0) return
+      const remaining = manual ? manual.distance * (1 - manual.progress) : 0
+      stopAutoplay()
+      if (reducedMotion?.matches) {
+        manual = null
+        moveRail(offset.current + remaining + direction * step)
+        return
+      }
+      // Rapid clicks retarget the same animation, retaining every requested card step.
+      manual = { from: offset.current, distance: remaining + direction * step, start: null, progress: 0 }
+      startAutoplay()
     }
 
     function syncLayout() {
       measureSeam()
       if (!hasIntersectionObserver) isVisible = isTrackInViewport(track)
       moveRail(offset.current)
-      if (reducedMotion?.matches) stopAutoplay()
-      else startAutoplay()
+      if (reducedMotion?.matches) {
+        stopAutoplay()
+        if (manual) moveRail(manual.from + manual.distance)
+        manual = null
+      }
+      startAutoplay()
     }
 
     function handleVisibilityChange() {
@@ -113,11 +144,12 @@ export function useInfiniteReviewRail({
 
     function handleMouseEnter() {
       isHovered = true
-      stopAutoplay()
+      if (!manual) stopAutoplay()
     }
 
     function handleMouseLeave() {
       isHovered = false
+      if (!manual) lastTime = null
       startAutoplay()
     }
 
@@ -143,6 +175,7 @@ export function useInfiniteReviewRail({
     syncLayout()
 
     return () => {
+      navigateRef.current = () => {}
       stopAutoplay()
       resizeObserver?.disconnect()
       intersectionObserver?.disconnect()
@@ -154,4 +187,8 @@ export function useInfiniteReviewRail({
       reducedMotion?.removeEventListener?.('change', syncLayout)
     }
   }, [enabled, items, railRef, speed, trackRef])
+  return {
+    previous: () => navigateRef.current(-1),
+    next: () => navigateRef.current(1),
+  }
 }

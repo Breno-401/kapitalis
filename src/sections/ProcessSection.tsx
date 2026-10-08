@@ -1,6 +1,4 @@
-import { useId, useRef } from 'react'
-import { useProcessScrollProgress } from './useProcessScrollProgress'
-import { useProcessReveal } from './useProcessReveal'
+import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import styles from './ProcessSection.module.css'
 
 const steps = [
@@ -37,23 +35,32 @@ const steps = [
 ] as const
 
 export function ProcessSection() {
-  const trackRef = useRef<HTMLElement>(null)
-  const sceneRef = useRef<HTMLDivElement>(null)
   const sectionId = useId()
-  const { activeIndex, staticLayout } = useProcessScrollProgress(trackRef, sceneRef, steps.length)
-  useProcessReveal(trackRef, activeIndex, staticLayout)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number
+    switch (event.key) {
+      case 'ArrowRight': nextIndex = (index + 1) % steps.length; break
+      case 'ArrowLeft': nextIndex = (index + steps.length - 1) % steps.length; break
+      case 'Home': nextIndex = 0; break
+      case 'End': nextIndex = steps.length - 1; break
+      default: return
+    }
+    event.preventDefault()
+    setActiveIndex(nextIndex)
+    buttonsRef.current[nextIndex]?.focus({ preventScroll: true })
+  }
 
   return (
     <section
       className={styles.section}
       data-theme-surface="dark"
-      data-process-track=""
-      data-process-layout={staticLayout ? 'static' : 'sticky'}
-      ref={trackRef}
       id="processo"
       aria-labelledby="process-title"
     >
-      <div className={`container ${styles.scene}`} ref={sceneRef} data-process-scene="">
+      <div className={`container ${styles.scene}`}>
         <header data-reveal-group role="presentation">
           <p className={styles.eyebrow} data-reveal="text">Etapas conceituais</p>
           <div className={styles.heading}>
@@ -66,11 +73,19 @@ export function ProcessSection() {
         </header>
 
         <div className={styles.route}>
-          <ol className={styles.timeline} aria-label="Etapas conceituais do processo">
+          <div className={styles.timeline} role="tablist" aria-label="Etapas conceituais do processo">
             {steps.map(({ title }, index) => (
-              <li
+              <button
+                type="button"
+                role="tab"
+                id={`${sectionId}-${index}-tab`}
+                aria-selected={index === activeIndex}
+                aria-controls={`${sectionId}-${index}-panel`}
+                tabIndex={index === activeIndex ? 0 : -1}
+                ref={button => { buttonsRef.current[index] = button }}
+                onClick={() => setActiveIndex(index)}
+                onKeyDown={event => handleKeyDown(event, index)}
                 className={styles.step}
-                aria-current={!staticLayout && index === activeIndex ? 'step' : undefined}
                 data-active={index === activeIndex}
                 key={title}
               >
@@ -78,14 +93,18 @@ export function ProcessSection() {
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <span>{title}</span>
-              </li>
+              </button>
             ))}
-          </ol>
+          </div>
 
           <div className={styles.chapters}>
             {steps.map(({ title, description, result, points }, index) => (
               <article
-                aria-labelledby={`${sectionId}-${index}-heading`}
+                role="tabpanel"
+                id={`${sectionId}-${index}-panel`}
+                aria-labelledby={`${sectionId}-${index}-tab`}
+                hidden={index !== activeIndex}
+                tabIndex={0}
                 className={styles.chapter}
                 data-active={index === activeIndex}
                 key={title}

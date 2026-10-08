@@ -234,11 +234,44 @@
   transform: translate(1px, -1px);
 }
 
+.navigation {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.navigationButton {
+  display: grid;
+  place-items: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+}
+
+.navigationButton:hover { border-color: var(--color-gold-soft); color: var(--color-gold-soft); }
+.navigationButton:focus-visible { outline: 2px solid var(--color-gold-soft); outline-offset: 3px; }
+.navigationButton svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .trackFrame {
   position: relative;
   width: 100%;
   height: 26rem;
-  margin-top: clamp(2.5rem, 5vw, 4rem);
+  margin-top: 0.75rem;
   overflow: clip;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
@@ -469,7 +502,7 @@
   .trackFrame {
     height: auto;
     min-height: 26rem;
-    margin-top: 2rem;
+    margin-top: 0.75rem;
   }
 
   .track {
@@ -587,6 +620,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .navigationButton,
   .reviewCard,
   .expandButton {
     transition: none;
