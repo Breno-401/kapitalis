@@ -19,7 +19,7 @@
 .noticeCopy { display: grid; gap: 0.2rem; min-width: 0; }
 .noticeCopy strong { font-size: 0.8rem; }
 .noticeCopy p { color: var(--text-secondary); font-size: 0.74rem; line-height: 1.5; }
-.noticeActions { display: flex; flex: 0 0 auto; align-items: center; gap: 0.55rem; }
+.noticeActions { display: flex; flex: 0 0 auto; align-items: center; flex-wrap: wrap; gap: 0.55rem; }
 .noticeActions button,
 .close {
   box-sizing: border-box;
@@ -43,10 +43,10 @@
 .noticeActions .learnMore { border-color: transparent; color: var(--text-secondary); }
 .noticeActions button:hover,
 .close:hover { border-color: var(--accent); background: var(--accent-muted); }
-.noticeActions .dismiss { border-color: var(--accent); background: var(--accent); color: var(--text-on-accent); }
-.noticeActions .dismiss:hover { background: var(--accent-fill-hover); }
-:global(html[data-theme='light']) .noticeActions .dismiss { background: var(--accent-strong); }
-:global(html[data-theme='light']) .noticeActions .dismiss:hover { background: var(--accent-fill-hover); }
+.noticeActions .accept { border-color: var(--accent); background: var(--accent); color: var(--text-on-accent); }
+.noticeActions .accept:hover { background: var(--accent-fill-hover); }
+:global(html[data-theme='light']) .noticeActions .accept { background: var(--accent-strong); }
+:global(html[data-theme='light']) .noticeActions .accept:hover { background: var(--accent-fill-hover); }
 .noticeActions button:focus-visible,
 .close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 
@@ -75,6 +75,8 @@
 .detailsBody { display: grid; gap: 0.75rem; padding-top: 0.9rem; }
 .detailsBody p { color: var(--text-secondary); font-size: 0.76rem; line-height: 1.55; }
 .detailsBody a { color: var(--accent); }
+.preferenceControls { display: grid; gap: 0.55rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+.preferenceControls > strong { font-size: 0.8rem; }
 
 @keyframes details-in {
   from { opacity: 0; transform: translateY(0.25rem); }

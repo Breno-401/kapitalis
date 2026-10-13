@@ -1,20 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { site } from '../data/site'
+import {
+  getStoredConsentChoice,
+  updateConsentChoice,
+  type ConsentChoice,
+} from '../privacy/googleConsent'
 import styles from './PrivacyNotice.module.css'
 
-export const PRIVACY_NOTICE_STORAGE_KEY = 'kapitalis-privacy-notice-dismissed'
 export const OPEN_PRIVACY_DETAILS_EVENT = 'kapitalis:open-privacy-details'
 
-function wasNoticeDismissed() {
-  try {
-    return window.localStorage.getItem(PRIVACY_NOTICE_STORAGE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
 export function PrivacyNotice() {
-  const [dismissed, setDismissed] = useState(wasNoticeDismissed)
+  const [consentChoice, setConsentChoice] = useState<ConsentChoice | null>(getStoredConsentChoice)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const returnFocusRef = useRef<HTMLElement | null>(null)
@@ -31,13 +27,9 @@ export function PrivacyNotice() {
     window.setTimeout(() => returnFocusRef.current?.focus(), 0)
   }
 
-  function dismissNotice() {
-    setDismissed(true)
-    try {
-      window.localStorage.setItem(PRIVACY_NOTICE_STORAGE_KEY, 'true')
-    } catch {
-      // The notice can still be dismissed for the current page when storage is unavailable.
-    }
+  function chooseConsent(choice: ConsentChoice) {
+    updateConsentChoice(choice)
+    setConsentChoice(choice)
   }
 
   useEffect(() => {
@@ -60,20 +52,23 @@ export function PrivacyNotice() {
 
   return (
     <>
-      {!dismissed && (
+      {consentChoice === null && (
         <aside className={styles.notice} aria-label="Aviso de privacidade" data-privacy-notice>
           <div className={styles.noticeCopy}>
             <strong>Privacidade</strong>
             <p>
-              Os dados informados nas simulações são processados no seu navegador e só entram na URL se você escolher compartilhar.
+              Este site usa Google Tag Manager e Google Ads. Escolha se permite o uso de dados para medição e publicidade. Valores das simulações não são enviados ao dataLayer.
             </p>
           </div>
           <div className={styles.noticeActions}>
             <button className={styles.learnMore} onClick={openDetails} type="button">
               Saiba mais
             </button>
-            <button className={styles.dismiss} onClick={dismissNotice} type="button">
-              Entendi
+            <button onClick={() => chooseConsent('denied')} type="button">
+              Rejeitar todos
+            </button>
+            <button className={styles.accept} onClick={() => chooseConsent('granted')} type="button">
+              Aceitar todos
             </button>
           </div>
         </aside>
@@ -105,17 +100,38 @@ export function PrivacyNotice() {
           </div>
           <div className={styles.detailsBody}>
             <p>
-              As ferramentas servem para simulações de referência e para iniciar uma conversa com a Kapitalis. Os valores digitados são processados no navegador, não são enviados a um servidor da Kapitalis e não são gravados no armazenamento local.
+              As ferramentas servem para simulações de referência e para iniciar uma conversa com a Kapitalis. Os valores digitados são processados no navegador, não são enviados a um servidor da Kapitalis nem incluídos no dataLayer das tags.
             </p>
             <p>
               Os campos necessários só entram na URL quando você escolhe compartilhar ou copiar o link. As ferramentas não pedem nome, e-mail ou telefone.
             </p>
             <p>
-              A versão atual não usa cookies, pixels ou analytics. A preferência de tema e o fechamento deste aviso ficam no armazenamento local do navegador; esses itens não incluem valores das simulações.
+              O site usa Google Tag Manager e Google Ads. O Consent Mode v2 começa com ad_storage, analytics_storage, ad_user_data e ad_personalization negados. Se você aceitar, os quatro estados serão liberados; se rejeitar, permanecerão negados. A escolha fica salva neste navegador e pode ser alterada abaixo.
+            </p>
+            <p>
+              As tags são carregadas mesmo com os estados negados; nesse estado, podem enviar ao Google sinais de medição sem cookies, conforme o Consent Mode. A escolha controla o armazenamento e o uso de dados pelas tags.
             </p>
             <p>
               Os links de WhatsApp, Google, Instagram e Facebook só abrem quando você os aciona; o tratamento após sair do site segue as práticas de cada serviço.
             </p>
+            <div className={styles.preferenceControls}>
+              <strong>Preferências de rastreamento</strong>
+              <p aria-live="polite">
+                {consentChoice === null
+                  ? 'Você ainda não escolheu.'
+                  : consentChoice === 'granted'
+                    ? 'Sua escolha atual: aceitou todos os estados.'
+                    : 'Sua escolha atual: rejeitou todos os estados.'}
+              </p>
+              <div className={styles.noticeActions}>
+                <button onClick={() => chooseConsent('denied')} type="button">
+                  Rejeitar todos
+                </button>
+                <button className={styles.accept} onClick={() => chooseConsent('granted')} type="button">
+                  Aceitar todos
+                </button>
+              </div>
+            </div>
             <p>
               Para falar com a Kapitalis: <a href={`mailto:${site.email}`}>{site.email}</a>.
             </p>
